@@ -39,5 +39,5 @@ echo "export SLURM_CONF=$SLURM_CONF" >> $src/.env
 echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >> $src/.env
 
 echo "*** Important 1: Please check/update the src/.env for all environment variables ***"
-echo "*** Important 2: Please check/update the src/sys.yml ***"
+echo "*** Important 2: Please check/update the src/sys_template.yml and rename it to sys.yml ***"
 echo "*** Important 3: Please add $pwd into PATH ***"
