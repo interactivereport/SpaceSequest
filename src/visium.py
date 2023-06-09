@@ -1,5 +1,5 @@
 
-import sys,os,warnings,logging,shutil
+import sys,os,warnings,logging,shutil,random
 import cmdUtility as cu
 import utility as ut
 
@@ -8,15 +8,33 @@ logging.disable(level=logging.INFO)
 
 strPipePath=os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
+def init(strDir):
+    strMeta=os.path.join(strDir,"sample.csv")
+    with open(strMeta,"w") as f:
+        f.write("Sample_Name,%s\n"%ut.sr_path_column)
+    config = ut.readLines(os.path.join(strPipePath,"src","visium.yml"))
+    config = [one.replace("OUTPUT",strDir)
+                    .replace("SAMPLE",strMeta)
+                    .replace("JOBID","j%d"%random.randint(10,99)) for one in config]
+    strConfig = os.path.join(strDir,"config.yml")
+    with open(strConfig,"w") as f:
+        f.writelines(config)
+    print("Config file is created: ",strConfig)
 def saveRaw(meta,sName,strPkl,strH5ad):
     os.makedirs(os.path.dirname(strPkl),exist_ok=True)
     ut.sr_read(meta,sName,strPkl,strH5ad)
 def main():
-    if len(sys.argv)<2:
-        print("Test running...")
-        strConfig = os.path.join(strPipePath,"example","visium","config.yml")
+    strPath = os.path.realpath(sys.argv[1])
+    if os.path.isdir(strPath):
+        init(strPath)
+        return()
+    elif os.path.isfile(strPath):
+        strConfig=strPath
     else:
-        strConfig=os.path.realpath(sys.argv[1])
+        print("Unknown input: ",strPath)
+        return()
+    
+    ut.MsgInit()
     config,sInfo = ut.getConfig(strConfig)
     ut.sr_checkMeta(sInfo,config)
     

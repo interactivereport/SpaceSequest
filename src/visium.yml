@@ -1,0 +1,22 @@
+## Please modify "required" section
+prj_name: required # this is the name of the project which will be used as prefix of all file created
+prj_title: "required" # quote might be needed
+output: OUTPUT
+sample_name: Sample_Name # this is the column header in the following meta file which specify the sample name
+sample_meta: SAMPLE
+#filtering
+UMI_count_gene: 15 #the minimal number of UMI required for a gene to be included
+UMI_count_cell: 100 #the minimal number of UMI required for a cell to be included 
+min_cells: 20 #filtering genes by minimal cell, please increase this when there is a large number of cells
+min_features: 50 #filtering cells by minimal genes
+highCount_cutoff: 80000 # any cells with higher total counts to be removed
+highGene_cutoff: 6000 # any cells with higher number of detected genes to be removed
+#SpaGCN setting
+spg_clusterN: required 
+spg_p: 0.8
+
+#Parallel setting
+parallel: False #"sge" or "slurm"
+core: 2
+memory: 30G #if provided (e.g. 100G), it will be used to request cluster scheduler  
+jobID: JOBID # please make sure this job id is different with your other projects which would be run at the same time
