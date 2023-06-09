@@ -1,4 +1,5 @@
-import os,yaml,warnings,logging,functools,pickle
+import os,yaml,warnings,logging,functools,pickle,configparser
+from datetime import datetime
 import pandas as pd
 import scanpy as sc
 import paste as pst
@@ -13,6 +14,20 @@ strPipePath=os.path.dirname(os.path.realpath(__file__))
 def msgError(msg):
     print(msg)
     exit()
+def MsgInit():
+    print("\n\n*****",datetime.now().strftime("%Y-%m-%d %H:%M:%S"),"*****")
+    appPath=os.path.dirname(strPipePath)
+    if os.path.isdir(os.path.join(appPath,".git")):
+        gitConfig = configparser.ConfigParser()
+        tmp = gitConfig.read(os.path.join(appPath,".git","config"))
+        url = gitConfig['remote "origin"']['url']
+    
+        gitLog = pd.read_csv(os.path.join(appPath,".git","logs","HEAD"),sep="\t",header=None)
+        gitLog = gitLog.iloc[-1,0].split(" ")
+        print("###########\n## scRNAsequest: %s"%url)
+        print("## Pipeline Path: %s"%appPath)
+        print("## Pipeline Date: %s %s"%(datetime.fromtimestamp(int(gitLog[-2])).strftime('%Y-%m-%d %H:%M:%S'),gitLog[-1]))
+        print("## git HEAD: %s\n###########\n"%gitLog[1])
 def getConfig(strConfig):
     print("Initializing ...")
     if not os.path.isfile(strConfig):
@@ -28,7 +43,10 @@ def getConfig(strConfig):
     if config.get('prj_name') is None:
         msgError("The output path is required in config")
     return config, sInfo
-
+def readLines(strF):
+    with open(strF,"r") as f:
+        lines = f.readlines()
+    return lines
 def getSys():
     strSys=os.path.join(strPipePath,"sys.yml")
     if not os.path.isfile(strSys):
