@@ -9,6 +9,7 @@ from copy import deepcopy
 import SpaGCN as spg
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+from matplotlib.backends.backend_pdf import PdfPages
 
 print=functools.partial(print, flush=True)
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -57,39 +58,43 @@ def generate_rgb_colors(n):
 def plotSpaGCN(adata_all,strWK):
     print("*** plot SpaGCN ***")
     SpaGCN_list={}
-    cm = dict(zip(adata_all.obs[predKey].unique().tolist(), generate_rgb_colors(adata_all.obs[predKey].nunique())))
-    nc=4 if adata_all.obs.batch.nunique()>4 else adata_all.obs.batch.nunique()
-    nr=math.ceil(adata_all.obs.batch.nunique()/nc)
-    fig, axs = plt.subplots(nr, nc, figsize=(nc*5,nr*5))
-    axs = axs.reshape(-1)
-    n=0
-    legends=[]
-    for oneKey in adata_all.obs.batch.unique():
-        RJdata = adata_all[adata_all.obs.batch==oneKey,:].copy()
-        ax  = sc.pl.scatter(RJdata,
-                            alpha=1,
-                            x="pixel_y_align",
-                            y="pixel_x_align",
-                            color=predKey,
-                            palette=cm,
-                            show=False,size=100000/RJdata.shape[0],
-                            ax = axs[n])  
-        ax.set_aspect('equal', 'box')
-        ax.axes.invert_yaxis()
-        ax.axes.set_xlim([-1000, 1000])
-        ax.axes.set_ylim([-1000, 1000])
-        ax.set(title=oneKey)
-        legends.append(ax.get_legend_handles_labels())
-        ax.get_legend().remove()
-        n +=1
-    while n<len(axs):
-        axs[n].axis('off')
-        n +=1
-    handles, labels = [sum(one, []) for one in zip(*legends)]
-    ix=np.unique(labels,return_index=True)[1]
-    fig.legend([handles[i] for i in ix], [labels[i] for i in ix],markerscale=2)
-    plt.savefig(os.path.join(strWK,"SpaGCN.pdf"))#,bbox_inches="tight"
-    plt.close()
+    batchN=adata_all.obs.batch.nunique()
+    nc = math.ceil(math.sqrt(batchN))
+    nr = round(math.sqrt(batchN))
+    with PdfPages(os.path.join(strWK,"SpaGCN.pdf")) as pdf:
+        for oneCluster in [a for a in adata_all.obs.columns if a.startswith(predKey)]:
+            cm = dict(zip(adata_all.obs[oneCluster].unique().tolist(), generate_rgb_colors(adata_all.obs[oneCluster].nunique())))
+            fig, axs = plt.subplots(nr, nc, figsize=(nc*5+2,nr*5))
+            axs = axs.reshape(-1)
+            n=0
+            legends=[]
+            for oneKey in adata_all.obs.batch.unique():
+                RJdata = adata_all[adata_all.obs.batch==oneKey,:].copy()
+                ax  = sc.pl.scatter(RJdata,
+                                    alpha=1,
+                                    x="pixel_x_align",
+                                    y="pixel_y_align",
+                                    color=oneCluster,
+                                    palette=cm,
+                                    show=False,size=100000/RJdata.shape[0],
+                                    ax = axs[n])  
+                ax.set_aspect('equal', 'box')
+                ax.axes.invert_yaxis()
+                ax.axes.set_xlim([-1000, 1000])
+                ax.axes.set_ylim([-1000, 1000])
+                ax.set(title=oneKey)
+                legends.append(ax.get_legend_handles_labels())
+                ax.get_legend().remove()
+                n +=1
+            while n<len(axs):
+                axs[n].axis('off')
+                n +=1
+            handles, labels = [sum(one, []) for one in zip(*legends)]
+            ix=np.unique(labels,return_index=True)[1]
+            fig.legend([handles[i] for i in ix], [labels[i] for i in ix],markerscale=2)
+            pdf.savefig(bbox_inches="tight")
+            #plt.savefig(os.path.join(strWK,"SpaGCN.pdf"))#,bbox_inches="tight"
+            plt.close()
 
 def alignSlices(D_dict,strWK):
     print("*** slice align ***")
@@ -121,10 +126,10 @@ def find_resolution(n_clusters,adata_list,adj_list,l_list):
         current_res = sum(resolutions)/2
         clf=spg.multiSpaGCN()
         # setting seeds! Need to explicitly set it for each source of randomness. 
-        #r_seed=t_seed=n_seed=2022
-        #random.seed(r_seed)
-        #torch.manual_seed(t_seed)
-        #np.random.seed(n_seed)
+        r_seed=t_seed=n_seed=random.randint(1000,9999)
+        random.seed(r_seed)
+        torch.manual_seed(t_seed)
+        np.random.seed(n_seed)
         clf.train(adata_list,adj_list,l_list,init_spa=True,init="louvain",res=current_res, tol=5e-3, lr=0.05, max_epochs=200)
         y_pred, prob = clf.predict()
         labels = y_pred.astype('str')
@@ -134,7 +139,7 @@ def find_resolution(n_clusters,adata_list,adj_list,l_list):
         else:
             resolutions[1] = current_res        
         iteration = iteration + 1
-        print("iter %d: res=%.5f found %d clusters"%(iteration,current_res,obtained_clusters))
+        print("iter %d: res=%.5f found %d clusters\n\n"%(iteration,current_res,obtained_clusters))
         # following due to sometimes it stacked at reporting 1 cluster, (not sure the reason) restart seems help
         if obtained_clusters==1:
             oneContinue +=1
@@ -144,27 +149,34 @@ def find_resolution(n_clusters,adata_list,adj_list,l_list):
             return None,None
     return clf,current_res
 
-def find_resolution_multispagcn(n_clusters,adata_list,adj_list,l_list,strWK): 
-    print("*** cluster prediction for spg_clusterN=%d ***"%n_clusters)
-    strF = os.path.join(strWK,"res_clusters.pkl")
-    if os.path.isfile(strF):
-        print("Using the previous clustering result %s\n\tIf a new clustering is needed, please remove/rename the above file!"%strF)
-        clf,current_res=ut.readPkl(strF)
-    else:
-        nTry = 0
-        while nTry<3:
-            nTry += 1
-            clf, current_res=find_resolution(n_clusters,adata_list,adj_list,l_list)
-            if not clf is None:
-                break
-            print("\tStuck on the only one cluster: try again at %d times"%nTry)
-        ut.writePkl([clf, current_res],strF)      
-    return clf, current_res
+def find_resolution_multispagcn(n_clusters,adata_list,adj_list,l_list,strWK):
+    adata_all = None
+    res_all =[]
+    for clusterN in n_clusters:
+        print("*** cluster prediction for spg_clusterN=%d ***"%clusterN)
+        strF = os.path.join(strWK,"res_clusterN%d.pkl"%clusterN)
+        if os.path.isfile(strF):
+            print("Using the previous clustering result %s\n\tIf a new clustering is needed, please remove/rename the above file!"%strF)
+            clf,current_res=ut.readPkl(strF)
+        else:
+            nTry = 0
+            while nTry<5:
+                nTry += 1
+                clf, current_res=find_resolution(clusterN,adata_list,adj_list,l_list)
+                if not clf is None:
+                    break
+                print("\tStuck on the only one cluster: try again at %d times"%nTry)
+            if clf is None:
+                ut.msgError("SpaGCN failed with clustering %d times!"%nTry)
+            ut.writePkl([clf, current_res],strF)
+        if adata_all is None:
+            adata_all = clf.adata_all
+        y_pred, prob = clf.predict()
+        adata_all.obs["%s%d"%(predKey,clusterN)] = ["C%d"%i for i in y_pred]
+        res_all.append(current_res)
+    return adata_all, res_all
 
-def formatOutput(clf,strOut):
-    y_pred, prob = clf.predict()
-    adata_all = clf.adata_all
-    adata_all.obs[predKey] = ["C%d"%i for i in y_pred]
+def formatOutput(adata_all,strOut):
     plotSpaGCN(adata_all,os.path.dirname(strOut))
     ut.writePkl(adata_all.obs.copy(),strOut)
     return
@@ -203,23 +215,24 @@ def SpaGCN(strConfig,strRaw,strOut):
     preprocess(D_dict,config)
     center = alignSlices(D_dict,os.path.dirname(strOut))
     adj_dict,l_dict=process(D_dict,config['spg_p'])
-    clf,res = find_resolution_multispagcn(config['spg_clusterN'],
+    adata_all,res_all = find_resolution_multispagcn(config['clusterN'],
                                           list(D_dict.values()),
                                           list(adj_dict.values()),
                                           list(l_dict.values()),
                                           os.path.dirname(strOut))
-    return formatOutput(clf,strOut)
+    return formatOutput(adata_all,strOut)
 
 def mergeSpaGCN(strH5ad,strPkl):
-    print("*** Merge SpaGCN cluster ***")
+    print("Merge SpaGCN cluster")
     obs = ut.readPkl(strPkl)
-    D = sc.read_h5ad(strH5ad,backed="r+")
-    if predKey in D.obs.columns:
-        print("Skip: %s exists in h5ad: %s\n\tIf a new run is desired, please rename/remove the above h5ad file."%(predKey,strH5ad))
-        return
     obs.index = [re.sub(obs["dataset_batch"][i]+"$",obs["batch"][i],obs.index[i]) for i in range(obs.shape[0])]
-    D.obs = D.obs.merge(obs[predKey],"left",left_index=True,right_index=True)
-    D.obs[predKey].fillna("Missing",inplace=True)
+    D = sc.read_h5ad(strH5ad,backed="r+")
+    for oneCluster in [a for a in obs.columns if a.startswith(predKey)]:
+        if oneCluster in D.obs.columns:
+            print("\tSkip: Column '%s' exists in the final h5ad"%(oneCluster))
+            continue
+        D.obs = D.obs.merge(obs[oneCluster],"left",left_index=True,right_index=True)
+        D.obs[oneCluster].fillna("Missing",inplace=True)
     D.write(strH5ad)
 
 def main():
