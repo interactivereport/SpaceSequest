@@ -1,8 +1,11 @@
-import os,yaml,warnings,logging,functools,pickle,configparser
+import sys,os,yaml,warnings,logging,functools,pickle,configparser
 from datetime import datetime
 import pandas as pd
 import scanpy as sc
 import paste as pst
+import rpy2.robjects as robjects
+from rpy2.robjects import pandas2ri
+readRDS = robjects.r['readRDS']
 #from ipython_exit import exit
 
 #print=functools.partial(print, flush=True)
@@ -41,7 +44,13 @@ def getConfig(strConfig):
     if config.get('output') is None:
         msgError("The output path is required in config")
     if config.get('prj_name') is None:
-        msgError("The output path is required in config")
+        msgError("The project name (prj_name) is required in config")
+    if config.get('clusterN') is None:
+        msgError("The cluster numbers (clusterN) are required in config")
+    clusterN = [int(a) for a in config.get('clusterN') if isinstance(a,int) or isinstance(a,float) or a.isdigit()]
+    if len(clusterN)==0:
+        msgError("The integer list of cluster numbers (clusterN) are required in config")
+    config['clusterN'] = clusterN
     return config, sInfo
 def readLines(strF):
     with open(strF,"r") as f:
@@ -119,6 +128,32 @@ def filterD(D,min_gene=None,max_gene=None,min_count_cell=100,min_cell=None,min_c
     sc.pp.filter_genes(D,min_counts=min_count_gene,min_cells=min_cell)
     sc.pp.filter_cells(D,min_counts=min_count_cell,min_genes=min_gene,max_genes=max_gene)
   
-  
 def preAlign(all_slices):
     pass
+
+## merge obs
+def mergeRDS(strH5ad,strObs):
+    print("Merging ",strObs)
+    D = sc.read_h5ad(strH5ad,backed="r+")
+    obs = pandas2ri.rpy2py_dataframe(readRDS(strObs))
+    for oneC in obs.columns:
+        if oneC in D.obs.columns:
+            print("\tSkip: Column '%s' exists in the final h5ad"%(oneC))
+            continue
+        else:
+            D.obs = D.obs.merge(obs[oneC],how="left",left_index=True,right_index=True)
+            D.obs[oneC].fillna("Missing",inplace=True)
+    D.write(strH5ad)
+
+def main():
+    if len(sys.argv)<2:
+        print("Unknown utility call!")
+        return()
+    task = sys.argv[1]
+    if task=="mergeRDS":
+        mergeRDS(sys.argv[2],sys.argv[3])
+    else:
+        print("Unknown task: %s"%task)
+
+if __name__ == "__main__":
+    main()

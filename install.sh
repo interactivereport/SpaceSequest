@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # The conda env specified below will be removed if exists
-appEnvPath="~/.conda/envs/spaceRequest"
+appEnvPath="~/.conda/envs/SpaceSequest"
 
 if [[ -z "$appEnvPath" ]]; then
   echo "Please set appEnvPath where you want the conda env to be installed"

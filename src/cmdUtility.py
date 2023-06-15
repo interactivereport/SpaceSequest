@@ -27,7 +27,7 @@ def submit_cmd(cmds,config,core=None,memG=0):
     for one in cmds.keys():
       if cmds[one] is None:
         continue
-      print("\n\n\nsubmitting %s"%one)
+      print("\n\nsubmitting %s"%one)
       oneCMD=cmds[one] #+" 2>&1 | tee "+ strLog
       try:
         subprocess.run(oneCMD,shell=True,check=True)

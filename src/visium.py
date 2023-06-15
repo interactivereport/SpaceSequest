@@ -1,5 +1,5 @@
 
-import sys,os,warnings,logging,shutil,random
+import sys,os,warnings,logging,shutil,random,re
 import cmdUtility as cu
 import utility as ut
 
@@ -45,21 +45,38 @@ def main():
     if not os.path.isfile(strSep):
         ut.msgError("Error in reading files!")
     
+    cmd = {}
+    strFinals = {}
     # apply SpaGCN
-    strSpaGCN = os.path.join(config['output'],"SpaGCN",config['prj_name']+".pkl")
-    cu.submit_cmd({'SpaGCN':"python -u %s/src/SpaGCN_run.py %s %s %s"%(strPipePath,strConfig,strSep,strSpaGCN)},config)
-    if not os.path.isfile(strSpaGCN):
-        ut.msgError("Error in spaGCN!")    
+    strFinals["SpaGCN"] = os.path.join(config['output'],"SpaGCN",config['prj_name']+".pkl")
+    if os.path.isfile(strFinals["SpaGCN"]):
+        print("\n\nUsing previous SpaGCN results: %s\n\tIf a new process is wanted, please rename/remove the above file"%strFinals["SpaGCN"])
+    else:
+        cmd['SpaGCN'] = "python -u %s/src/SpaGCN_run.py %s %s %s"%(strPipePath,strConfig,strSep,strFinals["SpaGCN"])
     
+    # apply BayesSpace
+    strFinals["BayesSpace"] = os.path.join(config['output'],"BayesSpace",config['prj_name']+".rds")
+    if os.path.isfile(strFinals["BayesSpace"]):
+        print("\n\nUsing previous BayesSpace results: %s\n\tIf a new process is wanted, please rename/remove the above file"%strFinals["BayesSpace"])
+    else:
+        cmd['BayesSpace'] = "Rscript %s/src/BayesSpace_run.R %s %s"%(strPipePath,strConfig,strFinals["BayesSpace"])
+    
+    # Run all methods
+    cu.submit_cmd(cmd,config)
+    for one in strFinals:
+        if not os.path.isfile(strFinals[one]):
+            ut.msgError("Error in %s!"%one)
+
     # merge all
     strH5ad = os.path.join(config['output'],config['prj_name']+".h5ad")
     if os.path.isfile(strH5ad):
         print("Final h5ad file exists: ",strH5ad)
     else:
         shutil.copyfile(strH5ad_raw, strH5ad)
-    cu.submit_cmd({'mergeSpaGCN':"python -u %s/src/SpaGCN_run.py %s %s"%(strPipePath,strH5ad,strSpaGCN)},config)
+    cu.submit_cmd({'mergeSpaGCN':"python -u %s/src/SpaGCN_run.py %s %s"%(strPipePath,strH5ad,strFinals["SpaGCN"])},config)
+    cu.submit_cmd({'mergeBayesSpace':"python -u %s/src/utility.py mergeRDS %s %s"%(strPipePath,strH5ad,strFinals["BayesSpace"])},config)
     
-    print("=== visium process is completed! ===")
+    print("\n\n=== visium process is completed! ===")
 if __name__ == "__main__":
     if len(sys.argv)==1:
         print("=== Welcome to 'visium' from SpaceRequest! ===")
