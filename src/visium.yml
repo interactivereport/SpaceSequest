@@ -11,6 +11,16 @@ min_cells: 20 #filtering genes by minimal cell, please increase this when there 
 min_features: 50 #filtering cells by minimal genes
 highCount_cutoff: 80000 # any cells with higher total counts to be removed
 highGene_cutoff: 6000 # any cells with higher number of detected genes to be removed
+# gene sets
+gene_group:
+    MT:
+        startwith: ["MT-","Mt-","mt-"]
+        cutoff: 30 # percentage cutoff to filter out the cells (larger than this cutoff)
+        rm: False # this means the genes specified "startwith" will be REMOVED from the downstream analysis
+    RP: 
+        startwith: [MRPL,MRPS,RPL,RPS]
+        cutoff: 100
+        rm: False
 # clustering
 clusterN: [14,15]
 
@@ -21,8 +31,18 @@ spg_p: 0.8
 # BayesSpace setting
 rmGeneStart: ["MT-","Mt-","mt-"]
 
+# cell2location setting
+scH5ad: #the path to the processed/annotated single cell/nuclei RNAseq (could be paired)
+annotation_obs: # the cell type annotation in above h5ad.obs to build the model
+matchColumn: #if paired, the column header (e.g. library_id) in sample meta table which indicated in the above obs (matching values with obs.library_id), otherwise all cells will be used for each spatial sample
+ref_cell_count_cutoff: 5
+ref_cell_percentage_cutoff2: 0.03
+ref_nonz_mean_cutoff: 1.12
+N_cells_per_location: 5
+detection_alpha: 20
+
 #Parallel setting
-parallel: False #"sge" or "slurm"
+parallel: False #"sge" or "slurm" or False
 core: 2
 memory: 30G #if provided (e.g. 100G), it will be used to request cluster scheduler  
 jobID: JOBID # please make sure this job id is different with your other projects which would be run at the same time

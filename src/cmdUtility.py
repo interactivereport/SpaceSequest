@@ -1,4 +1,4 @@
-import os, subprocess, time, re, random, glob
+import os, subprocess, time, re, random, glob, multiprocessing, functools
 from natsort import natsorted
 import pandas as pd
 
@@ -14,8 +14,18 @@ def run_cmd(cmd):
       print("%s process return above error"%cmd)#,e.stderr.decode("utf-8")
     cmdR = e
   return cmdR
+def smap(f):
+    return f()
+
+def submit_funs(funcs,core=1):
+    with multiprocessing.Pool(processes=core) as pool:
+        a=pool.map(smap,funcs)
+    res = {}
+    [res.update(one) for one in a]
+    return res
+
 ## parallel job management
-def submit_cmd(cmds,config,core=None,memG=0):
+def submit_cmd(cmds,config,core=None,memG=0,condaEnv="condaEnv"):
   #cmds = {k:v for i, (k,v) in enumerate(cmds.items()) if not v is None}
   if len(cmds)==0:
     return
@@ -34,13 +44,13 @@ def submit_cmd(cmds,config,core=None,memG=0):
       except:
         print("%s process return error!"%one)
   elif parallel=="sge":
-    jID = qsub(cmds,config['output'],core,memG=memG)
+    jID = qsub(cmds,config['output'],core,memG=memG,jID=config.get("jobID"),condaEnv=condaEnv)
     print("----- Monitoring all submitted SGE jobs: %s ..."%jID)
     ## in case of long waiting time to avoid Recursion (too deep)
     cmdN = {one:1 for one in cmds.keys()}
     failedJobs = {}
     while True:
-      qstat(jID,config['output'],cmds,cmdN,core,memG,failedJobs)
+      qstat(jID,config['output'],cmds,cmdN,core,memG,failedJobs,condaEnv=condaEnv)
       if len(cmds)==0:
         break
       ## wait for 1 min if any running jobs
@@ -51,16 +61,18 @@ def submit_cmd(cmds,config,core=None,memG=0):
         print("\t--->ERROR failed with %d times qsub: %s"%(maxJobSubmitRepN,one))
       print("\n*** Please check log files in %s folder and consider rerun the analysis!"%jID)
   elif parallel=="slurm":
-    if memG==0 and config.get('memory') is not None and config.get('memory').endswith("G"):
+    if config.get('gpu'):
+        print("\tGPU jobs")
+    elif memG==0 and config.get('memory') is not None and config.get('memory').endswith("G"):
       print("\tAssign memory according to config: ",config.get('memory'))
       memG=int(re.sub("G$","",config.get('memory')))
-    jID = sbatch(cmds,config['output'],core,memG=memG,jID=config.get("jobID"),gpu=config.get('gpu'))
-    print("\t----- Monitoring all submitted SLURM jobs: %s ..."%jID)
+    jID = sbatch(cmds,config['output'],core,memG=memG,jID=config.get("jobID"),gpu=config.get('gpu'),condaEnv=condaEnv)
+    print("\t----- Monitoring all submitted SLURM jobs: %s for %s"%(jID,','.join(cmds.keys())))
     ## in case of long waiting time to avoid Recursion (too deep)
     cmdN = {one:1 for one in cmds.keys()}
     failedJobs = {}
     while True:
-      squeue(jID,config['output'],cmds,cmdN,core,memG,failedJobs,gpu=config.get('gpu'))
+      squeue(jID,config['output'],cmds,cmdN,core,memG,failedJobs,gpu=config.get('gpu'),condaEnv=condaEnv)
       if len(cmds)==0:
         break
       ## wait for 1 min if any running jobs
@@ -74,7 +86,7 @@ def submit_cmd(cmds,config,core=None,memG=0):
     print("ERROR: unknown parallel setting: %s"%parallel)
     exit()
 
-def qsub(cmds,strPath,core,memG=0,jID=None):
+def qsub(cmds,strPath,core,memG=0,jID=None,condaEnv="condaEnv"):
   if jID is None:
     jID = "j%d"%random.randint(10,99)
   strWD = os.path.join(strPath,jID)
@@ -93,7 +105,8 @@ def qsub(cmds,strPath,core,memG=0,jID=None):
                             .replace('wkPath',strWD)
                             .replace("jID",jID)
                             .replace("sysPath",strPipePath)
-                            .replace("strCMD",cmds[one]))
+                            .replace("strCMD",cmds[one])
+                            .replace("strEnv",condaEnv))
     strF=os.path.join(strWD,"%s.sh"%one)
     with open(strF,"w") as f:
       f.write(oneScript)
@@ -101,7 +114,7 @@ def qsub(cmds,strPath,core,memG=0,jID=None):
   for one in noRun:
     del cmds[one]
   return jID
-def qstat(jID,strPath,cmds,cmdN,core,memG,failedJobs):
+def qstat(jID,strPath,cmds,cmdN,core,memG,failedJobs,condaEnv):
   print(".",end="")
   strWD = os.path.join(strPath,jID)
   qstateCol=4 # make sure the state of qstat is the 4th column (0-index)
@@ -146,7 +159,7 @@ def qstat(jID,strPath,cmds,cmdN,core,memG,failedJobs):
         print("\tFinished: %s"%one)
         finishedJob.append(one)
   if len(resub)>0:
-    re1=qsub(resub,strPath,core,memG,jID)
+    re1=qsub(resub,strPath,core,memG,jID,condaEnv)
     time.sleep(5) #might not needed for the qsub to get in
   for one in finishedJob:
     del cmds[one]
@@ -156,11 +169,12 @@ def qstat(jID,strPath,cmds,cmdN,core,memG,failedJobs):
   #  time.sleep(60)
   #  qstat(jID,strPath,cmds,core,iN)
 
-def sbatch(cmds,strPath,core,memG=0,jID=None,gpu=False):
+def sbatch(cmds,strPath,core,memG=0,jID=None,gpu=False,condaEnv="condaEnv"):
   gpu=False if gpu is None else gpu
   sbatchScript=sbatchScriptCPU
   if gpu:
     sbatchScript=sbatchScriptGPU
+    memG=300000
   if jID is None:
     jID = "j%d"%random.randint(10,99)
   strWD = os.path.join(strPath,jID)
@@ -175,13 +189,14 @@ def sbatch(cmds,strPath,core,memG=0,jID=None,gpu=False):
                             .replace('wkPath',strWD)
                             .replace("jID",jID)
                             .replace("sysPath",strPipePath)
-                            .replace("strCMD",cmds[one]))
+                            .replace("strCMD",cmds[one])
+                            .replace("strEnv",condaEnv))
     strF=os.path.join(strWD,"%s.sh"%one)
     with open(strF,"w") as f:
       f.write(oneScript)
     run_cmd("sbatch %s"%strF)
   return jID
-def squeue(jID,strPath,cmds,cmdN,core,memG,failedJobs,gpu=False):
+def squeue(jID,strPath,cmds,cmdN,core,memG,failedJobs,gpu=False,condaEnv="condaEnv"):
   gpu=False if gpu is None else gpu
   print(".",end="")
   strWD = os.path.join(strPath,jID)
@@ -233,7 +248,7 @@ def squeue(jID,strPath,cmds,cmdN,core,memG,failedJobs,gpu=False):
         print("\tFinished: %s"%one)
         finishedJob.append(one)
   if len(resub)>0:
-    re1=sbatch(resub,strPath,core,memG,jID,gpu=gpu)
+    re1=sbatch(resub,strPath,core,memG,jID,gpu=gpu,condaEnv=condaEnv)
     time.sleep(5) #might not needed for the qsub to get in
   for one in finishedJob:
     del cmds[one]
@@ -282,7 +297,7 @@ echo 'end of HOST'
 # exit
 set -e
 
-env -i bash -c 'source sysPath/src/.env;eval $condaEnv;strCMD'
+env -i bash -c 'source sysPath/src/.env;eval $strEnv;strCMD'
 echo 'DONE'
 '''
 sbatchScriptCPU='''#!/bin/bash
@@ -298,7 +313,7 @@ echo $SLURM_JOB_NODELIST
 echo 'end of HOST'
 # exit
 set -e
-env -i bash -c 'source sysPath/src/.env;eval $condaEnv;strCMD'
+env -i bash -c 'source sysPath/src/.env;eval $strEnv;strCMD'
 echo 'DONE'
 '''
 sbatchScriptGPU='''#!/bin/bash
@@ -316,6 +331,6 @@ echo $SLURM_JOB_NODELIST
 echo 'end of HOST'
 # exit
 set -e
-env -i bash -c 'source sysPath/src/.env;eval $condaEnv;strCMD'
+env -i bash -c 'source sysPath/src/.env;eval $strEnv;strCMD'
 echo 'DONE'
 '''

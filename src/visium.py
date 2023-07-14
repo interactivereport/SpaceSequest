@@ -1,7 +1,10 @@
-
-import sys,os,warnings,logging,shutil,random,re
+import sys,os,warnings,logging,shutil,random,re,functools
 import cmdUtility as cu
 import utility as ut
+import SpaGCN_run as spa
+import BayesSpace_run as bay
+import Cell2location_run as c2l
+
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 logging.disable(level=logging.INFO)
@@ -20,9 +23,9 @@ def init(strDir):
     with open(strConfig,"w") as f:
         f.writelines(config)
     print("Config file is created: ",strConfig)
-def saveRaw(meta,sName,strPkl,strH5ad):
+def saveRaw(meta,config,strPkl,strH5ad):
     os.makedirs(os.path.dirname(strPkl),exist_ok=True)
-    ut.sr_read(meta,sName,strPkl,strH5ad)
+    ut.sr_read(meta,config,strPkl,strH5ad)
 def main():
     strPath = os.path.realpath(sys.argv[1])
     if os.path.isdir(strPath):
@@ -45,37 +48,30 @@ def main():
     if not os.path.isfile(strSep):
         ut.msgError("Error in reading files!")
     
-    cmd = {}
-    strFinals = {}
+    methods = []
     # apply SpaGCN
-    strFinals["SpaGCN"] = os.path.join(config['output'],"SpaGCN",config['prj_name']+".pkl")
-    if os.path.isfile(strFinals["SpaGCN"]):
-        print("\n\nUsing previous SpaGCN results: %s\n\tIf a new process is wanted, please rename/remove the above file"%strFinals["SpaGCN"])
-    else:
-        cmd['SpaGCN'] = "python -u %s/src/SpaGCN_run.py %s %s %s"%(strPipePath,strConfig,strSep,strFinals["SpaGCN"])
+    methods.append(functools.partial(spa.run,strConfig,strSep,config))
     
     # apply BayesSpace
-    strFinals["BayesSpace"] = os.path.join(config['output'],"BayesSpace",config['prj_name']+".rds")
-    if os.path.isfile(strFinals["BayesSpace"]):
-        print("\n\nUsing previous BayesSpace results: %s\n\tIf a new process is wanted, please rename/remove the above file"%strFinals["BayesSpace"])
-    else:
-        cmd['BayesSpace'] = "Rscript %s/src/BayesSpace_run.R %s %s"%(strPipePath,strConfig,strFinals["BayesSpace"])
+    methods.append(functools.partial(bay.run,strConfig,config))
+
+    # apply cell2location
+    methods.append(functools.partial(c2l.run,strConfig,strH5ad_raw))
     
     # Run all methods
-    cu.submit_cmd(cmd,config)
-    for one in strFinals:
-        if not os.path.isfile(strFinals[one]):
-            ut.msgError("Error in %s!"%one)
+    print("\n\t===== Running methods =====")
+    strFinals=cu.submit_funs(methods,len(methods) if config['parallel'] else 1)
 
     # merge all
+    print("\n\t===== Merging methods =====")
     strH5ad = os.path.join(config['output'],config['prj_name']+".h5ad")
     if os.path.isfile(strH5ad):
         print("Final h5ad file exists: ",strH5ad)
     else:
         shutil.copyfile(strH5ad_raw, strH5ad)
-    cu.submit_cmd({'mergeSpaGCN':"python -u %s/src/SpaGCN_run.py %s %s"%(strPipePath,strH5ad,strFinals["SpaGCN"])},config)
-    cu.submit_cmd({'mergeBayesSpace':"python -u %s/src/utility.py mergeRDS %s %s"%(strPipePath,strH5ad,strFinals["BayesSpace"])},config)
-    
+    spa.merge(strH5ad,strFinals)
+    bay.merge(strH5ad,strFinals)
+    c2l.merge(strH5ad,strFinals)
     print("\n\n=== visium process is completed! ===")
 if __name__ == "__main__":
     if len(sys.argv)==1:
@@ -85,7 +81,7 @@ if __name__ == "__main__":
         ut.msgError(ut.getSys().get('powerMsg'))
     elif len(sys.argv)>1 and sys.argv[1]=="saveRaw":
         config,sInfo = ut.getConfig(sys.argv[2])
-        saveRaw(sInfo,config['sample_name'],sys.argv[3],sys.argv[4])
+        saveRaw(sInfo,config,sys.argv[3],sys.argv[4])
     else:
         main()
         ut.msgError(ut.getSys().get('powerMsg'))
