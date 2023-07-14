@@ -50,8 +50,9 @@ BayesSpace_process <- function(config,strRaw,strOut){
         }
         
         # normalization
-        message("\tlognormalize & PCA & UMAP")
-        sce <- spatialPreprocess(sce, n.PCs = 50) #lognormalize, PCA
+        message("\tlognormalize & PCA")
+        sce <- spatialPreprocess(sce,platform="Visium", n.PCs = 50) #lognormalize, PCA
+        message("\tUMAP")
         sce <- runUMAP(sce, dimred = "PCA")
         colnames(reducedDim(sce, "UMAP")) = c("UMAP1", "UMAP2")
         
