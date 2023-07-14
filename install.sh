@@ -39,7 +39,7 @@ conda deactivate
 
 # setup needed env variables
 echo "export condaEnv='source $condaPath/etc/profile.d/conda.sh;conda activate $appEnvPath'" > $src/.env
-echo "export condaEnv_C2L='source $condaPath/etc/profile.d/conda.sh;conda activate $appEnvPath_C2L'" > $src/.env
+echo "export condaEnv_C2L='source $condaPath/etc/profile.d/conda.sh;conda activate $appEnvPath_C2L'" >> $src/.env
 echo "export PATH=$PATH" >> $src/.env
 echo "export OPENBLAS_NUM_THREADS=1" >> $src/.env
 echo "export MKL_NUM_THREADS=1" >> $src/.env
