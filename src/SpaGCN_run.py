@@ -4,6 +4,7 @@ import numpy as np
 import scanpy as sc
 import paste as pst
 import utility as ut
+import cmdUtility as cu
 import seaborn as sns
 from copy import deepcopy
 import SpaGCN as spg
@@ -16,6 +17,8 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 logging.disable(level=logging.INFO)
 predKey = "SpaGCN_pred"
 #sys.stdout = sys.__stdout__
+strPipePath=os.path.dirname(os.path.realpath(__file__))
+mKey="SpaGCN"
 
 def preprocess(slices,config):
     print("*** filter ***")
@@ -222,18 +225,31 @@ def SpaGCN(strConfig,strRaw,strOut):
                                           os.path.dirname(strOut))
     return formatOutput(adata_all,strOut)
 
-def mergeSpaGCN(strH5ad,strPkl):
-    print("Merge SpaGCN cluster")
+def run(strConfig,strRaw,config):
+    strOut=os.path.join(config['output'],mKey,config['prj_name']+".pkl")
+    if os.path.isfile(strOut):
+        print("\n\nUsing previous *SpaGCN* results: %s\n\tIf a new process is wanted, please rename/remove the above file"%strOut)
+        return {mKey:strOut}
+    else:
+        cmd = {}
+        cmd[mKey] = "python -u %s/SpaGCN_run.py %s %s %s"%(strPipePath,strConfig,strRaw,strOut)
+        cu.submit_cmd(cmd,config)
+    return {mKey:strOut}
+
+def merge(strH5ad,allRes):
+    strPkl=allRes[mKey]
+    print("merging %s: %s"%(mKey,strPkl))
     obs = ut.readPkl(strPkl)
     obs.index = [re.sub(obs["dataset_batch"][i]+"$",obs["batch"][i],obs.index[i]) for i in range(obs.shape[0])]
     D = sc.read_h5ad(strH5ad,backed="r+")
-    for oneCluster in [a for a in obs.columns if a.startswith(predKey)]:
-        if oneCluster in D.obs.columns:
-            print("\tSkip: Column '%s' exists in the final h5ad"%(oneCluster))
-            continue
-        D.obs = D.obs.merge(obs[oneCluster],"left",left_index=True,right_index=True)
-        D.obs[oneCluster].fillna("Missing",inplace=True)
-    D.write(strH5ad)
+    selCol=~obs.columns.isin(D.obs.columns)
+    if (~selCol).sum()>0:
+        print("\tSkip exists:",",".join(obs.columns[~selCol]))
+    if selCol.sum()>0:
+        D.obs = D.obs.merge(obs.loc[:,selCol],"left",left_index=True,right_index=True)
+        modCol = D.obs.columns.isin(obs.columns[selCol])
+        D.obs.loc[:,modCol]=D.obs.loc[:,modCol].apply(lambda x: ut.fillNA(x,'Missing'))
+        D.write(strH5ad)
 
 def main():
     if len(sys.argv)==3:
