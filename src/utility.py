@@ -32,6 +32,7 @@ def MsgInit():
         print("## Pipeline Path: %s"%appPath)
         print("## Pipeline Date: %s %s"%(datetime.fromtimestamp(int(gitLog[-2])).strftime('%Y-%m-%d %H:%M:%S'),gitLog[-1]))
         print("## git HEAD: %s\n###########\n"%gitLog[1])
+    a=getSys()#testing the exists
 def getConfig(strConfig):
     print("Initializing ...")
     if not os.path.isfile(strConfig):
