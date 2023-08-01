@@ -25,7 +25,7 @@ def run(strConfig,config):
 def merge(strH5ad,allRes):
     strObs = allRes[mKey]
     print("merging %s: %s"%(mKey,strObs))
-    D = ad.read_h5ad(strH5ad,backed="r+")
+    D = ad.read_h5ad(strH5ad)#,backed="r+"
     obs = pandas2ri.rpy2py_dataframe(readRDS(strObs))
     selCol=~obs.columns.isin(D.obs.columns)
     if (~selCol).sum()>0:

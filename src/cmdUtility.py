@@ -21,7 +21,7 @@ def submit_funs(funcs,core=1):
     with multiprocessing.Pool(processes=core) as pool:
         a=pool.map(smap,funcs)
     res = {}
-    [res.update(one) for one in a]
+    [res.update(one) for one in a if one is not None]
     return res
 
 ## parallel job management

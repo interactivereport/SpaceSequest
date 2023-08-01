@@ -143,7 +143,6 @@ def sr_addGP(adata,config):
         adata._inplace_subset_obs(selObs)
     else:
         sc.pp.calculate_qc_metrics(adata,inplace=True)
-    
     if rmGene.sum()>0:
         adata._inplace_subset_var(np.invert(rmGene))
         print("\t Total of %d genes are removed",rmGene.sum())
@@ -187,6 +186,15 @@ def sr_read(meta,config,strPkl=None,strH5ad=None):
         os.remove(strH5ad)
     sr_merge(strPkl,strH5ad,config)
     return
+
+## standard logNormal normalization
+def logNormal(strH5ad,strOut,target_sum):
+    print("*** logNormal ***")
+    D = sc.read_h5ad(strH5ad)
+    D.raw = D
+    sc.pp.normalize_total(D, target_sum=target_sum)
+    sc.pp.log1p(D)
+    D.write(strOut)
 
 ## preprocess
 def filterSlice(slices,min_gene=None,max_gene=None,min_count_cell=100,min_cell=None,min_count_gene=15):

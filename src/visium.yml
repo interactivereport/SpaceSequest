@@ -21,6 +21,8 @@ gene_group:
         startwith: [MRPL,MRPS,RPL,RPS]
         cutoff: 100
         rm: False
+# normalize scale:
+normScale: 10000
 # clustering
 clusterN: [14,15]
 

@@ -30,17 +30,21 @@ def main():
     strPath = os.path.realpath(sys.argv[1])
     if os.path.isdir(strPath):
         init(strPath)
-        return()
+        return
     elif os.path.isfile(strPath):
         strConfig=strPath
     else:
         print("Unknown input: ",strPath)
-        return()
+        return
     
     ut.MsgInit()
     config,sInfo = ut.getConfig(strConfig)
     ut.sr_checkMeta(sInfo,config)
     
+    strH5ad = os.path.join(config['output'],config['prj_name']+".h5ad")
+    if os.path.isfile(strH5ad):
+        print("Final h5ad file exists: ",strH5ad)
+        return
     # read in samples
     strSep = os.path.join(config['output'],"raw",config['prj_name']+".pkl")
     strH5ad_raw = os.path.join(config['output'],"raw",config['prj_name']+".h5ad")
@@ -49,6 +53,9 @@ def main():
         ut.msgError("Error in reading files!")
     
     methods = []
+    # logNormal
+    methods.append(functools.partial(ut.logNormal,strH5ad_raw,strH5ad,config['normScale']))
+    
     # apply SpaGCN
     methods.append(functools.partial(spa.run,strConfig,strSep,config))
     
@@ -64,11 +71,6 @@ def main():
 
     # merge all
     print("\n\t===== Merging methods =====")
-    strH5ad = os.path.join(config['output'],config['prj_name']+".h5ad")
-    if os.path.isfile(strH5ad):
-        print("Final h5ad file exists: ",strH5ad)
-    else:
-        shutil.copyfile(strH5ad_raw, strH5ad)
     spa.merge(strH5ad,strFinals)
     bay.merge(strH5ad,strFinals)
     c2l.merge(strH5ad,strFinals)
