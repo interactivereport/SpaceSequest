@@ -24,10 +24,9 @@ gene_group:
 # normalize scale:
 normScale: 10000
 # clustering
-clusterN: [14,15]
+clusterN: [14,15] # required
 
 # SpaGCN setting
-spg_clusterN: required 
 spg_p: 0.8
 
 # BayesSpace setting
