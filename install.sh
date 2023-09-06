@@ -37,10 +37,15 @@ conda activate $appEnvPath_C2L
 pip install cell2location==0.1.3
 conda deactivate
 
+# remove personal lib
+sed -i 's|R_LIBS_USER|#R_LIBS_USER|g' $appEnvPath/lib/R/etc/Renviron
+sed -i 's|R_LIBS_USER|#R_LIBS_USER|g' $appEnvPath_C2L/lib/R/etc/Renviron
+
 # setup needed env variables
 echo "export condaEnv='source $condaPath/etc/profile.d/conda.sh;conda activate $appEnvPath'" > $src/.env
 echo "export condaEnv_C2L='source $condaPath/etc/profile.d/conda.sh;conda activate $appEnvPath_C2L'" >> $src/.env
 echo "export PATH=$PATH" >> $src/.env
+echo "export export PYTHONNOUSERSITE=1" >> $src/.env
 echo "export OPENBLAS_NUM_THREADS=1" >> $src/.env
 echo "export MKL_NUM_THREADS=1" >> $src/.env
 echo "export SGE_EXECD_PORT=$SGE_EXECD_PORT" >> $src/.env
