@@ -237,8 +237,13 @@ def run(strConfig,strRaw,config):
     return {mKey:strOut}
 
 def merge(strH5ad,allRes):
+    if not mKey in allRes.keys():
+        return
     strPkl=allRes[mKey]
     print("merging %s: %s"%(mKey,strPkl))
+    if not os.path.isfile(strPkl):
+        print("\tSkip: the above file is missing!")
+        return
     obs = ut.readPkl(strPkl)
     obs.index = [re.sub(obs["dataset_batch"][i]+"$",obs["batch"][i],obs.index[i]) for i in range(obs.shape[0])]
     D = sc.read_h5ad(strH5ad)#,backed="r+"

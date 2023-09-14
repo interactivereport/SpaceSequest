@@ -57,13 +57,16 @@ def main():
     methods.append(functools.partial(ut.logNormal,strH5ad_raw,strH5ad,config['normScale']))
     
     # apply SpaGCN
-    methods.append(functools.partial(spa.run,strConfig,strSep,config))
+    if 'SpaGCN' in config['methods']:
+        methods.append(functools.partial(spa.run,strConfig,strSep,config))
     
     # apply BayesSpace
-    methods.append(functools.partial(bay.run,strConfig,config))
+    if 'BayesSpace' in config['methods']:
+        methods.append(functools.partial(bay.run,strConfig,config))
 
     # apply cell2location
-    methods.append(functools.partial(c2l.run,strConfig,strH5ad_raw))
+    if 'cell2location' in config['methods']:
+        methods.append(functools.partial(c2l.run,strConfig,strH5ad_raw))
     
     # Run all methods
     print("\n\t===== Running methods =====")

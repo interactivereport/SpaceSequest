@@ -23,8 +23,13 @@ def run(strConfig,config):
 
 ## merge obs
 def merge(strH5ad,allRes):
+    if not mKey in allRes.keys():
+        return
     strObs = allRes[mKey]
     print("merging %s: %s"%(mKey,strObs))
+    if not os.path.isfile(strObs):
+        print("\tSkip: the above file is missing!")
+        return
     D = ad.read_h5ad(strH5ad)#,backed="r+"
     obs = pandas2ri.rpy2py_dataframe(readRDS(strObs))
     selCol=~obs.columns.isin(D.obs.columns)

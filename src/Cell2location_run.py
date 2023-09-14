@@ -286,10 +286,13 @@ def run(strConfig,strH5ad):
     return {mKey:strFinal}
 
 def merge(strH5ad,allRes):
+    if not mKey in allRes.keys():
+        return
     strF = allRes[mKey]
     print("merging %s: %s"%(mKey,strF))
     if not os.path.isfile(strF):
         print("\tSkip, the above file is missing!")
+        return
     obs = ut.readPkl(strF)
     D = ad.read_h5ad(strH5ad)#,backed="r+"
     selCol=~obs.columns.isin(D.obs.columns)

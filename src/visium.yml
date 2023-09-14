@@ -26,12 +26,11 @@ normScale: 10000
 # clustering
 clusterN: [14,15] # required
 
+methods: [SpaGCN,BayesSpace,cell2location,tangram]
 # SpaGCN setting
 spg_p: 0.8
-
 # BayesSpace setting
 rmGeneStart: ["MT-","Mt-","mt-"]
-
 # cell2location setting
 scH5ad: #the path to the processed/annotated single cell/nuclei RNAseq (could be paired)
 annotation_obs: # the cell type annotation in above h5ad.obs to build the model
@@ -41,6 +40,8 @@ ref_cell_percentage_cutoff2: 0.03
 ref_nonz_mean_cutoff: 1.12
 N_cells_per_location: 5
 detection_alpha: 20
+# tangram setting
+
 
 #Parallel setting
 parallel: False #"sge" or "slurm" or False

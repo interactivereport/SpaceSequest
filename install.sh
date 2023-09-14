@@ -24,7 +24,7 @@ conda env remove -p $appEnvPath_C2L
 condaPath=$(dirname $(dirname $condaPath))
 # mamba is not in the base conda
 conda create -y -p $appEnvPath -c conda-forge python=3.8.13 mamba=1.1.0
-conda create -y -p $appEnvPath_C2L -c conda-forge python=3.9 pandas=1.4.4 numpy=1.21.6
+conda create -y -p $appEnvPath_C2L -c conda-forge python=3.9 pandas=1.4.4
 
 # for SpaGCN & BayesSpace
 source $condaPath/etc/profile.d/conda.sh
@@ -34,8 +34,11 @@ conda deactivate
 
 # for cell2location
 conda activate $appEnvPath_C2L
-pip install cell2location==0.1.3
+pip install cell2location==0.1.3 numba==0.56.4 squidpy==1.1.2 scikit-image==0.19.2 cellpose==1.0.2 tangram-sc==1.0.2
 conda deactivate
+
+
+
 
 # remove personal lib
 sed -i 's|R_LIBS_USER|#R_LIBS_USER|g' $appEnvPath/lib/R/etc/Renviron
