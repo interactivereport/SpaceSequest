@@ -34,7 +34,7 @@ conda deactivate
 
 # for cell2location
 conda activate $appEnvPath_C2L
-pip install cell2location==0.1.3 numba==0.56.4 squidpy==1.1.2 scikit-image==0.19.2 cellpose==1.0.2 tangram-sc==1.0.2
+pip install cell2location==0.1.3 scvi-tools==1.0.0 numba==0.56.4 squidpy==1.1.2 scikit-image==0.19.2 cellpose==1.0.2 tangram-sc==1.0.2 seaborn==0.11.1 anndata==0.7.5 pandas==1.4.4 h5py==3.1.0 scanpy==1.8.2 matplotlib==3.5.1
 conda deactivate
 
 

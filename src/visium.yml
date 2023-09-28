@@ -40,7 +40,13 @@ ref_cell_percentage_cutoff2: 0.03
 ref_nonz_mean_cutoff: 1.12
 N_cells_per_location: 5
 detection_alpha: 20
-# tangram setting
+# tangram setting (This might be the same as above, but still required)
+tg_scH5ad: #the path to the processed/annotated single cell/nuclei RNAseq (could be paired)
+tg_annotation_obs: # the cell type annotation in above h5ad.obs to build the model
+tg_matchColumn: #if paired, the column header (e.g. library_id) in sample meta table which indicated in the above obs (matching values with obs.library_id), otherwise all cells will be used for each spatial sample
+tg_rmGeneStart: ["MT-","Mt-","mt-"]
+tg_image_column: # the column header in sample meta, this column specifiy the path to a high resolution image tif file
+tg_segment_method: "watershed" # the method for squidpy.im.segment, 'watershed' (default ) or 'cellpose': customize one using cellpose.models
 
 
 #Parallel setting

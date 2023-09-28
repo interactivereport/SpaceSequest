@@ -4,6 +4,7 @@ import utility as ut
 import SpaGCN_run as spa
 import BayesSpace_run as bay
 import Cell2location_run as c2l
+import tangram_run as tan
 
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -48,9 +49,12 @@ def main():
     # read in samples
     strSep = os.path.join(config['output'],"raw",config['prj_name']+".pkl")
     strH5ad_raw = os.path.join(config['output'],"raw",config['prj_name']+".h5ad")
-    cu.submit_cmd({'rawRead':"python -u %s/src/visium.py saveRaw %s %s %s"%(strPipePath,strConfig,strSep,strH5ad_raw)},config)
-    if not os.path.isfile(strSep):
-        ut.msgError("Error in reading files!")
+    if os.path.isfile(strSep):
+        print("Using previous raw read:%s\n\tIf a new process is wanted, please rename/remove the above file"%strSep)
+    else:
+        cu.submit_cmd({'rawRead':"python -u %s/src/visium.py saveRaw %s %s %s"%(strPipePath,strConfig,strSep,strH5ad_raw)},config)
+        if not os.path.isfile(strSep):
+            ut.msgError("Error in reading files!")
     
     methods = []
     # logNormal
@@ -68,6 +72,10 @@ def main():
     if 'cell2location' in config['methods']:
         methods.append(functools.partial(c2l.run,strConfig,strH5ad_raw))
     
+    # apply tangram
+    if 'tangram' in config['methods']:
+        methods.append(functools.partial(tan.run,strConfig,strH5ad_raw))
+    
     # Run all methods
     print("\n\t===== Running methods =====")
     strFinals=cu.submit_funs(methods,len(methods) if config['parallel'] else 1)
@@ -77,6 +85,7 @@ def main():
     spa.merge(strH5ad,strFinals)
     bay.merge(strH5ad,strFinals)
     c2l.merge(strH5ad,strFinals)
+    tan.merge(strH5ad,strFinals)
     print("\n\n=== visium process is completed! ===")
 if __name__ == "__main__":
     if len(sys.argv)==1:

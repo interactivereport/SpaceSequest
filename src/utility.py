@@ -43,6 +43,10 @@ def getConfig(strConfig):
         sInfo = pd.read_csv(config["sample_meta"])
     else:
         msgError("Missing sample meta: %s"%config.get("sample_meta"))
+    if config.get("sample_name") is not None and config["sample_name"] in sInfo.columns:
+        sInfo.index = list(sInfo[config["sample_name"]])
+    else:
+        msgError("Missing sample name column (%s)"%config.get("sample_name"))
     if config.get('output') is None:
         msgError("The output path is required in config")
     if config.get('prj_name') is None:
