@@ -38,7 +38,8 @@ def submit_cmd(cmds,config,core=None,memG=0,condaEnv="condaEnv"):
       if cmds[one] is None:
         continue
       print("\n\nsubmitting %s"%one)
-      oneCMD=cmds[one] #+" 2>&1 | tee "+ strLog
+      #oneCMD=cmds[one] #+" 2>&1 | tee "+ strLog
+      oneCMD = "env -i bash -c 'source %s/src/.env;eval $%s;%s'"%(strPipePath,condaEnv,cmds[one])
       try:
         subprocess.run(oneCMD,shell=True,check=True)
       except:

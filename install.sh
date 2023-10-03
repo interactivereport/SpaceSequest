@@ -32,12 +32,10 @@ conda activate $appEnvPath
 mamba env update -f install/install.yml
 conda deactivate
 
-# for cell2location
+# for Cell2location & tangram
 conda activate $appEnvPath_C2L
-pip install cell2location==0.1.3 scvi-tools==1.0.0 numba==0.56.4 squidpy==1.1.2 scikit-image==0.19.2 cellpose==1.0.2 tangram-sc==1.0.2 seaborn==0.11.1 anndata==0.7.5 pandas==1.4.4 h5py==3.1.0 scanpy==1.8.2 matplotlib==3.5.1
+pip install cell2location==0.1.3 scvi-tools==1.0.0 numba==0.56.4 squidpy==1.1.2 scikit-image==0.19.2 cellpose==1.0.2 tangram-sc==1.0.2 seaborn==0.11.1 anndata==0.8.0 pandas==1.4.4 h5py==3.6.0 scanpy==1.8.2 matplotlib==3.5.1 websocket-client==1.6.3
 conda deactivate
-
-
 
 
 # remove personal lib

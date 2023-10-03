@@ -85,7 +85,7 @@ def filter_genes(adata, cell_count_cutoff=15, cell_percentage_cutoff2=0.05, nonz
 def buildModel(config,strOne,selSample=None,use_gpu=False):
     from cell2location.models import RegressionModel
     print("Building model: use_gpu (%s)"%use_gpu)
-    strModel = os.path.join(os.path.dirname(strOne),"model",os.path.basename(strOne))
+    strModel = os.path.join(os.path.dirname(strOne),"model",re.sub('pkl$','h5ad',os.path.basename(strOne)))
     os.makedirs(os.path.dirname(strModel),exist_ok=True)
     if os.path.isfile(strModel):
         print("\tLoading exist model file: ",strModel)
@@ -145,15 +145,9 @@ def buildModel(config,strOne,selSample=None,use_gpu=False):
 
 def applyModel(adata,inf_aver,config,useGPU,strOne):
     import cell2location
-    #strRes = re.sub("h5ad$","pkl",strOne)
-    #if os.path.isfile(strRes):
-    #    mod,adata = ut.readPkl(strRes)
-    #    adata.write(strOne)
-    #    plotCell2Location(mod,adata,strOne)
-    #    return
     if os.path.isfile(strOne):
-        print("Using previous results:",strOne)
-        print("\tPlease remove/rename the above file if a new run is wanted!")
+        print("\tUsing previous results:",strOne)
+        print("\t\tPlease remove/rename the above file if a new run is wanted!")
     else:
         intersect = np.intersect1d(adata.var_names, inf_aver.index)
         adata = adata[:, intersect].copy()
@@ -186,13 +180,13 @@ def applyModel(adata,inf_aver,config,useGPU,strOne):
         # Add to anndata layers
         for i, n in enumerate(mod.factor_names_):
             adata.layers[n] = expected_dict['mu'][i]
-        #ut.writePkl([mod,adata],re.sub("h5ad$","pkl",strOne))
-        adata.write(strOne)
+        adata.write(re.sub("pkl$","h5ad",strOne))
+        ut.writePkl(adata.obs.copy(),strOne)
         plotCell2Location(mod,adata,strOne)
     
 def plotCell2Location(mod,adata,strOne):
     print("\tPlotting the final cell2location")
-    with PdfPages(re.sub("h5ad$","pdf",strOne)) as pdf:
+    with PdfPages(re.sub("pkl$","pdf",strOne)) as pdf:
         mod.plot_history(1000)
         plt.legend(labels=['full data training'])
         pdf.savefig(bbox_inches="tight")
@@ -212,7 +206,7 @@ def plotCell2Location(mod,adata,strOne):
 
 def oneRun(strOut,strConfig,strH5ad,sName):
     print("*** cell2location: %s ***"%sName)
-    strOne = os.path.join(strOut,sName+".h5ad")
+    strOne = os.path.join(strOut,sName+".pkl")
     if os.path.isfile(strOne):
         print("\tUsing existing result: %s\n\tIf a new run for this sample is wanted, please rename/remove the above file!"%strOne)
         return()
@@ -234,12 +228,13 @@ def mergeInd(strFinal,sNamesList):
     sNames=sNamesList.split(',')
     obs = []
     for sName in sNames:
-        strOne = os.path.join(strOut,sName+".h5ad")
+        strOne = os.path.join(strOut,sName+".pkl")
         if not os.path.isfile(strOne):
             print("\tSkip %s: missing final result: %s"%(sName,strOne))
-        D1 = ad.read_h5ad(strOne,backed="r")
-        obs.append(D1.obs[[i for i in D1.obs.columns if i.startswith(mKey+"_")]].copy())
-        del D1
+        oneObs = ut.readPkl(strOne)
+        #D1 = ad.read_h5ad(strOne,backed="r")
+        obs.append(oneObs[[i for i in oneObs.columns if i.startswith(mKey+"_")]].copy())
+        del oneObs
     obs = pd.concat(obs)
     obs.fillna(0,inplace=True)
     ut.writePkl(obs,strFinal)

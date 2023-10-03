@@ -331,7 +331,7 @@ def run(strConfig,strH5ad):
 
     cmd= {'%s_Extract'%mKey:"python -u %s/tangram_run.py Extract %s %s"%(strPipePath,strConfig,strOut)}
     config['gpu'] = False
-    cu.submit_cmd(cmd,config,condaEnv="condaEnv_C2L")
+    cu.submit_cmd(cmd,config)#,condaEnv="condaEnv_C2L"
     
     return {mKey:strOut}
 
