@@ -15,7 +15,7 @@ logging.disable(level=logging.INFO)
 batchKey="library_id"
 strPipePath=os.path.dirname(os.path.realpath(__file__))
 
-def msgError(msg):
+def msgError(msg=""):
     print(msg)
     exit()
 def MsgInit():

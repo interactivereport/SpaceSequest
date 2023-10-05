@@ -30,6 +30,8 @@ conda create -y -p $appEnvPath_C2L -c conda-forge python=3.9 pandas=1.4.4
 source $condaPath/etc/profile.d/conda.sh
 conda activate $appEnvPath
 mamba env update -f install/install.yml
+R -q -e 'if(!require(peakRAM)) install.packages("peakRAM",repos="https://cran.rstudio.com/")'
+R -q -e 'if(!require(nebula)) devtools::install_github("lhe17/nebula",ref="v1.1.7",upgrade="never",upgrade_dependencies=F)'
 conda deactivate
 
 # for Cell2location & tangram
