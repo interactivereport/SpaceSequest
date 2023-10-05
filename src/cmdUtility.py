@@ -11,6 +11,10 @@ def run_cmd(cmd):
     cmdR = subprocess.run(cmd,shell=True,check=True,stdout=subprocess.PIPE)#capture_output=True,
   except subprocess.CalledProcessError as e:
     if not e.returncode==1:
+      if e.stderr is not None:
+        print(e.stderr.decode("utf-8"))
+      elif e.stdout is not None:
+        print(e.stdout.decode("utf-8"))
       print("%s process return above error"%cmd)#,e.stderr.decode("utf-8")
     cmdR = e
   return cmdR
