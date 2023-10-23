@@ -18,6 +18,7 @@ mKey="tangram"
 cellN='tg_cell_count'
 tg_pred = 'tangram_ct_pred'
 tg_count = 'tangram_ct_count'
+tg_cID = 'tangram_cid_count'
 tg_suffix = "_processed.pkl"
 tmp_dir= 'tmp'
 capture_id = 'capture_id'
@@ -175,6 +176,7 @@ def applyTangram(ad_ref,ad_qur,cluster_label,pdf,parallel='cpu'):
         scale_factor=1
     )
     savePDF(None,pdf)
+    ct_count_tmp = ad_qur.obsm[tg_count].copy()# keep it in temp, it will be replaced by the following cell id 
     ad_ref.obs['cell_id']=ad_ref.obs.index
     print("\t\tcount cell annoations: cell_id")
     tg.count_cell_annotations(
@@ -183,6 +185,8 @@ def applyTangram(ad_ref,ad_qur,cluster_label,pdf,parallel='cpu'):
         ad_qur,
         annotation="cell_id",
     )
+    ad_qur.obsm[tg_cID] = ad_qur.obsm[tg_count].copy()
+    ad_qur.obsm[tg_count]=ct_count_tmp
     return ad_qur, ad_ref, adata_segment
 def mapRef(ctMap,segLoc,ref_label):
     print("\t\tmaping scRef loc")
@@ -201,14 +205,14 @@ def mapRef(ctMap,segLoc,ref_label):
 def returnOne(ad_qur,ad_ref,adata_segment,cluster_label,prefix=None):
     print("\tsaving")
     adata_segment.uns['tangram_cell_segmentation'].centroids = adata_segment.uns['tangram_cell_segmentation'].centroids.astype(str)
-    sc_loc = mapRef(ad_qur.obsm['tangram_ct_count'].copy(),adata_segment.obs.copy(),ad_ref.obs[cluster_label])
+    sc_loc = mapRef(ad_qur.obsm[tg_cID].copy(),adata_segment.obs.copy(),ad_ref.obs[cluster_label])
     qur_cluster=adata_segment.obs
     qur_cluster.index = list(adata_segment.obs.centroids)
     if prefix is not None and os.path.exists(os.path.dirname(prefix)):
         adata_segment.write(prefix+"_segment.h5ad")
         ut.writePkl([ad_qur.obsm[tg_pred],ad_qur.obsm[tg_count],qur_cluster,sc_loc],prefix+tg_suffix)
     else:
-        return ad_qur.obsm['tangram_ct_pred'], ad_qur.obsm['tangram_ct_count'], qur_cluster, sc_loc
+        return ad_qur.obsm['tg_pred'], ad_qur.obsm['tg_count'], qur_cluster, sc_loc
 def createSegment(tg_seg):
     D=ad.AnnData(pd.DataFrame({"FakeG%d"%i:0 for i in range(2)},index=tg_seg.index))
     D.obs=tg_seg
@@ -347,10 +351,10 @@ def merge(strH5ad,allRes):
     D = ad.read_h5ad(strH5ad)#,backed="r+"
     if not tg_pred in D.obsm.keys():
         print("\tmerging tg_pred into obsm")
-        D.obsm[tg_pred] = pd.DataFrame(index=D.obs_names).merge(tg_ct_pred,'left',left_index=True, right_index=True).to_numpy()
+        D.obsm[tg_pred] = pd.DataFrame(index=D.obs_names).merge(tg_ct_pred,'left',left_index=True, right_index=True)#.to_numpy()
     if not tg_count in D.obsm.keys():
         print("\tmerging tg_count into obsm")
-        D.obsm[tg_count] = pd.DataFrame(index=D.obs_names).merge(tg_ct_count,'left',left_index=True, right_index=True).to_numpy()
+        D.obsm[tg_count] = pd.DataFrame(index=D.obs_names).merge(tg_ct_count,'left',left_index=True, right_index=True)#.to_numpy()
     tg_ct_pred.columns = ['tg_'+one for one in tg_ct_pred.columns]
     if tg_ct_pred.columns.isin(D.obs.columns).sum()==0:
         print("\tmerging labels into obs")
