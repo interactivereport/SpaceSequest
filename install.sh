@@ -32,6 +32,9 @@ conda activate $appEnvPath
 mamba env update -f install/install.yml
 R -q -e 'if(!require(peakRAM)) install.packages("peakRAM",repos="https://cran.rstudio.com/")'
 R -q -e 'if(!require(nebula)) devtools::install_github("lhe17/nebula",ref="v1.1.7",upgrade="never",upgrade_dependencies=F)'
+R -q -e 'options(timeout = 600000000);devtools::install_github("dmcable/spacexr@5baf6393552e401857db1eb79ddb0af16ff15f84", build_vignettes = FALSE)'
+# might need the second try to install
+R -q -e 'options(timeout = 600000000);devtools::install_github("dmcable/spacexr@5baf6393552e401857db1eb79ddb0af16ff15f84", build_vignettes = FALSE)'
 conda deactivate
 
 # for Cell2location & tangram
