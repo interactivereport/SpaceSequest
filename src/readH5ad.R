@@ -95,9 +95,17 @@ getobsm <- function(strH5ad,key){
   AllK <- h5ls(strH5ad,recursive=2)
   k <- AllK[grepl("obsm",AllK[,1]),2]
   if(!key%in%k) return(NULL)
-  X <- h5read(strH5ad,paste0("obsm/",key))
-  colnames(X) <- getID(strH5ad,AllK,"/obs")    #h5read(strH5ad,"/obs/_index")
-  return(t(X))
+  one <- h5read(strH5ad,paste0("obsm/",key))
+  if(is.matrix(one)){
+    dimnames(one) <- list(paste(key,1:nrow(one),sep="_"),
+                        getID(strH5ad,AllK,"/obs"))    #h5read(strH5ad,"/obs/_index")
+    obsm <- t(one)
+  }else{
+    sel <- names(one)[sapply(one,function(x)return(is.null(names(x))))&!grepl("^_|index$|^barcode$",names(one))]
+    obsm <- do.call(cbind.data.frame, one[sel])
+    rownames(obsm) <- one[[grep("index$|^barcode$",names(one))]]
+  }
+  return(obsm)
 }
 getobsmKey <- function(strH5ad){
   k <- h5ls(strH5ad,recursive=2)
