@@ -2,6 +2,9 @@ require(R6)
 require(cli)
 require(BiocParallel)
 
+allcell <- "spDEG_all_cells"
+cside_ct_anno <- "CSIDE_CT_anno"
+
 sparse_batch_apply <- function(X,MARGIN,FUN,shortLab="",...){
   step <- 500
   while(step>10){
@@ -50,6 +53,7 @@ scDEG <- R6Class("scDEG",
                  public=list(
                    initialize=function(X=NULL,meta=NULL,
                                        id_col=NULL,cluster_col=NULL,grp_col=NULL,ctrl_value=NULL,alt_value=NULL,
+                                       NA_str=NULL,
                                        strX=NULL,strMeta=NULL,
                                        pipelinePath=""){
                      message("Loading ...")
@@ -64,12 +68,17 @@ scDEG <- R6Class("scDEG",
                      
                      message("Reading ...")
                      private$id_col <- id_col
-                     private$cluster_col <- cluster_col
                      private$grp_col <- grp_col
                      private$ctrl_value <- ctrl_value
                      private$alt_value <- alt_value
+                     private$NA_str <- NA_str
                      if(is.null(meta)) private$getMeta(strMeta)
                      else private$meta <- meta
+                     if(is.na(cluster_col)){## if all cells are included
+                       cluster_col <- allcell
+                       private$meta[,allcell]<- allcell
+                     }
+                     private$cluster_col <- cluster_col
                      private$check_meta()
                      
                      if(is.null(X)){
@@ -86,21 +95,23 @@ scDEG <- R6Class("scDEG",
                      
                      message("The scDEG initialization is completed successfully!")
                    },
-                   run=function(alg,fliter_list,clusters=NULL,covar=NULL,prefix=NULL,...){
-                     list2env(fliter_list,envir=environment())
-                     #The following should be in the fitler_list
-                     stopifnot(exists('rmGene'))
-                     stopifnot(exists('min.cells.per.gene'))
-                     stopifnot(exists('min.perc.cells.per.gene'))
-                     stopifnot(exists('min.cells.per.gene.type'))
-                     stopifnot(exists('perc_threshold'))
-                     stopifnot(exists('perc.filter.type'))
-                     stopifnot(exists('lib_size_low'))
-                     stopifnot(exists('lib_size_high'))
-                     stopifnot(exists('min.genes.per.cell'))
-                     stopifnot(exists('min.cells.per.subj'))
-                     stopifnot(exists('min.ave.pseudo.bulk.cpm'))
-                     
+                   run=function(alg,fliter_list,clusters=NULL,covar=NULL,prefix=NULL,method="HL",...){
+                     if(T){
+                       list2env(fliter_list,envir=environment())
+                       #The following should be in the fitler_list
+                       stopifnot(exists('rmGene'))
+                       stopifnot(exists('min.cells.per.gene'))
+                       stopifnot(exists('min.perc.cells.per.gene'))
+                       stopifnot(exists('min.cells.per.gene.type'))
+                       stopifnot(exists('perc_threshold'))
+                       stopifnot(exists('perc.filter.type'))
+                       stopifnot(exists('lib_size_low'))
+                       stopifnot(exists('lib_size_high'))
+                       stopifnot(exists('min.genes.per.cell'))
+                       stopifnot(exists('min.cells.per.subj'))
+                       stopifnot(exists('min.ave.pseudo.bulk.cpm'))
+                     }
+                     if(!is.null(covar) && (is.na(covar) || nchar(covar))) covar<-NULL
                      if(is.null(clusters)) clusters <- unique(private$meta[,private$cluster_col])
                      
                      allDEG <- NULL
@@ -121,11 +132,12 @@ scDEG <- R6Class("scDEG",
                          private$scDEG_apply_filter_pseudoBulk(min.ave.pseudo.bulk.cpm)
                          message("pseudo bulk model: ",paste(colnames(private$sInfo),collapse="+"))
                        }
-                       
+                       if(sum(private$c_index)<100) stop("Too few cells after filtering!")
                        oneDEG <- function(){
                          de <- switch (alg,
-                           'NEBULA' = private$scDEG_Nebula(covar,...),
-                           'DESeq2' = private$scDEG_DESeq2(...)
+                           'NEBULA' = private$scDEG_Nebula(covar,method),
+                           'DESeq2' = private$scDEG_DESeq2(...),
+                           'CSIDE' = private$scDEG_CSDIE(prefix,...)
                          )
                          return(de)
                        }
@@ -138,8 +150,10 @@ scDEG <- R6Class("scDEG",
                    }
                  ),
                  private=list(
-                   X=NULL,meta=NULL,id_col=NULL,cluster_col=NULL,grp_col=NULL,ctrl_value=NULL,alt_value=NULL,
+                   X=NULL,meta=NULL,id_col=NULL,cluster_col=NULL,grp_col=NULL,ctrl_value=NULL,alt_value=NULL,NA_str=NULL,
+                   strH5ad=NULL,cell_row='array_row',cell_col='array_col',
                    c_index=NULL,g_index=NULL,pseudoX=NULL,sInfo=NULL,
+                   # preprocess -----
                    loadPKG=function(strPath){
                      stopifnot(require(data.table))
                      stopifnot(require(dplyr))
@@ -161,6 +175,8 @@ scDEG <- R6Class("scDEG",
                      stopifnot(require(nebula))
                      #stopifnot(require(scater))
                      #stopifnot(require(peakRAM))
+                     stopifnot(require(spacexr))
+                     stopifnot(require(doParallel))
                      source(file.path(strPath,"readH5ad.R"))
                    },
                    getUMI=function(strUMI){
@@ -168,6 +184,7 @@ scDEG <- R6Class("scDEG",
                        private$X <- readRDS(strUMI)
                      }else if(grepl("h5ad$",strUMI)){
                        private$X <- getX(strUMI)
+                       private$strH5ad <- strUMI
                      }else{
                        stop(paste("unknown UMI format:",strUMI))
                      }
@@ -275,8 +292,8 @@ scDEG <- R6Class("scDEG",
                      message("--- Total of ",sum(private$c_index)," cells")
                    },
                    scDEG_check_model=function(covar){
+                     if(is.list(covar)) covar <- names(covar)
                      if(sum(!covar%in%colnames(private$meta))>0) stop("Undefinied covar in meta!")
-                     message("Please check the following sample meta information:")
                      meta <- private$meta[private$c_index,c(private$id_col,private$cluster_col,private$grp_col,covar)] %>% 
                        group_by_at(private$id_col) %>% 
                        group_modify(function(x,k){
@@ -302,14 +319,18 @@ scDEG <- R6Class("scDEG",
                          if(length(endCol)>0) oneInfo <- cbind(oneInfo[,!colnames(oneInfo)%in%endCol],oneInfo[,endCol])
                          return(oneInfo)
                        })
+                     message("Please check the following sample meta information:")
                      print(data.frame(meta))
                      
                      private$sInfo <- as.data.frame(meta[,!(grepl('_sd$',colnames(meta)))])
                      colnames(private$sInfo) <- gsub("_mean$","",colnames(private$sInfo))
                      rownames(private$sInfo) <- private$sInfo[,private$id_col]
-                     private$sInfo <- private$sInfo[,c(private$grp_col,covar),drop=F]
-                     private$sInfo <- private$sInfo[,sapply(private$sInfo,function(x)return(sum(grepl("^Skip$",x)|(grepl(":",x)&grepl(";",x)))==0)),drop=F]
-
+                     if(sum(!c(private$id_col,private$cluster_col,private$grp_col,covar)%in%colnames(private$sInfo))>0){
+                       message("WARNING: not all defined column in sample information table!")
+                     }else{
+                       private$sInfo <- private$sInfo[,c(private$grp_col,covar),drop=F]
+                       private$sInfo <- private$sInfo[,sapply(private$sInfo,function(x)return(sum(grepl("^Skip$",x)|(grepl(":",x)&grepl(";",x)))==0)),drop=F]
+                     }
                      return(meta)
                    },
                    scDEG_apply_filter_pseudoBulk=function(min.ave.pseudo.bulk.cpm = 1){
@@ -320,7 +341,7 @@ scDEG <- R6Class("scDEG",
                      message("--- Total of ",nrow(private$pseudoX)," genes")
                    },
                    # DEG by NEBULA pipeline -------
-                   scDEG_Nebula=function(covar,...){
+                   scDEG_Nebula=function(covar,method){
                      meta <-  private$meta[private$c_index,c(private$grp_col,covar),drop=F]
                      message(private$grp_col)
                      print(head(meta))
@@ -328,13 +349,15 @@ scDEG <- R6Class("scDEG",
                      df = model.matrix(as.formula(paste0("~",paste(colnames(meta),collapse="+"))),data=meta)
                      re = nebula(private$X[private$g_index,private$c_index],
                                  private$meta[private$c_index,private$id_col],
-                                 pred=df,offset=colSums(private$X[private$g_index,private$c_index]),...)
+                                 pred=df,offset=colSums(private$X[private$g_index,private$c_index]),method=method)
                      final_table <- data.frame(ID=re$summary[,"gene"],re$summary[,grep(private$grp_col,colnames(re$summary))])
                      colnames(final_table) <- c("ID","logFC","se","Pvalue")
                      final_table$log2FC <- log2(exp(final_table$logFC))
                      final_table$FDR <- p.adjust(final_table[,"Pvalue"],method="fdr")
                      final_table$method <- "NEBULA"
                      final_table$algorithm <- re$algorithm
+                     first4 <- c("ID","log2FC","Pvalue","FDR")
+                     final_table <- final_table[,c(first4,colnames(final_table)[!colnames(final_table)%in%first4])]
                      return(final_table)
                    },
                    # DEG by DESeq2 ---------
@@ -355,12 +378,209 @@ scDEG <- R6Class("scDEG",
                      final_table <- data.frame(row.names=NULL,
                                                ID=rownames(res),
                                                log2FC=res$log2FoldChange,
-                                               se=res$lfcSE,
                                                Pvalue=res$pvalue,
                                                FDR=res$padj,
+                                               se=res$lfcSE,
                                                method="DESeq2",
                                                algorithm='lfcShrink')
                      return(final_table)
+                   },
+                   # DEG by C-SIDE -----
+                   scDEG_CSDIE=function(prefix=NULL,csideParam=list(),cside_clusters=NULL,...){
+                     list2env(csideParam,envir=environment())
+                     stopifnot(exists('cside_strRef'))
+                     stopifnot(exists('cside_ct_col'))
+                     stopifnot(exists('cside_ct_N'))
+                     stopifnot(exists('cside_grp_col'))
+                     stopifnot(exists('cside_wt'))
+                     stopifnot(exists('cside_ct_count'))
+                     stopifnot(exists('cside_weight_threshold'))
+                     stopifnot(exists('cside_gene_threshold'))
+                     stopifnot(exists('cside_log_fc'))
+                     stopifnot(exists('cside_fdr'))
+                     strRCTD <- paste0(prefix,"_cside.rds")
+                     if(file.exists(strRCTD)){
+                       message("Using previous results: ",strRCTD)
+                       message("\tIf a new run is wanted, please rename/remove the above file!")
+                       RCTD_reps <- readRDS(strRCTD)
+                     }else{
+                       core <- max(1,parallelly::availableCores()-1)
+                       grp_ids <- private$get_cside_repgroup(cside_grp_col)
+                       puck_list <- private$get_cside_puck()
+                       sc_ref <- private$get_cside_ref(cside_strRef,cside_ct_col,cside_ct_N)
+                       w <- private$get_cside_weight(cside_wt)
+                       print(dim(w))
+                       if(!is.null(w) && sum(!unique(sc_ref@cell_types)%in%colnames(w))>0){
+                         message("The following cell types in reference did NOT include in weight matrix:")
+                         message("\t",paste(unique(sc_ref@cell_types)[!unique(sc_ref@cell_types)%in%colnames(w)],collapse=", "))
+                       }
+                       
+                       message("Creating RCTD ...")
+                       RCTD_reps <- create.RCTD.replicates(spatialRNA.replicates = puck_list,
+                                                           reference = sc_ref,
+                                                           replicate_names = names(puck_list),
+                                                           group_ids = grp_ids,
+                                                           max_cores = core,
+                                                           keep_reference = T,
+                                                           CELL_MIN_INSTANCE = 0) #Don't drop celltypes on the basis of minimum number
+                       message("Updating weight matrix ...")
+                       if(is.null(w)){
+                         RCTD_reps <- run.RCTD.replicates(RCTD_reps, doublet_mode = FALSE)
+                       }else{
+                         RCTD_reps <- private$update_cside_weight(w,RCTD_reps)
+                       }
+                       puck_exvar <- private$get_cside_exvar(RCTD_reps)
+                       ## run cside
+                       message("Running cside ...")
+                       sapply(RCTD_reps@RCTD.reps,function(one)print(one@config$doublet_mode))
+                       if(is.null(cside_clusters)) cside_clusters <- unique(sc_ref@cell_types)
+                       RCTD_reps <- run.CSIDE.replicates(RCTD_reps,
+                                                         cside_clusters,
+                                                         puck_exvar,
+                                                         weight_threshold = cside_weight_threshold,
+                                                         log_fc_thresh = cside_log_fc,
+                                                         doublet_mode = F, #Ran with full weights, not doublet
+                                                         gene_threshold = cside_gene_threshold,
+                                                         population_de = F, # Get DE across all cell types, run this later
+                                                         cell_type_threshold = cside_ct_count,
+                                                         fdr = cside_fdr)
+                       ## Run meta regression (covariates) to compare groups
+                       # this is not tested, not including
+                       message("Formating DE results ...")
+                       if(F){
+                         metaF <- F
+                         metaDesign <- get_cside_covar(covar)
+                         if(!is.null(metaDesign)) metaF <- T
+                         RCTD_reps <- CSIDE.population.inference(RCTD_reps,
+                                                                 log_fc_thresh=cside_log_fc,
+                                                                 meta = metaF,
+                                                                 meta.design.matrix = metaDesign,
+                                                                 fdr = cside_fdr,
+                                                                 meta.test_var = ifelse(metaF,colnames(metaDesign)[2],"intrcpt"))
+                         saveRDS(RCTD_reps,paste0(prefix,"_cside_regression.rds"))
+                       }
+                       RCTD_reps <- CSIDE.population.inference(RCTD_reps,log_fc_thresh=cside_log_fc,fdr=cside_fdr)
+                       saveRDS(RCTD_reps,paste0(prefix,"_cside.rds"))
+                     }
+                     return(private$extract_cside_deg(RCTD_reps))
+                   },
+                   get_cside_ref=function(strH5ad,anno_col,N){
+                     message("Creating reference from ",strH5ad)
+                     message("\tPlease make sure doublets are annotated in column ",anno_col," as defined in 'NA_string'")
+                     X <- getX(strH5ad)
+                     meta <- getobs(strH5ad)
+                     selCell <- c()
+                     UMI <- colSums(X)
+                     message("\tDownsampling for each annotation from total of ",length(UMI)," cells: top cells by UMI")
+                     for(one in unique(meta[,anno_col])){
+                       if(one%in%private$NA_str) next
+                       if(sum(meta[,anno_col]==one)<=N){
+                         selCell <- c(selCell,rownames(meta)[meta[,anno_col]==one])
+                       }else{
+                         selCell <- c(selCell,names(sort(UMI[meta[,anno_col]==one],decreasing=T))[1:N])
+                       }
+                     }
+                     message("\t",length(selCell)," cells selected")
+                     return(spacexr::Reference(X[,selCell], setNames(as.factor(meta[selCell,anno_col]),selCell), UMI[selCell]))
+                   },
+                   get_cside_puck=function(){
+                     if(!private$cell_row %in%colnames(private$meta) || !private$cell_col%in%colnames(private$meta))
+                       stop(private$cell_row," and ",private$cell_col," are required in cell meta information")
+                     nUMI <- colSums(private$X)
+                     sIDs <- unique(private$meta[,private$id_col])
+                     puck_list <- lapply(setNames(sIDs,sIDs),function(sid){
+                       sel <- private$c_index & private$meta[,private$id_col]==sid
+                       return(spacexr::SpatialRNA(private$meta[sel,c(private$cell_row,private$cell_col)],
+                                                  private$X[,sel],
+                                                  nUMI[sel]))
+                     })
+                     return(puck_list)
+                   },
+                   get_cside_repgroup=function(grp_col){
+                     if(is.null(grp_col)) return(NULL)
+                     if(!grp_col%in%colnames(private$meta)){
+                       message(cside_grp_col," is not in the cell meta column!")
+                       return(NULL)
+                     }
+                     grp <- unique(private$meta[private$c_index,c(private$id_col,grp_col)])
+                     return(setNames(as.numeric(factor(grp[,grp_col])),
+                                     grp[,private$id_col]))
+                     
+                   },
+                   get_cside_weight=function(wt_col){
+                     if(is.null(wt_col)) return(NULL)
+                     message("get annotation weight matrix: ",wt_col)
+                     if(wt_col=='c2l'){
+                       w <- private$meta[private$c_index,grepl("^c2l_",colnames(private$meta))]
+                       colnames(w) <- gsub("^c2l_","",colnames(w))
+                     }else if(wt_col=='tg'){
+                       if(is.null(private$strH5ad) || !file.exists(private$strH5ad))
+                         stop("Missing input h5ad (UMI) for tangram weights")
+                       if(!"tangram_ct_count" %in% getobsmKey(strWeight))
+                         stop("Missing 'tangram_ct_count' in obsm in ",private$strH5ad)
+                       obsm <- getobsm(private$strH5ad,"tangram_ct_count")
+                       w <- obsm[,!colnames(obsm)%in%c('x','y','centroids','cell_n')]
+                       w <- cbind(w,tg_unknow=obsm$cell_n-apply(w,1,sum))
+                     }else{
+                       message("Unknown weight matrix setting (wt_col): ",wt_col)
+                       message("\tUsing RCTD from spacexr")
+                       return(NULL)
+                     }
+                     w <- w[,!colnames(w)%in%private$NA_str]
+                     w <- t(apply(w,1,function(x)return(x/sum(x))))
+                     return(w)
+                   },
+                   update_cside_weight=function(w,RCTD){
+                     if(!is.null(w)){
+                       for (i in 1:length(RCTD@RCTD.reps)) {
+                         # Subset each replicate barcodes
+                         barcodes <- RCTD@RCTD.reps[[i]]@spatialRNA@counts@Dimnames[[2]]
+                         RCTD@RCTD.reps[[i]] <- import_weights(RCTD@RCTD.reps[[i]], w[barcodes,])
+                         # Need to set the doublet_mode as "full" so that the code will use this weights in slot: myRCTD@results$weights
+                         RCTD@RCTD.reps[[i]]@config$doublet_mode <- "full"
+                         RCTD@RCTD.reps[[i]]@config$RCTDmode <- "full"
+                         message(i,": ",RCTD@RCTD.reps[[i]]@config$doublet_mode)
+                       }
+                     }
+                     sapply(RCTD@RCTD.reps,function(one)print(one@config$doublet_mode))
+                     return(RCTD)
+                   },
+                   get_cside_exvar=function(RCTD_reps){
+                     puck_exvar <- list()
+                     for(i in 1:length(RCTD_reps@RCTD.reps)){
+                       barcodes <- RCTD_reps@RCTD.reps[[i]]@spatialRNA@counts@Dimnames[[2]]
+                       exvar <- as.integer(private$meta[barcodes,private$grp_col] == private$alt_value)
+                       names(exvar) <- barcodes
+                       puck_exvar[[i]] <-  exvar
+                     }
+                     return(puck_exvar)
+                   },
+                   get_cside_covar=function(covar){
+                     if(is.null(covar)) return(NULL)
+                     meta <- private$meta[private$c_index,] %>% 
+                       dplyr::select(any_of(c(private$id_col,names(covar)))) %>% 
+                       dplyr::distinct()
+                     if(nrow(meta) != length(unique(meta[,private$id_col]))){
+                       message("Some covar columns are NOT slice-specific:")
+                       print(meta)
+                       return(NULL)
+                     }
+                     rownames(meta) <- meta[,private$id_col]
+                     meta <- meta[,!colnames(meta)==private$id_col,drop=F]
+                     for(one in names(covar)){
+                       if(is.character(meta[[one]]) || is.factor(meta[[one]])){
+                         if(is.null(covar[[one]])) covar[[one]] <- unique(meta[,one])
+                         meta[[one]] <- factor(meta[one],levels=covar[[one]])
+                       }
+                     }
+                     return(model.matrix(as.formula(paste("~",paste(colnames(meta),collapse="+"))),meta))
+                   },
+                   extract_cside_deg=function(RCTD){
+                     first4 <- c('gene',"log2FC","p","q_val")
+                     res_df <- as.data.frame(purrr::map(RCTD@population_de_results, function(x) x %>% tibble::rownames_to_column("gene")) %>%
+                       rbindlist(idcol=cside_ct_anno) %>% mutate(log10p=-log10(p),log2FC= log2(exp(log_fc_est))))
+                     res_df <- res_df[,c(first4,colnames(res_df)[!colnames(res_df)%in%first4])]
+                     return(res_df)
                    },
                    #create pseudo -------
                    createPseudo=function(){
@@ -377,6 +597,15 @@ scDEG <- R6Class("scDEG",
                      mode(private$pseudoX) <- 'integer'
                    },
                    #cell filtering -------
+                   filter_subset=function(subsetList){
+                     if(is.null(subsetList)) return()
+                     message("C-SIDE covars filtering")
+                     for(one in names(subsetList)){
+                       if(is.null(subsetList[[one]])) next
+                       private$c_index <- private$c_index & private$meta[,one]%in%subsetList[[one]]
+                       message("\t",one,": ",sum(private$c_index)," cells")
+                     }
+                   },
                    cellFiltering=function(sel,msg){
                      message(msg)
                      private$c_index <- private$c_index & sel

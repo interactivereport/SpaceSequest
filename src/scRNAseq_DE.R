@@ -16,7 +16,7 @@ checkFileExist <- function(strF,msg="file"){
 }
 main <- function(strConfig){
   suppressMessages(suppressWarnings(PKGloading()))
-  message("scDEG starting ...")
+  message("spDEG starting ...")
   config <- yaml::read_yaml(strConfig)
   strDEG <- checkFileExist(config$DEG_desp,"DEG description file")
   if(!is.null(config$prj_name)){
@@ -37,59 +37,41 @@ main <- function(strConfig){
     q()
   }
   colnames(compInfo) <- sapply(strsplit(colnames(compInfo),"[[:punct:]]"),head,1)
-  meta <- getMeta(strH5ad)
-  ## check compInfo against meta
+  #meta <- getMeta(strH5ad)
+  ## check compInfo against meta in checkInput function
   message("\tComparison description file checking ...")
   if("comparisonName"%in%colnames(compInfo) && length(unique(compInfo$comparisonName))!=nrow(compInfo))
     stop("Unique comparison names are required!")
-  selCol <- apply(compInfo,1,function(x){
-    hh <- unlist(x[c("sample","cluster","group")])
-    if(!is.na(x["covars"]) && nchar(x["covars"])>2){
-      coV <- unlist(strsplit(x["covars"],"\\+"),use.name=F)
-      if(sum(hh%in%coV)>0) stop("Overlap covars with other setups!")
-      hh <- c(hh,coV)
-    }
-    if(sum(!hh%in%colnames(meta))>0){
-      message(paste(hh[!hh%in%colnames(meta)],collapse=", "))
-      stop("The above header defined in DEG description file are NOT in the obs of h5ad file")
-    }
-    v <- x[c("alt","ref")]
-    if(sum(!v%in%unique(meta[,x["group"]]))>0){
-      message(paste(v[!v%in%unique(meta[,x["group"]])],collapse=", "))
-      stop("The above entris defined in DEG description file are NOT in the obs column")
-    }
-    return(hh)
-  })
 
-  ## create scDEG folder
-  message("\tcreating scDEG folder ...")
-  scDEGpath <- paste0(prefix,"_scDEG/")
-  dir.create(scDEGpath,showWarnings=F)
+  ## create spDEG folder
+  message("\tcreating spDEG folder ...")
+  spDEGpath <- paste0(prefix,"_spDEG/")
+  dir.create(spDEGpath,showWarnings=F)
 
   ## enumerate all comparisons
-  message("\tcreating scDEG tasks ...")
+  message("\tcreating spDEG tasks ...")
   cmds <- apply(compInfo,1,function(x){
-    if(is.na(x["method"]) || nchar(x["method"])<1){
-      x["method"] <- "NEBULA"
-      if(is.na(x["model"])) x["model"] <- "HL"
-    }
+    if(is.na(x["method"]) || nchar(x["method"])<1) x["method"] <- "NEBULA"
+    if(grepl("nebula",x['method'],ignore.case=T) && (is.na(x["model"]) || nchar(x["model"])<1))
+      x["model"] <- "HL"
+    cluster_col <- x['cluster']
+    if(grepl("cside",x['method'],ignore.case=T)) cluster_col=NULL
     coV <- NULL
-    if(!is.na(x["covars"]) && nchar(x["covars"])>2) coV <- unlist(strsplit(x["covars"],"\\+"),use.name=F)
+    if(!is.na(x["covars"]) && nchar(x["covars"])>2){
+      if(grepl("^\\{",x["covars"])) coV <- yaml::yaml.load(x["covars"])
+      else coV <- unlist(strsplit(x["covars"],"\\+"),use.name=F)
+    }
     if("comparisonName"%in%names(x)){
       message(x["comparisonName"])
-      strOut <- file.path(scDEGpath,x["comparisonName"])
+      strOut <- file.path(spDEGpath,x["comparisonName"])
     }else{
-      strD <- paste(c(gsub("_",".",c(paste(x[c("alt","ref")],collapse=".vs."),
-                                     x[c("cluster","group","method","model")]))),collapse="_")
-      strOut <- list.files(scDEGpath,strD)
-      if(length(strOut)>0) strOut <- file.path(scDEGpath,strOut[1])
-      else strOut <- file.path(scDEGpath,strD)
+      stop("comparisonName is required column in the DEG definition file")
     }
     if(dir.exists(strOut)) message("\tUsing existing: ",strOut)
     pipelineV <- ifelse(is.null(config$DEG_pipeline_version),'v1',config$DEG_pipeline_version)
     #system(paste("rm -rf",strOut))
     return(scRNAseq_DE(strH5adraw,strH5ad,strOut,x["method"],
-                x["sample"],x["cluster"],
+                x["sample"],cluster_col,
                 x["group"],x["ref"],x["alt"],
                 x["model"],coV,
                 NA_str=config$NAstring,
@@ -102,15 +84,28 @@ main <- function(strConfig){
                 R6_perc.filter.type = config$R6_perc.filter.type,
                 R6_min.ave.pseudo.bulk.cpm = config$R6_min.ave.pseudo.bulk.cpm,
                 R6_min.cells.per.subj = config$R6_min.cells.per.subj,
+                
+                cside_strRef=config$cside_strRef,
+                cside_ct_col=config$cside_ct_col,
+                cside_grp_col=config$cside_grp_col,
+                cside_ct_N=config$cside_ct_N,
+                cside_wt=config$cside_wt,
+                cside_ct_count=config$cside_ct_count,
+                cside_weight_threshold=config$cside_weight_threshold,
+                cside_gene_threshold=config$cside_gene_threshold,
+                cside_log_fc=config$cside_log_fc,
+                cside_fdr=config$cside_fdr,
+                
+                #core=floor(as.numeric(gsub("G","",config$memory))/16),
                 ver=pipelineV))
   })
   cmds <- unlist(cmds)#,use.names=F
   #cmds <- cmds[grepl("Astro",names(cmds))]
   #message(paste(paste(names(cmds),cmds,sep=": "),collapse="\n"))
-  write(rjson::toJSON(cmds),paste0(prefix,"_scDEG.cmd.json"))
+  write(rjson::toJSON(cmds),paste0(prefix,"_spDEG.cmd.json"))
   #print(head(cmds))
-  #writeLines(paste(cmds,collapse="\n"),paste0(prefix,"_scDEG.cmd"))
-  cat("scDEG task creation completed")
+  #writeLines(paste(cmds,collapse="\n"),paste0(prefix,"_spDEG.cmd"))
+  cat("spDEG task creation completed")
   
 }
 
@@ -137,6 +132,17 @@ scRNAseq_DE <- function(
     R6_min.ave.pseudo.bulk.cpm = 1,
     R6_min.cells.per.subj = 3,
     
+    cside_strRef=NULL,
+    cside_ct_col=NULL,
+    cside_ct_N=500,
+    cside_grp_col=NULL,
+    cside_wt="c2l",
+    cside_ct_count=0,
+    cside_weight_threshold=0,
+    cside_gene_threshold=5e-5,
+    cside_log_fc=0.4,
+    cside_fdr=0.05,
+    
     ver='v1',
     core=1,
     parallel=FALSE,
@@ -145,16 +151,20 @@ scRNAseq_DE <- function(
     env <- as.list(environment())
     checkInput(env)
     saveRDS(env,file=file.path(output,"env.rds"))
-
-    meta <- getMeta(strMeta)
-    cmd <- c()
-    for(one in unique(meta[,column_cluster])){
-      #"Rscript cmdPath/scRNAseq_DE.R cmdPath grpInterest" paste(jID,one,addSRC)
-      cmd <- c(cmd,paste0("cd ",output,"; Rscript ",scRNAseq_DE_path,"/scRNAseq_DE.R ",
-                         scRNAseq_DE_path,' "',one,'"'))
+    if(grepl("^cside$",method,ignore.case=T)){
+        cmd <- setNames(paste0("cd ",output,"; Rscript ",scRNAseq_DE_path,"/scRNAseq_DE.R ",
+                               scRNAseq_DE_path,' CSIDE'),
+                        paste(basename(output),"CSIDE",grp_alt,grp_ref,sep="_"))
+    }else{
+        meta <- getMeta(strMeta)
+        cmd <- c()
+        for(one in unique(meta[,column_cluster])){
+            #"Rscript cmdPath/scRNAseq_DE.R cmdPath grpInterest" paste(jID,one,addSRC)
+            cmd <- c(cmd,paste0("cd ",output,"; Rscript ",scRNAseq_DE_path,"/scRNAseq_DE.R ",
+                                scRNAseq_DE_path,' "',one,'"'))
+        }
+        names(cmd) <- gsub(" ",".",paste(basename(output),unique(meta[,column_cluster]),grp_alt,grp_ref,sep="_"))
     }
-    names(cmd) <- gsub(" ",".",paste(basename(output),unique(meta[,column_cluster]),grp_alt,grp_ref,sep="_"))
-    
     return(list(cmd))
 }
 
@@ -195,7 +205,7 @@ checkInput <- function(env){
                 stop(paste(one,"is not in the column",env$column_group,"from sample meta table!"))
         }
     }
-    allMethods <- c("t_test", "u_test","edgeR","limma","DESeq2","MAST","limma_cell_level","glmmTMB","NEBULA","ancova")
+    allMethods <- c("DESeq2","NEBULA","CSIDE")
     if(!env$method%in%allMethods)
         stop(paste0("method (",env$method,")is not supported!\nSelect from ",
                     paste(allMethods,collapse=", ")))
@@ -207,6 +217,11 @@ checkInput <- function(env){
         if(!env$method_model%in% c("nbinom2", "nbinom1", "poisson", "nbinom2zi", "nbinom1zi"))
             stop("method_model has to be nbinom2, nbinom1, poisson, nbinom2zi or nbinom1zi for glmmTMB method!")
         if(env$method_model!="nbinom2") warning("method_model is recommended to be nbinom2 for NEBULA method!")
+    }else if(env$method=="CSIDE"){
+        if(is.null(env$cside_strRef) || !file.exists(env$cside_strRef))
+            stop("Reference h5ad (cside_strRef) with raw UMI is required!")
+        if(is.null(env$cside_ct_col))
+            stop("Annotation column header (cside_ct_col) in reference cell meta is required!")
     }
     system(paste("mkdir -p",env$output))
 }
@@ -262,45 +277,7 @@ checkCellMeta <- function(meta,env,cluster_interest){
 
 scRNAseq_DE_one_v1 <- function(env,cluster_interest,strSrc=NULL){
   if(!is.null(strSrc)) source(paste0(strSrc,"/scDEG.R"))
-  message("===== ",env$method,":",cluster_interest," =====")
   strOut <- env$output
-  if(!is.null(env$column_group)){
-    strF <- file.path(strOut,paste0(gsub("__","_",paste0(env$grp_alt,".vs.",env$grp_ref)),"__",
-                                    gsub("__","_",paste(env$column_cluster,cluster_interest,sep=":")),"__",
-                                    gsub("__","_",env$method),
-                                    #"__cov:",paste(env)
-                                    ".csv"))
-    if(!is.null(env$column_covars)){
-      strF <- gsub("\\.csv$",paste0("__cov:",paste(gsub("__","_",env$column_covars),collapse="+"),".csv"),strF)
-    }
-  }else{
-    strF <- file.path(strOut,paste0(cluster_interest,".vs.Rest","__",gsub("_",".",env$column_cluster),".csv"))
-    intrestGrp <- as.character(allMeta[,env$column_cluster])
-    intrestGrp[intrestGrp!=cluster_interest] <- "Rest"
-    allMeta <- cbind(allMeta,all="all",intrestGrp=intrestGrp)
-    env$column_cluster <- "all"
-    env$column_group <- "intrestGrp"
-    env$grp_ref <- "Rest"
-    env$grp_alt <- cluster_interest
-    cluster_interest <- "all"
-  }
-  if(file.exists(strF)){
-    message("\tSkip: ",strF," exists!")
-    return()
-  }
-  ## fitting the legancy filter status
-  #if(!env$R6_cells.per.gene.filter) env$R6_min.cells.per.gene <- 0
-  #if(!env$R6_perc.cells.filter) env$R6_min.perc.cells.per.gene <- 0
-  #if(!env$R6_perc.filter) env$R6_perc_threshold <- 1
-  #if(!env$R6_pseudo.bulk.cpm.filte) env$R6_min.ave.pseudo.bulk.cpm <- 0
-  ##
-  
-  sce <- scDEG$new(id_col=env$column_sample,
-                   cluster_col=env$column_cluster,
-                   grp_col=env$column_group,ctrl_value=env$grp_ref,alt_value=env$grp_alt,
-                   strX=env$strCount,strMeta=env$strMeta,
-                   pipelinePath=strSrc)
-  #alg,fliter_list,clusters=NULL,covar=NULL,prefix=NULL,...
   filters <- list(rmGene=c("Mt-","MT-","mt-"),
                   min.cells.per.gene = env$R6_min.cells.per.gene,min.perc.cells.per.gene = env$R6_min.perc.cells.per.gene,
                   min.cells.per.gene.type = env$R6_min.cells.per.gene.type,
@@ -308,18 +285,69 @@ scRNAseq_DE_one_v1 <- function(env,cluster_interest,strSrc=NULL){
                   lib_size_low = 200, lib_size_high = 20*10^6,
                   min.genes.per.cell = env$R6_min.genes.per.cell, min.cells.per.subj = env$R6_min.cells.per.subj,
                   min.ave.pseudo.bulk.cpm=env$R6_min.ave.pseudo.bulk.cpm)
+  
+  if(grepl("^cside$",env$method,ignore.case=T) && cluster_interest=="CSIDE"){
+    env$column_cluster <- NA
+    cluster_interest <- NULL
+    strF <- file.path(strOut,paste0(env$grp_alt,".vs.",env$grp_ref,"_allDEG.rds"))
+  }else{
+    if(!is.null(env$column_group)){
+      strF <- file.path(strOut,paste0(gsub("__","_",paste0(env$grp_alt,".vs.",env$grp_ref)),"__",
+                                      gsub("__","_",paste(env$column_cluster,cluster_interest,sep=":")),"__",
+                                      gsub("__","_",env$method),
+                                      #"__cov:",paste(env)
+                                      ".csv"))
+      if(!is.null(env$column_covars)){
+        strF <- gsub("\\.csv$",paste0("__cov:",paste(gsub("__","_",env$column_covars),collapse="+"),".csv"),strF)
+      }
+    }else{
+      strF <- file.path(strOut,paste0(cluster_interest,".vs.Rest","__",gsub("_",".",env$column_cluster),".csv"))
+      intrestGrp <- as.character(allMeta[,env$column_cluster])
+      intrestGrp[intrestGrp!=cluster_interest] <- "Rest"
+      allMeta <- cbind(allMeta,all="all",intrestGrp=intrestGrp)
+      env$column_cluster <- "all"
+      env$column_group <- "intrestGrp"
+      env$grp_ref <- "Rest"
+      env$grp_alt <- cluster_interest
+      cluster_interest <- "all"
+    }
+  }
+  if(file.exists(strF)){
+    message("\tSkip: ",strF," exists!")
+    return()
+  }
+  message("===== ",env$method,": ",cluster_interest," =====")
+  sce <- scDEG$new(id_col=env$column_sample,
+                   cluster_col=env$column_cluster,
+                   grp_col=env$column_group,ctrl_value=env$grp_ref,alt_value=env$grp_alt,
+                   strX=env$strCount,strMeta=env$strMeta,
+                   NA_str=env$NA_str,
+                   pipelinePath=strSrc)
   de <- sce$run(alg=env$method,fliter_list=filters,clusters=cluster_interest,
-                covar=env$column_covars,method=env$method_model)
-  write.csv(de,file=strF,row.names = FALSE)
+                covar=env$column_covars,method=env$method_model,
+                csideParam=env[grepl("^cside",names(env))],
+                prefix=fs::path_ext_remove(strF))
+  if(grepl("^cside$",env$method,ignore.case=T)){
+    saveRDS(de,strF)
+    for(one in unique(de[[cside_ct_anno]])){
+      strF <- file.path(strOut,paste0(gsub("__","_",paste0(env$grp_alt,".vs.",env$grp_ref)),"__",
+                                      gsub("__","_",paste(env$cside_ct_col,one,sep=":")),"__",
+                                      gsub("__","_",env$method),
+                                      ".csv"))
+      write.csv(de[de[[cside_ct_anno]]==one,],file=strF,row.names = FALSE)
+    }
+  }else{
+      write.csv(de,file=strF,row.names = FALSE)
+  }
   return()
 }
 
 scRNAseq_DE_dist <- function(env,cluster_interest,strSrc=NULL){
   if(env$ver=='v1'){
-    message("=== scDEG pipeline v1 ===")
+    message("=== spDEG pipeline v1 ===")
     return(scRNAseq_DE_one_v1(env,cluster_interest,strSrc))
   }else{
-    stop("Unknown scDEG pipeline version: ",env$ver)
+    stop("Unknown spDEG pipeline version: ",env$ver)
   }
 }
 

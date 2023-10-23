@@ -6,7 +6,7 @@ import pandas as pd
 strPipePath=os.path.dirname(os.path.realpath(__file__))
 
 def MsgHelp():
-    print("\nscDEG /path/to/a/folder === or === scDEG /path/to/a/config/file\n")
+    print("\nspDEG /path/to/a/folder === or === spDEG /path/to/a/config/file\n")
     ut.msgError("An empty config file will be generated automatically when a folder is provided")
   
 def initProject(strInput):
@@ -35,39 +35,39 @@ def getConfig(strConfig):
 
 def checkConfig(config):
     if config.get('UMI') is None or not os.path.isfile(config.get('UMI')):
-        ut.msgError("Skip scDEG: UMI file required to exist")
+        ut.msgError("Skip spDEG: UMI file required to exist")
     if config.get('meta') is None or not os.path.isfile(config.get('meta')):
-        ut.msgError("Skip scDEG: meta file required to exist")
+        ut.msgError("Skip spDEG: meta file required to exist")
 
     if config['DEG_desp'] is None or not os.path.isfile(config['DEG_desp']):
-        ut.msgError("Skip scDEG: Missing DEG description file!")
+        ut.msgError("Skip spDEG: Missing DEG description file!")
     D = pd.read_csv(config['DEG_desp'],header=0)
     if D.shape[0]==0:
-        ut.msgError("Skip scDEG: Empty DEG description file!")
+        ut.msgError("Skip spDEG: Empty DEG description file!")
     return D
 
 def runDEG(strConfig):
     config, dInfo = getConfig(strConfig)
     prefix = os.path.join(config['output'],config['DBname'])
     if os.path.isfile("%s.db"%prefix) and not config["newProcess"]:
-        ut.msgError("Skip scDEG: db file exists: %s.db"%prefix)
+        ut.msgError("Skip spDEG: db file exists: %s.db"%prefix)
 
     cmd = "Rscript %s/scRNAseq_DE.R %s"%(strPipePath,strConfig)
     msg = cU.run_cmd(cmd).stdout.decode("utf-8")
-    #msg="scDEG task creation completed"
-    if "scDEG task creation completed" in msg:
-        with open("%s_scDEG.cmd.json"%prefix,"r") as f:
-            scDEGtask = json.load(f)
+    #msg="spDEG task creation completed"
+    if "spDEG task creation completed" in msg:
+        with open("%s_spDEG.cmd.json"%prefix,"r") as f:
+            spDEGtask = json.load(f)
         if not config.get('memory') is None:
             memG=int(re.sub("G$","",config.get('memory')))
         else:
             memG = math.ceil(os.path.getsize(config.get('UMI'))*50/1e9)
-        cU.submit_cmd(scDEGtask,config,math.ceil(memG/16),memG)
+        cU.submit_cmd(spDEGtask,config,math.ceil(memG/16),memG)
         formatDEG(prefix)
 
 def formatDEG(prefix):
-    print("=== Formating scDEG results to create the db file ===")
-    with open("%s_scDEG.cmd.json"%prefix,"r") as f:
+    print("=== Formating spDEG results to create the db file ===")
+    with open("%s_spDEG.cmd.json"%prefix,"r") as f:
         DEGcmds = json.load(f)
     DEGpaths = list(set([one.split(";")[0].replace("cd ","") for k,one in DEGcmds.items()]))
     csv = []
