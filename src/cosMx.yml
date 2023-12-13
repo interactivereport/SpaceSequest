@@ -6,5 +6,6 @@ sample_name: Sample_Name # this is the column header in the following meta file 
 cell_id_col: [cell_ID,cellID] #the column header (first one in order) of cell ID in all data across files defined in above sample_meta
 suffix_local_px: _local_px # the suffix of pix location in one capture image, such that x coordinates column header is regular expression ".*x.*_local_px"
 suffix_global_px: _global_px # the suffix of pix location in global image, such that x coordinates column header is regular expression ".*x.*_global_px"
+saveLocalX: false # should the local cell center coordinates to be saved into obsm.X_
 tx_col: target # the column header of transcripts in transcript location file
 

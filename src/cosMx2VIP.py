@@ -108,6 +108,8 @@ def readOneCapture(sID,meta,config):
     # add px coordinates
     print(" add px coordinates")
     for k in suf_px:
+        if k=='local' and not config['saveLocalX']:
+            continue
         D.obsm['X_%s'%k] = cInfo[["%s%s"%(i,suf_px[k]) for i in ['x','y']]].to_numpy('float32')
     # add cell boundaries
     print(" add cell boundaries")
