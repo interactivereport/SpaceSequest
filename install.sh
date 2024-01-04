@@ -26,7 +26,7 @@ condaPath=$(dirname $(dirname $condaPath))
 conda create -y -p $appEnvPath -c conda-forge python=3.8.13 mamba=1.1.0
 conda create -y -p $appEnvPath_C2L -c conda-forge python=3.9 pandas=1.4.4
 
-# for SpaGCN & BayesSpace
+# for SpaGCN & BayesSpace & CeLEry
 source $condaPath/etc/profile.d/conda.sh
 conda activate $appEnvPath
 mamba env update -f install/install.yml
@@ -35,6 +35,12 @@ R -q -e 'if(!require(nebula)) devtools::install_github("lhe17/nebula",ref="v1.1.
 R -q -e 'options(timeout = 600000000);devtools::install_github("dmcable/spacexr@5baf6393552e401857db1eb79ddb0af16ff15f84",upgrade_dependencies=F)'
 # might need the second try to install
 R -q -e 'options(timeout = 600000000);devtools::install_github("dmcable/spacexr@5baf6393552e401857db1eb79ddb0af16ff15f84",upgrade_dependencies=F)'
+# CeLEry
+git clone https://github.com/QihuangZhang/CeLEry
+cd CeLEry/CeLEry_package
+sed -i 's|sklearn|scikit-learn|g' pyproject.toml
+python3 setup.py build
+python3 setup.py install
 conda deactivate
 
 # for Cell2location & tangram
