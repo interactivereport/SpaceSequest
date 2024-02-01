@@ -183,9 +183,9 @@ def sr_read(meta,config,strPkl=None,strH5ad=None):
         sr_addGP(oneD,config)
         #add additional sample information
         for j in meta.columns:
-          if j in [sName,sr_path_column]:
-            continue
-          oneD.obs[j] = meta[j][i]
+            if j in [sName,sr_path_column]:
+                continue
+            oneD.obs[j] = meta[j][i]
         all_slices[meta[sName][i]]=oneD
     if strPkl is None:
         return all_slices
