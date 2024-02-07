@@ -48,20 +48,20 @@ tg_rmGeneStart: ["MT-","Mt-","mt-"]
 tg_image_column: # the column header in sample meta, this column specifiy the path to a high resolution image tif file
 tg_segment_method: "watershed" # the method for squidpy.im.segment, 'watershed' (default ) or 'cellpose': customize one using cellpose.models
 # SpaTalk seting (This might be the same as above, but still required)
-st_scH5ad: /edgehpc/dept/compbio/users/msheehan/msheehan/sc_sn_RNAseq/20220713_TST11621_cuprizone_finalLT/20220720_cuprizonemousebrain_cell2loc_and_OL_labels_added_clean.h5ad #the path to the processed/annotated single cell/nuclei RNAseq (could be paired)
-st_annotation_obs: final_label # the cell type annotation in above h5ad.obs to build the model
-st_matchColumn: Number #if paired, the column header (e.g. library_id) in sample meta table which indicated in the above obs (matching values with obs.library_id), otherwise all cells will be used for each spatial sample
+st_scH5ad:  #the path to the processed/annotated single cell/nuclei RNAseq (could be paired)
+st_annotation_obs:  # the cell type annotation in above h5ad.obs to build the model
+st_matchColumn:  #if paired, the column header (e.g. library_id) in sample meta table which indicated in the above obs (matching values with obs.library_id), otherwise all cells will be used for each spatial sample
 st_species: Mouse # the species of the data, only support Mouse or Human
 st_use_cell2location: True #if True (default), c2l estimated cell count matrix will be used
 st_max_wait_cell2location: 10 # the maximum waiting time for cell2location to finish 
 st_spot_max_cell: 30 #Recommended for 10X Visium 55 micron spot
-st_rm_ct: [Unknown,Ext_Unknown,PPR] # the cell type annotation to be removed from the decomposition process
+st_rm_ct: [Unknown] # the cell type annotation to be removed from the decomposition process
 st_rm_ct_min_cell: 100 # the minimal cell number for sc reference required to keep the cell type annotation
 st_sel_ct: # the cell types to be selected for SpaTalk after the above two applied 
 st_downsample_ct_rate: 1 #the downsampling rate (cells to be kept) of sc reference
 st_downsample_ct_min: 3000 #the downsampling does not apply to cell type with cell number less than this
-st_senders: [Astro,Ext_L23,Inh_Pvalb,MFOL,Micro] # set the cell type as senders, pelease considering set a limited number (each pair ~10min). Default: empty as all available cell types
-st_receivers: [Astro,Ext_L23,Inh_Pvalb,MFOL,Micro] # set the cell type as receivers, pelease considering set a limited number (each pair ~10min). Default: empty as all available cell types
+st_senders: [] # set the cell type as senders, pelease considering set a limited number (each pair ~10min). Default: empty as all available cell types
+st_receivers: [] # set the cell type as receivers, pelease considering set a limited number (each pair ~10min). Default: empty as all available cell types
 st_mc_core: 8 # this is import to avoid OOM (out-of-memory) error in some of SpaTalk process, estimate: <total available memory>/(3*<dec_celltype.rds>)
 st_iter_num: 1000 #SpaTalk:dec_celltype:min_percent: Number of iteration to generate the single-cell data for spot-based data.
 st_min_percent: 0.2 #SpaTalk:dec_celltype:min_percent: Min percent to predict new cell type for single-cell st_data or predict new cell for spot-based st_data

@@ -212,6 +212,10 @@ SpaTalk_one <- function(X,L,scRef_umi,scRef_ct,strOut,
 }
 
 SpaTalk_run <- function(config,strH5ad,strOut,strFinal,strC2L=""){
+    config <- sapply(config,function(x){
+        if(is.list(x) && length(x)==0)
+            return(NULL)
+        return(x)})
     if(file.exists(strFinal)){
         msg_previous(strFinal)
     }else{
@@ -261,80 +265,14 @@ main <- function(){
     suppressMessages(suppressWarnings(loadSpaTalkPkg()))
     args = commandArgs(trailingOnly=TRUE)
     
-    SpaTalk_run(yaml::read_yaml(args[1]),
+    SpaTalk_run(sapply(yaml::read_yaml(args[1]),function(x){
+        if(is.list(x) && length(x)==0)
+            return(NULL)
+        return(x)}),
                 args[2],args[3],args[4],args[5])
-    
-}
-debug <- function(){
-    suppressMessages(suppressWarnings(loadSpaTalkPkg()))
-    config <- yaml::read_yaml("example/visium/visium.yml")
-    strH5ad <- "example/visium/raw/new.h5ad"
-    strOut <- "example/visium/SpaTalk"
-    strC2L <- "example/visium/SpaTalk/oyoung_visium_test_c2l.h5ad"
-    
-    message("Loading ...")
-    obs <- getobs(strH5ad)
-    X <- getX(strH5ad)
-    scRef_X <- getX(config$st_scH5ad)
-    scRef_obs <- getobs(config$st_scH5ad)
-    
-    #remove cell tyoe with less cells
-    ct_count <- table(scRef_obs[[config$tg_annotation_obs]])
-    config$st_rm_ct <- unique(c(config$st_rm_ct,names(ct_count)[ct_count<config$st_rm_ct_min_cell]))
-    c2l <- NULL
-    if(nchar(strC2L)>3 && file.exists(strC2L)) c2l <- t(getX(strC2L))
-    lri <- tf_df <- lr_path_df <- list()
-    
-    one <- unique(obs[[batchKey]])[1] #sample(unique(obs[[batchKey]]),1)
-    message("Processing ",one)
-    selC <- rep(T,nrow(scRef_obs))
-    if(!is.null(config$st_matchColumn) && config$st_matchColumn%in%colnames(scRef_obs)){
-        matchKey <- unique(obs[obs[[batchKey]]==one,config$st_matchColumn])
-        selC <- scRef_obs[[config$st_matchColumn]]%in% matchKey
-        message("\tMatching scRef: ",paste(matchKey,collapse=", "))
-    }
-    spotIDs <- rownames(obs)[obs[[batchKey]]==one]
-    strTmp <- file.path(strOut,one)
-    dir.create(strTmp,showWarnings=F)
-    source("src/SpaTalk_run.R")
-    res <- SpaTalk_one(X[,spotIDs],obs[spotIDs,],scRef_X[,selC],scRef_obs[[config$st_annotation_obs]][selC],strTmp,
-                       config$st_species,config$st_spot_max_cell,
-                       config$st_rm_ct,config$st_sel_ct,config$st_downsample_ct_rate,config$st_downsample_ct_min,
-                       c2l[spotIDs,],
-                       config$st_iter_num,config$st_min_percent,config$core,
-                       config$st_n_neighbor,config$st_min_pairs,config$st_min_pairs_ratio,config$st_co_exp_ratio)
-    lri[[one]] <- res$lri
-    tf_df[[one]] <- res$tf_df
-    lr_path_df[[one]] <- res$lr_path_df
-    
-    lri <- dplyr::bind_rows(lri,.id=batchKey)
-    tf_df <- dplyr::bind_rows(tf_df,.id=batchKey)
-    lr_path_df <- dplyr::bind_rows(lr_path_df,.id=batchKey)
     
 }
 
 main()
 
-if(F){
-    obj <- SpaTalk::dec_cci(obj,
-                            celltype_sender = "Astro",
-                            celltype_receiver = "Micro",
-                            n_neighbor = 10, # default
-                            pvalue = 0.05, # default
-                            min_pairs = 5, # default 5
-                            min_pairs_ratio = 0, # default
-                            per_num = 1000, # default 1000
-                            co_exp_ratio = 0.1, # default
-                            if_doParallel = TRUE, # default  
-                            use_n_cores = 16)
-    
-    
-    obje <- SpaTalk::dec_cci_all(obje,
-                                 n_neighbor = 10,
-                                 min_pairs = 5,
-                                 min_pairs_ratio = 0,
-                                 per_num = 1000, 
-                                 co_exp_ratio = 0.1,
-                                 use_n_cores = 4)
-}
 
