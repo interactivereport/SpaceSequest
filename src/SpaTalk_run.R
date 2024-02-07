@@ -93,7 +93,7 @@ SpaTalk_one <- function(X,L,scRef_umi,scRef_ct,strOut,
                         C2L=NULL,ct_senders=NULL,ct_receivers=NULL,
                         n_perm=1000,min_per=0.2,n_mc_core=2,n_core=2,
                         n_neighbor=10,min_pairs=5,min_pairs_ratio=0,co_exp_ratio=0.1){#
-    strF1 <- file.path(strOut,"dec_cci_all.rds")
+    strF1 <- file.path(strOut,"dec_cci.rds")
     if(file.exists(strF1)){
         msg_previous(strF1)
         obj <- readRDS(strF1)
@@ -208,6 +208,10 @@ SpaTalk_one <- function(X,L,scRef_umi,scRef_ct,strOut,
     tf_df <- rbindlist( lapply(lr_path_list, "[[", 1) ) %>% distinct()
     lr_path_df <- rbindlist( lapply(lr_path_list, "[[", 2) )
     
+    lri$celltype_sender <- as.character(lri$celltype_sender)
+    lri$celltype_receiver <- as.character(lri$celltype_receiver)
+    lr_path_df$celltype_sender <- as.character(lr_path_df$celltype_sender)
+    lr_path_df$celltype_receiver <- as.character(lr_path_df$celltype_receiver)
     return(list(lri=lri,tf_df=tf_df,lr_path_df=lr_path_df))
 }
 
