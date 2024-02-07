@@ -236,7 +236,7 @@ def run(strConfig,strRaw,config):
         cu.submit_cmd(cmd,config)
     return {mKey:strOut}
 
-def merge(strH5ad,allRes):
+def merge(D,allRes):
     if not mKey in allRes.keys():
         return
     strPkl=allRes[mKey]
@@ -246,7 +246,7 @@ def merge(strH5ad,allRes):
         return
     obs = ut.readPkl(strPkl)
     obs.index = [re.sub(obs["dataset_batch"][i]+"$",obs["batch"][i],obs.index[i]) for i in range(obs.shape[0])]
-    D = sc.read_h5ad(strH5ad)#,backed="r+"
+    #D = sc.read_h5ad(strH5ad)#,backed="r+"
     selCol=~obs.columns.isin(D.obs.columns)
     if (~selCol).sum()>0:
         print("\tSkip exists:",",".join(obs.columns[~selCol]))
@@ -254,7 +254,7 @@ def merge(strH5ad,allRes):
         D.obs = D.obs.merge(obs.loc[:,selCol],"left",left_index=True,right_index=True)
         modCol = D.obs.columns.isin(obs.columns[selCol])
         D.obs.loc[:,modCol]=D.obs.loc[:,modCol].apply(lambda x: ut.fillNA(x,'Missing'))
-        D.write(strH5ad)
+        #D.write(strH5ad)
 
 def main():
     if len(sys.argv)==3:

@@ -5,7 +5,8 @@ import SpaGCN_run as spa
 import BayesSpace_run as bay
 import Cell2location_run as c2l
 import tangram_run as tan
-
+import SpaTalk_run as st
+import anndata as ad
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 logging.disable(level=logging.INFO)
@@ -76,16 +77,23 @@ def main():
     if 'tangram' in config['methods']:
         methods.append(functools.partial(tan.run,strConfig,strH5ad_raw))
     
+    #apply SpaTalk
+    if 'SpaTalk' in config['methods']:
+        methods.append(functools.partial(st.run,strConfig,strH5ad_raw))
+    
     # Run all methods
     print("\n\t===== Running methods =====")
     strFinals=cu.submit_funs(methods,len(methods) if config['parallel'] else 1)
 
     # merge all
     print("\n\t===== Merging methods =====")
-    spa.merge(strH5ad,strFinals)
-    bay.merge(strH5ad,strFinals)
-    c2l.merge(strH5ad,strFinals)
-    tan.merge(strH5ad,strFinals)
+    D = ad.read_h5ad(strH5ad)
+    spa.merge(D,strFinals)
+    bay.merge(D,strFinals)
+    c2l.merge(D,strFinals)
+    tan.merge(D,strFinals)
+    st.merge(D,strFinals)
+    D.write(strH5ad)
     print("\n\n=== visium process is completed! ===")
 if __name__ == "__main__":
     if len(sys.argv)==1:

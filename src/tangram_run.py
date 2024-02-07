@@ -339,7 +339,7 @@ def run(strConfig,strH5ad):
     
     return {mKey:strOut}
 
-def merge(strH5ad,allRes):
+def merge(D,allRes):
     if not mKey in allRes.keys():
         return
     strF = allRes[mKey]
@@ -348,7 +348,7 @@ def merge(strH5ad,allRes):
         print("\tSkip, the above file is missing!")
         return
     tg_ct_pred,tg_ct_count = ut.readPkl(strF)
-    D = ad.read_h5ad(strH5ad)#,backed="r+"
+    #D = ad.read_h5ad(strH5ad)#,backed="r+"
     if not tg_pred in D.obsm.keys():
         print("\tmerging tg_pred into obsm")
         D.obsm[tg_pred] = pd.DataFrame(index=D.obs_names).merge(tg_ct_pred,'left',left_index=True, right_index=True)#.to_numpy()
@@ -360,8 +360,8 @@ def merge(strH5ad,allRes):
         print("\tmerging labels into obs")
         D.obs = D.obs.merge(tg_ct_pred,'left',left_index=True, right_index=True)
         D.obs[tg_ct_pred.columns] = D.obs[tg_ct_pred.columns].fillna(0)
-    print("\tsaving")
-    D.write(strH5ad)
+    #print("\tsaving")
+    #D.write(strH5ad)
 
 def main():
     task = sys.argv[1]

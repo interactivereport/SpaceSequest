@@ -32,13 +32,16 @@ conda activate $appEnvPath
 mamba env update -f install/install.yml
 R -q -e 'if(!require(peakRAM)) install.packages("peakRAM",repos="https://cran.rstudio.com/",upgrade_dependencies=F)'
 R -q -e 'if(!require(nebula)) devtools::install_github("lhe17/nebula",ref="v1.1.7",upgrade="never",upgrade_dependencies=F)'
+R -q -e 'if(!require(NNLM)) devtools::install_github("linxihui/NNLM",ref="0.4.4",upgrade="never",upgrade_dependencies=F)'
+R -q -e 'if(!require(SpaTalk)) devtools::install_github("ZJUFanLab/SpaTalk@df5b507574ec84c79f7717e5d091d9efbcf4d37a",upgrade="never",upgrade_dependencies=F)'
 R -q -e 'options(timeout = 600000000);devtools::install_github("dmcable/spacexr@5baf6393552e401857db1eb79ddb0af16ff15f84",upgrade_dependencies=F)'
 # might need the second try to install
 R -q -e 'options(timeout = 600000000);devtools::install_github("dmcable/spacexr@5baf6393552e401857db1eb79ddb0af16ff15f84",upgrade_dependencies=F)'
 # CeLEry
 git clone https://github.com/QihuangZhang/CeLEry
 cd CeLEry/CeLEry_package
-sed -i 's|sklearn|scikit-learn|g' pyproject.toml
+git checkout f90ab255846821e15f8b3444b908eed0675f45d0
+#sed -i 's|sklearn|scikit-learn|g' pyproject.toml
 python3 setup.py build
 python3 setup.py install
 conda deactivate

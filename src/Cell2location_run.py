@@ -280,7 +280,7 @@ def run(strConfig,strH5ad):
     
     return {mKey:strFinal}
 
-def merge(strH5ad,allRes):
+def merge(D,allRes):
     if not mKey in allRes.keys():
         return
     strF = allRes[mKey]
@@ -289,7 +289,7 @@ def merge(strH5ad,allRes):
         print("\tSkip, the above file is missing!")
         return
     obs = ut.readPkl(strF)
-    D = ad.read_h5ad(strH5ad)#,backed="r+"
+    #D = ad.read_h5ad(strH5ad)#,backed="r+"
     selCol=~obs.columns.isin(D.obs.columns)
     if (~selCol).sum()>0:
         print("\tSkip exists:",",".join(obs.columns[~selCol]))
@@ -297,7 +297,7 @@ def merge(strH5ad,allRes):
         D.obs = D.obs.merge(obs.loc[:,selCol],"left",left_index=True,right_index=True)
         modCol = D.obs.columns.isin(obs.columns[selCol])
         D.obs.loc[:,modCol]=D.obs.loc[:,modCol].apply(lambda x: ut.fillNA(x,0))
-        D.write(strH5ad)
+        #D.write(strH5ad)
 
 def main():
     task=sys.argv[1]

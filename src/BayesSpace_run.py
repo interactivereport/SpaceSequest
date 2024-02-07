@@ -22,7 +22,7 @@ def run(strConfig,config):
     return {mKey:strOut}
 
 ## merge obs
-def merge(strH5ad,allRes):
+def merge(D,allRes):
     if not mKey in allRes.keys():
         return
     strObs = allRes[mKey]
@@ -30,7 +30,7 @@ def merge(strH5ad,allRes):
     if not os.path.isfile(strObs):
         print("\tSkip: the above file is missing!")
         return
-    D = ad.read_h5ad(strH5ad)#,backed="r+"
+    #D = ad.read_h5ad(strH5ad)#,backed="r+"
     obs = pandas2ri.rpy2py_dataframe(readRDS(strObs))
     selCol=~obs.columns.isin(D.obs.columns)
     if (~selCol).sum()>0:
@@ -39,5 +39,5 @@ def merge(strH5ad,allRes):
         D.obs = D.obs.merge(obs.loc[:,selCol],"left",left_index=True,right_index=True)
         modCol = D.obs.columns.isin(obs.columns[selCol])
         D.obs.loc[:,modCol]=D.obs.loc[:,modCol].apply(lambda x: ut.fillNA(x,'Missing'))
-        D.write(strH5ad)
+        #D.write(strH5ad)
 
