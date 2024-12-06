@@ -48,10 +48,11 @@ sr_read <- function(meta,sName,strRDS=NULL){
     }
     all_slices <- list()
     for(i in 1:nrow(meta)){
-        message("\t",meta[i,sName])
-        all_slices[[meta[i,sName]]] <- readVisium(meta[i,sr_path_column])
-        colData(all_slices[[meta[i,sName]]]) <- cbind(colData(all_slices[[meta[i,sName]]]),
-                                                      setNames(data.frame(meta[i,sName]),batchKey))
+        sID <- as.character(meta[i,sName])
+        message("\t",sID)
+        all_slices[[sID]] <- readVisium(meta[i,sr_path_column])
+        colData(all_slices[[sID]]) <- cbind(colData(all_slices[[sID]]),
+                                                      setNames(data.frame(sID),batchKey))
     }
     sce <- do.call(cbind,all_slices)
     colnames(sce) <- paste(colnames(sce),colData(sce)[[batchKey]],sep="-")

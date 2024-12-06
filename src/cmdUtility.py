@@ -29,6 +29,13 @@ def submit_funs(funcs,core=1):
     return res
 
 ## parallel job management
+def subprocess_one(cmd,k):
+  print("\n\tsubmitting ",k)
+  try:
+    subprocess.run(cmd,shell=True,check=True)
+  except:
+    print("%s process return error from \n\t%s"%(k,cmd))
+
 def submit_cmd(cmds,config,core=None,memG=0,condaEnv="condaEnv"):
   #cmds = {k:v for i, (k,v) in enumerate(cmds.items()) if not v is None}
   if len(cmds)==0:
@@ -36,18 +43,23 @@ def submit_cmd(cmds,config,core=None,memG=0,condaEnv="condaEnv"):
   if core is None:
     core=config['core']
   parallel = config["parallel"]
-  if not parallel:
-    os.makedirs(os.path.join(config["output"],"log"),exist_ok=True)
-    for one in cmds.keys():
-      if cmds[one] is None:
-        continue
-      print("\n\nsubmitting %s"%one)
-      #oneCMD=cmds[one] #+" 2>&1 | tee "+ strLog
-      oneCMD = "env -i bash -c 'source %s/src/.env;eval $%s;%s'"%(strPipePath,condaEnv,cmds[one])
-      try:
-        subprocess.run(oneCMD,shell=True,check=True)
-      except:
-        print("%s process return error!"%one)
+  if isinstance(parallel,bool):
+    if not parallel:
+      #os.makedirs(os.path.join(config["output"],"log"),exist_ok=True)
+      for one in cmds.keys():
+        if cmds[one] is None:
+          continue
+        print("\n\nsubmitting %s"%one)
+        #oneCMD=cmds[one] #+" 2>&1 | tee "+ strLog
+        oneCMD = "env -i bash -c 'source %s/src/.env;eval $%s;%s'"%(strPipePath,condaEnv,cmds[one])
+        try:
+          subprocess.run(oneCMD,shell=True,check=True)
+        except:
+          print("%s process return error!"%one)
+    else:
+      args = [("env -i bash -c 'source %s/src/.env;eval $%s;%s'"%(strPipePath,condaEnv,cmds[_]),_) for _ in cmds]
+      with multiprocessing.Pool(core) as pool:
+        res = pool.starmap(subprocess_one, args)
   elif parallel=="sge":
     jID = qsub(cmds,config['output'],core,memG=memG,jID=config.get("jobID"),condaEnv=condaEnv)
     print("----- Monitoring all submitted SGE jobs: %s ..."%jID)

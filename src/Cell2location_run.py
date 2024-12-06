@@ -85,7 +85,10 @@ def filter_genes(adata, cell_count_cutoff=15, cell_percentage_cutoff2=0.05, nonz
 def buildModel(config,strOne,selSample=None,use_gpu=False):
     from cell2location.models import RegressionModel
     print("Building model: use_gpu (%s)"%use_gpu)
-    strModel = os.path.join(os.path.dirname(strOne),"model",re.sub('pkl$','h5ad',os.path.basename(strOne)))
+    if selSample is None:# if all h5ad cells were used to build a model, all slices will use the same model
+        strModel = os.path.join(os.path.dirname(strOne),"model","full_sc_model.h5ad")
+    else:
+        strModel = os.path.join(os.path.dirname(strOne),"model",re.sub('pkl$','h5ad',os.path.basename(strOne)))
     os.makedirs(os.path.dirname(strModel),exist_ok=True)
     if os.path.isfile(strModel):
         print("\tLoading exist model file: ",strModel)
@@ -100,7 +103,7 @@ def buildModel(config,strOne,selSample=None,use_gpu=False):
         print("\tUsing %d cells to build the model"%D.shape[0])
         if not D.raw is None and not D.raw.X is None:
             print("\traw is available and used to build the cell2location model")
-            adata_ref = ad.AnnData(D.raw.X.copy(),obs=D.obs.copy(),var=D.var.copy(),dtype='int32')
+            adata_ref = ad.AnnData(D.raw.X.value.copy(),obs=D.obs.copy(),var=D.var.copy(),dtype='int32')
         else:
             print("\traw is NOT available. X is assumed to contain UMI and used to build the cell2location model")
             adata_ref = ad.AnnData(D.X.copy(),obs=D.obs.copy(),var=D.var.copy(),dtype='int32')
@@ -115,7 +118,7 @@ def buildModel(config,strOne,selSample=None,use_gpu=False):
             plt.close()
             adata_ref = adata_ref[:, selected].copy()
             adata_ref.obs[config['annotation_obs']] =adata_ref.obs[config['annotation_obs']].astype(str)
-            RegressionModel.setup_anndata(adata=adata_ref,batch_key='Number',labels_key=config['annotation_obs'])
+            RegressionModel.setup_anndata(adata=adata_ref,batch_key=config['batch'],labels_key=config['annotation_obs'])
             mod = RegressionModel(adata_ref)
             mod.view_anndata_setup()
             print("\ttraining")
@@ -140,11 +143,12 @@ def buildModel(config,strOne,selSample=None,use_gpu=False):
     else:
         inf_aver = adata_ref.var[[f'means_per_cluster_mu_fg_{i}'
                                   for i in adata_ref.uns['mod']['factor_names']]].copy()
-    inf_aver.columns = (mKey+"_")+adata_ref.uns['mod']['factor_names']
+    inf_aver.columns = [mKey+"_"+_ for _ in adata_ref.uns['mod']['factor_names']]
     return inf_aver
 
 def applyModel(adata,inf_aver,config,useGPU,strOne):
     import cell2location
+    print("Applying model: use_gpu (%s)"%useGPU)
     if os.path.isfile(strOne):
         print("\tUsing previous results:",strOne)
         print("\t\tPlease remove/rename the above file if a new run is wanted!")
@@ -172,7 +176,8 @@ def applyModel(adata,inf_aver,config,useGPU,strOne):
                   # use all data points in training because
                   # we need to estimate cell abundance at all locations
                   train_size=1,
-                  use_gpu=useGPU)
+                  use_gpu=useGPU,
+                  progress_bar_refresh_rate=0.2)
         adata = mod.export_posterior(adata, sample_kwargs={'num_samples': 1000, 'batch_size': mod.adata.n_obs, 'use_gpu': useGPU})
         adata.obs[adata.uns['mod']['factor_names']] = adata.obsm['q05_cell_abundance_w_sf']
         # Compute expected expression per cell type
@@ -212,7 +217,7 @@ def oneRun(strOut,strConfig,strH5ad,sName):
         return()
     config,sInfo = ut.getConfig(strConfig)
     sInfo.index = sInfo[config['sample_name']]
-    useGPU = False
+    useGPU = True
     if config['parallel']=="slurm":
         sysConfig = ut.getSys()
         useGPU = False if sysConfig.get("use_gpu") is None else sysConfig.get("use_gpu")
@@ -272,9 +277,10 @@ def run(strConfig,strH5ad):
     strCMD={}
     for one in sInfo[config['sample_name']]:
         strCMD['C2L_%s'%one] = "python -u %s/Cell2location_run.py oneRun %s %s %s %s"%(strPipePath,strOut,strConfig,strH5ad,one)
+    #print("\n".join(strCMD.values()))
     cu.submit_cmd(strCMD,config,condaEnv="condaEnv_C2L")
     
-    strCMD['C2L_Extract'] = "python -u %s/Cell2location_run.py Extract %s %s"%(strPipePath,strFinal,','.join(list(sInfo[config['sample_name']])))
+    strCMD['C2L_Extract'] = "python -u %s/Cell2location_run.py Extract %s %s"%(strPipePath,strFinal,','.join([str(_) for _ in sInfo[config['sample_name']]]))
     config['gpu'] = False
     cu.submit_cmd(strCMD,config,condaEnv="condaEnv_C2L")
     

@@ -1,8 +1,12 @@
-import sys,os,yaml,warnings,logging,functools,pickle,configparser
+import sys,os,yaml,warnings,logging,functools,pickle,configparser,shutil
 from datetime import datetime
 import pandas as pd
 import scanpy as sc
 import numpy as np
+import anndata as ad
+from matplotlib.backends.backend_pdf import PdfPages
+import seaborn as sns
+import matplotlib.pyplot as plt
 #import paste as pst
 #import rpy2.robjects as robjects
 #from rpy2.robjects import pandas2ri
@@ -96,7 +100,11 @@ def sr_checkMeta(meta,config):
         msgError("%s is required column in the sample sheet!"%sr_path_column)
 def sr_extract(strH5ad,sName):
     D = sc.read_h5ad(strH5ad)
-    adata = D[D.obs[batchKey]==sName].copy()
+    if D.obs[batchKey].dtype == 'category':
+        asType = D.obs[batchKey].cat.categories.dtype
+    else:
+        asType = D.obs[batchKey].dtype
+    adata = D[D.obs[batchKey]==asType.type(sName)].copy()
     adata.uns['spatial'] = {sName:adata.uns['spatial'][sName]}
     return adata
 def sr_merge(strPkl,strH5ad,config):
@@ -108,12 +116,20 @@ def sr_merge(strPkl,strH5ad,config):
     with open(strPkl,"rb") as f:
         D_dict = pickle.load(f)
     D_list = list(D_dict.values())
-    adata = sc.AnnData.concatenate(*D_list,
-      join="outer",
-      batch_categories=list(D_dict.keys()),
-      batch_key=batchKey,
-      uns_merge="unique")
+    #adata = sc.AnnData.concatenate(*D_list,
+    #  join="outer",
+    # batch_categories=list(D_dict.keys()),
+    # batch_key=batchKey,
+    #  uns_merge="unique")
+    adata = ad.concat(D_list,
+        join="outer",
+        keys=list(D_dict.keys()),
+        label=batchKey,
+        merge="unique",
+        uns_merge="unique",
+        index_unique="_")
     sr_filter(adata,config)
+    sr_plotQC(adata,os.path.join(config['output'],"QC","QC.pdf"))
     adata.write(strH5ad)
 def sr_addGP(adata,config):
     groupKey = 'gene_group'
@@ -167,7 +183,30 @@ def sr_filter(D,config):
     print("\t Cell, max gene %d: %d spots with %d genes"%((config.get('highGene_cutoff'),)+D.shape))
     sr_addGP(D,config)
     return
-
+def sr_metrics(meta,config):
+    df = []
+    for id in meta.index:
+        strF = os.path.join(meta[sr_path_column][id],"metrics_summary.csv")
+        if os.path.isfile(strF):
+            df.append(pd.read_csv(strF))
+    if len(df)==0:
+        print("No metrics information is available!")
+        return
+    strMetrics = os.path.join(config['output'],"QC","metrics_summary.csv")
+    os.makedirs(os.path.dirname(strMetrics),exist_ok=True)
+    pd.concat(df,ignore_index=True).to_csv(strMetrics,index=False)
+def sr_plotQC(D,strPDF):
+    os.makedirs(os.path.dirname(strPDF),exist_ok=True)
+    w = max(6.4,D.obs[batchKey].nunique()*2/10)
+    plt.rcParams["figure.figsize"] = (w,4.8)
+    with PdfPages(strPDF) as pdf:
+        for qc in ["total_counts","n_genes_by_counts"]+[_ for _ in D.obs.columns if _.startswith('pct_counts_')]:
+            ax = sc.pl.violin(D,keys=qc,groupby=batchKey,rotation=90,show=False)
+            ax.get_legend().remove()
+            #sns.displot(data=D.obs,x=qc,hue=batchKey,kind="kde")
+            pdf.savefig(bbox_inches="tight")
+            plt.close()
+    plt.rcParams['figure.figsize'] = plt.rcParamsDefault['figure.figsize']
 def sr_read(meta,config,strPkl=None,strH5ad=None):
     sName = config['sample_name']
     print("Reading samples ...")
@@ -176,7 +215,7 @@ def sr_read(meta,config,strPkl=None,strH5ad=None):
         sr_merge(strPkl,strH5ad,config)
         return
     all_slices = {}
-    for i in range(meta.shape[0]):
+    for i in meta.index:
         print("\t",meta[sName][i])
         oneD = sc.read_visium(meta[sr_path_column][i])
         oneD.var_names_make_unique()
@@ -187,6 +226,7 @@ def sr_read(meta,config,strPkl=None,strH5ad=None):
                 continue
             oneD.obs[j] = meta[j][i]
         all_slices[meta[sName][i]]=oneD
+    sr_metrics(meta,config)
     if strPkl is None:
         return all_slices
     with open(strPkl,"wb") as f:
@@ -198,12 +238,33 @@ def sr_read(meta,config,strPkl=None,strH5ad=None):
 
 ## standard logNormal normalization
 def logNormal(strH5ad,strOut,target_sum):
+    logH5ad = os.path.join(os.path.dirname(strOut),"logNormal",os.path.basename(strOut))
+    if os.path.isfile(logH5ad):
+        print("Using previous *logNormal*: %s\n\tIf a new process is wanted, please rename/remove the above file"%logH5ad)
+        shutil.copy(logH5ad,strOut)
+        return
     print("*** logNormal ***")
+    os.makedirs(os.path.dirname(logH5ad),exist_ok=True)
     D = sc.read_h5ad(strH5ad)
     D.raw = D
-    sc.pp.normalize_total(D, target_sum=target_sum)
+    sc.pp.highly_variable_genes(D,flavor='seurat_v3',n_top_genes=3000,inplace=True)
+    sc.pp.normalize_total(D,target_sum=target_sum)
     sc.pp.log1p(D)
-    D.write(strOut)
+    sc.pp.pca(D, n_comps=50, use_highly_variable=True, svd_solver='arpack')
+    sc.pp.neighbors(D)
+    sc.tl.umap(D)
+    D.obsm["X_umap_lognormal"] = D.obsm["X_umap"].copy()
+    del D.obsm["X_umap"]
+    sc.tl.louvain(D,key_added='lognormal_louvain_clusters')
+    # harmony
+    sc.external.pp.harmony_integrate(D,key=batchKey,max_iter_harmony=50)#X_pca_harmony
+    sc.pp.neighbors(D,use_rep="X_pca_harmony")
+    sc.tl.umap(D)
+    D.obsm["X_umap_harmony"] = D.obsm["X_umap"].copy()
+    del D.obsm["X_umap"]
+    sc.tl.louvain(D,key_added='harmony_louvain_clusters')
+    D.write(logH5ad)
+    shutil.copy(logH5ad,strOut)
 
 ## preprocess
 def filterSlice(slices,min_gene=None,max_gene=None,min_count_cell=100,min_cell=None,min_count_gene=15):
