@@ -1,8 +1,12 @@
 ## Please modify "required" section
-prj_name: required # this is the name of the project which will be used as prefix of all file created
+## Please modify "required" section
+prj_name: required # the name of the project which will be used as prefix of all file created
 output: OUTPUT
-sample_meta: SAMPLE
-sample_name: Sample_Name # this is the column header in the following meta file which specify the sample name
+expression_file: required # the path to the expression file for all FOV of a capture
+meta_file: required # the path to the meta file for all FOV of a capture
+cell_polygon_file: required # the path to the cell polygon file for all FOV of a capture
+transcript_loc_file: required # the path to the transcript location file for all FOV of a capture
+fov_image_file: required # the file path to the csv link the meta FOV column to image file path, two columns: first column is the FOV identifier the same as meta file (same column header); the second ("fov_img") is the file path to the FOV image
 cell_id_col: [cell_ID,cellID] #the column header (first one in order) of cell ID in all data across files defined in above sample_meta
 suffix_local_px: _local_px # the suffix of pix location in one capture image, such that x coordinates column header is regular expression ".*x.*_local_px"
 suffix_global_px: _global_px # the suffix of pix location in global image, such that x coordinates column header is regular expression ".*x.*_global_px"

@@ -18,11 +18,13 @@ meta_cols={'exp_col':'exp_path',
 }
 cellID_col = 'cell_ID'
 suf_px={'local':'_local_px','global':'_global_px'}
-sample_col = 'library_id'
+sample_col = 'FOV_id'
+fov_img_col = 'fov_img'
 cosMx_uns = 'cosMx'
 cell_uns = 'cell_polygons'
 transc_uns = 'tx_loc'
 img_uns = 'images'
+fov_prefix = 'FOV'
 
 def init(strDir):
     strMeta=os.path.join(strDir,"sample.csv")
@@ -45,28 +47,26 @@ def getConfig(strConfig):
         ut.msgError("Missing config: %s"%strConfig)    
     with open(strConfig,"r") as f:
         config = yaml.safe_load(f)
-    if config.get("sample_meta") is not None and os.path.isfile(config["sample_meta"]):
-        sInfo = pd.read_csv(config["sample_meta"])
-    else:
-        ut.msgError("Error: Missing sample meta: %s"%config.get("sample_meta"))
-    for one in meta_cols.values():
-        if not one in sInfo.columns:
-            ut.msgError('Error: Missing requied column: %s'%one)
-    if config.get("sample_name") is not None and config["sample_name"] in sInfo.columns:
-        sInfo.index = list(sInfo[config["sample_name"]])
-    else:
-        ut.msgError("Error: Missing sample name column (%s)"%config.get("sample_name"))
-    return config,sInfo
-def readData(strF,sID,possibleIDs,cID2index=False,suf_loc=None):
-    if not os.path.isfile(strF):
-        ut.msgError('\tError: missing file %s'%strF)
+    for checkF in ['expression_file','meta_file','cell_polygon_file','transcript_loc_file','fov_image_file']:
+        if config.get(checkF) is None or not os.path.isfile(config[checkF]):
+            ut.msgError("Error: Missing %s: %s"%(checkF,config.get(checkF)))
+    fov = pd.read_csv(config['fov_image_file'])
+    for oneF in fov[fov_img_col]:
+        if not os.path.isfile(oneF):
+            ut.msgError("Error: Missing FOV image meta: %s"%oneF)
+    return config,fov
+def readData(strF,fov_col,possibleIDs,cID2index=False,suf_loc=None,rm_fov_col=False):
     X = pd.read_csv(strF)
+    if not fov_col in X.columns:
+        ut.msgError('\tError: missing fov coloumn (%s) in %s'%(fov_col,strF))
     cID_col = [one for one in possibleIDs if one in X.columns]
     if len(cID_col)==0:
         ut.msgError('\tError: cannot find cell id column in %s'%strF)
-    print("\tSet %s as %s, and add sample id (%s) in cell ID"%(cID_col[0],cellID_col,sID))
+    print("\tSet %s as %s, and add fov column (%s) in cell ID"%(cID_col[0],cellID_col,fov_col))
     X.rename(columns={cID_col[0]:cellID_col},inplace=True)
-    X[cellID_col] = sID+"_"+X[cellID_col].astype('str')
+    X[cellID_col] = fov_prefix+X[fov_col].astype('str')+"_"+X[cellID_col].astype('str')
+    if rm_fov_col:
+        X.drop(fov_col,axis=1,inplace=True)
     print("\tUpdate px coordinates columns")
     if cID2index:
         print("\tSet %s as index and drop the column"%cellID_col)
@@ -84,70 +84,54 @@ def readData(strF,sID,possibleIDs,cID2index=False,suf_loc=None):
         if(any(x not in X.columns for x in loc_cols)):
             ut.msgError('\tError: missing coordinates in file %s'%strF)
     return X
-def readOneCapture(sID,meta,config):
-    print("Reading ",sID," ...")
+def saveVIP(strConfig):
+    config, fov = getConfig(strConfig)
     suffixLoc = dict(zip(suf_px.keys(),[config['suffix_local_px'],config['suffix_global_px']]))
-    # exp
-    print(" exp")
-    gExp = readData(meta[meta_cols['exp_col']][sID],sID,
-        config['cell_id_col'],cID2index=True)
-    # meta
-    print(" meta")
-    cInfo = readData(meta[meta_cols['meta_col']][sID],sID,
-        config['cell_id_col'],cID2index=True,suf_loc=suffixLoc)
-    for one in meta.columns:
-        if one in [config['sample_name']]+list(meta_cols.values()):
-            continue
-        cInfo[one] = meta[one][sID]
+    fov_col = fov.columns[0]
+    print(" read expression")
+    gExp = readData(config['expression_file'],fov_col,config['cell_id_col'],cID2index=True,rm_fov_col=True)
+    print(" read cell meta information")
+    cInfo = readData(config['meta_file'],fov_col,config['cell_id_col'],cID2index=True,suf_loc=suffixLoc)
+    #cInfo[sample_col] = fov_prefix+cInfo[fov_col]
     cID = cInfo.index.intersection(gExp.index)
-    # create anndata
     print(" create AnnData")
     D = ad.AnnData(X=gExp.loc[cID,:],obs=cInfo.loc[cID,:])
-    D.uns[cosMx_uns] = {sID:{}}
+    D.uns[cosMx_uns] = {}
+    for i in D.obs[fov_col].astype('str').unique():
+        D.uns[cosMx_uns][fov_prefix+i] = {}
     del gExp
-    # add px coordinates
     print(" add px coordinates")
     for k in suf_px:
         if k=='local' and not config['saveLocalX']:
             continue
         D.obsm['X_%s'%k] = cInfo[["%s%s"%(i,suf_px[k]) for i in ['x','y']]].to_numpy('float32')
-    # add cell boundaries
     print(" add cell boundaries")
-    D.uns[cosMx_uns][sID][cell_uns] = readData(meta[meta_cols['cell_col']][sID],sID,
-        config['cell_id_col'],suf_loc=suffixLoc).reset_index(drop=True)
-    # add transcript coordinates
+    cellBD = readData(config['cell_polygon_file'],fov_col,config['cell_id_col'],suf_loc=suffixLoc)
+    cellBD = cellBD[cellBD[fov_col].isin(D.obs[fov_col])]
+    for i in cellBD[fov_col].astype('str').unique():
+        D.uns[cosMx_uns][fov_prefix+i][cell_uns] = cellBD[cellBD[fov_col].astype('str')==i].drop(fov_col,axis=1).reset_index(drop=True)
+    del cellBD
     print(" add transcript coordinates")
-    D.uns[cosMx_uns][sID][transc_uns] = readData(meta[meta_cols['tx_col']][sID],sID,
-        config['cell_id_col'],suf_loc=suffixLoc).reset_index(drop=True)
-    if not config['tx_col'] in D.uns[cosMx_uns][sID][transc_uns].columns:
-        ut.msgError('\tError: missing transcript column %s in %s'%(config['tx_col'],strF))
-    # add histology image
-    if not os.path.isfile(meta[meta_cols['his_col']][sID]):
-        ut.msgError('\tError: missing histology image file %s'%meta[meta_cols['his_col']][sID])
-    D.uns[cosMx_uns][sID][img_uns]=plt.imread(meta[meta_cols['his_col']][sID])
-    return D
-def saveVIP(strConfig):
-    config, meta = getConfig(strConfig)
-    adatas = []
-    for sID in meta.index:
-        adatas.append(readOneCapture(sID,meta,config))
-    if len(adatas)==1:
-        adata = adatas[0]
-        adata.obs[batchKey]=list(meta.index)[0]
-    else:   
-        adata = ad.AnnData.concatenate(*adatas,
-            join="outer",
-            batch_categories=list(meta.index),
-            batch_key=sample_col,
-            index_unique=None,
-            uns_merge='unique')
+    trX = readData(config['transcript_loc_file'],fov_col,config['cell_id_col'],suf_loc=suffixLoc)
+    trX = trX[trX[fov_col].isin(D.obs[fov_col])]
+    if not config['tx_col'] in trX.columns:
+        ut.msgError('\tError: missing transcript column %s in %s'%(config['tx_col'],config['transcript_loc_file']))
+    for i in trX[fov_col].astype('str').unique():
+        D.uns[cosMx_uns][fov_prefix+i][transc_uns] = trX[trX[fov_col].astype('str')==i].drop(fov_col,axis=1).reset_index(drop=True)
+    del trX
+    print(" add FOV image")
+    fov.index = fov[fov_col].astype('str')
+    for i in range(fov.shape[0]):
+        if fov[fov_col][i] in D.obs[fov_col].values:
+            D.uns[cosMx_uns][fov_prefix+str(fov[fov_col][i])][img_uns]=plt.imread(fov[fov_img_col][i])
+
     print("Saving ...")
-    adata.uns[cosMx_uns]['keys'] = {'%s_px'%i:{j:'%s%s'%(j,suf_px[i]) for j in ['x','y']} for i in suf_px}
-    adata.uns[cosMx_uns]['keys']['cell'] = cell_uns
-    adata.uns[cosMx_uns]['keys']['tx_loc'] = transc_uns
-    adata.uns[cosMx_uns]['keys']['img'] = img_uns
-    adata.uns[cosMx_uns]['keys']['tx_col'] = config['tx_col']
-    adata.write(os.path.join(config['output'],config['prj_name']+".h5ad"))
+    D.uns[cosMx_uns]['keys'] = {'%s_px'%i:{j:'%s%s'%(j,suf_px[i]) for j in ['x','y']} for i in suf_px}
+    D.uns[cosMx_uns]['keys']['cell'] = cell_uns
+    D.uns[cosMx_uns]['keys']['tx_loc'] = transc_uns
+    D.uns[cosMx_uns]['keys']['img'] = img_uns
+    D.uns[cosMx_uns]['keys']['tx_col'] = config['tx_col']
+    D.write(os.path.join(config['output'],config['prj_name']+".h5ad"))
     return()
     
 def main():
