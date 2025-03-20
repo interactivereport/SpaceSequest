@@ -229,9 +229,13 @@ SpaTalk_run <- function(config,strH5ad,strOut,strFinal,strC2L=""){
         scRef_X <- getX(config$st_scH5ad)
         scRef_obs <- getobs(config$st_scH5ad)
         
-        #remove cell tyoe with less cells
+        #remove cell type with less cells
         ct_count <- table(scRef_obs[[config$tg_annotation_obs]])
         config$st_rm_ct <- unique(c(config$st_rm_ct,names(ct_count)[ct_count<config$st_rm_ct_min_cell]))
+        if(config$st_mc_core>config$cores){
+            message("\t___ reset st_mc_core is cores (",config$cores,")")
+            config$st_mc_core <- config$cores
+        }
         c2l <- NULL
         if(nchar(strC2L)>3 && file.exists(strC2L)) c2l <- t(getX(strC2L))
         lri <- tf_df <- lr_path_df <- list()

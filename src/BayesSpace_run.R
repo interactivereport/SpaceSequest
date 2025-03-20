@@ -130,7 +130,8 @@ main <- function(){
     strConfig <- args[1]
     strOut <- args[2]
     
-    list[config,meta] <- getConfig(strConfig)
+    #list[config,meta] <- getConfig(strConfig)
+    list2env(getConfig(strConfig), envir = environment())
     sr_checkMeta(config,meta)
     dir.create(dirname(strOut),showWarnings=F)
     

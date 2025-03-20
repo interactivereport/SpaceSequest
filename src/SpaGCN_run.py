@@ -1,5 +1,6 @@
 #The implementation from https://github.com/interactivereport/Mouse_Cuprizone_Spatial/blob/main/SpaGCN_multisample.py
 import os,sys,warnings,logging,yaml,pickle,random,torch,math,functools,io,colorsys,re
+import pandas as pd
 import numpy as np
 import scanpy as sc
 import paste as pst
@@ -120,10 +121,12 @@ def alignSlices(D_dict,strWK):
     plotAlign(D_dict,strWK)     
     return center
 
-def find_resolution(n_clusters,adata_list,adj_list,l_list):
+def find_resolution(n_clusters,adata_list,adj_list,l_list,clusterN_res=None):
     obtained_clusters = -1
     iteration = 0
-    resolutions = [0., 1.]
+    if clusterN_res is None:
+        clusterN_res={'0':1,'1':100}
+    resolutions = get_resolution(clusterN_res,n_clusters)
     oneContinue = 0
     while obtained_clusters != n_clusters and iteration < 50:
         current_res = sum(resolutions)/2
@@ -148,40 +151,60 @@ def find_resolution(n_clusters,adata_list,adj_list,l_list):
             oneContinue +=1
         else:
             oneContinue=0
+            clusterN_res[str(current_res)] = obtained_clusters
         if oneContinue>3:
             return None,None
     return clf,current_res
 
+def get_resolution(clusterN_res,targetN):
+    clusterN = dict(sorted(clusterN_res.items(), key=lambda item: float(item[0])))
+    k,v=list(clusterN.keys()),list(clusterN.values())
+    pos = np.searchsorted(np.array(v), targetN)
+    if v[pos]==targetN:
+        return [float(k[pos]),float(k[pos])]
+    return [float(k[pos-1]),float(k[pos])]
+
 def find_resolution_multispagcn(n_clusters,adata_list,adj_list,l_list,strWK):
     adata_all = None
+    cluster = pd.DataFrame()
     res_all =[]
+    clusterN_res={'0':1,'1':100}
     for clusterN in n_clusters:
         print("*** cluster prediction for spg_clusterN=%d ***"%clusterN)
         strF = os.path.join(strWK,"res_clusterN%d.pkl"%clusterN)
         if os.path.isfile(strF):
             print("Using the previous clustering result %s\n\tIf a new clustering is needed, please remove/rename the above file!"%strF)
-            clf,current_res=ut.readPkl(strF)
+            obj = ut.readPkl(strF)
+            if len(obj)==2: # older version
+                clf,current_res=obj
+            else:
+                clf,current_res,clusterN_res=obj
         else:
             nTry = 0
             while nTry<5:
                 nTry += 1
-                clf, current_res=find_resolution(clusterN,adata_list,adj_list,l_list)
+                clf, current_res=find_resolution(clusterN,adata_list,adj_list,l_list,clusterN_res)
                 if not clf is None:
                     break
                 print("\tStuck on the only one cluster: try again at %d times"%nTry)
             if clf is None:
                 ut.msgError("SpaGCN failed with clustering %d times!"%nTry)
-            ut.writePkl([clf, current_res],strF)
+            ut.writePkl([clf, current_res,clusterN_res],strF)
         if adata_all is None:
             adata_all = clf.adata_all
         y_pred, prob = clf.predict()
         adata_all.obs["%s%d"%(predKey,clusterN)] = ["C%d"%i for i in y_pred]
+        # remove the SpaGCN added sample index at the end of each obs_names/spot name
+        cluster = pd.merge(cluster,pd.DataFrame({"%s%d"%(predKey,clusterN):["C%d"%i for i in y_pred]},
+            index=clf.adata_all.obs_names.str.replace(r'-[^-]*$', '', regex=True)),
+            left_index=True, right_index=True, how='outer',sort=False)
         res_all.append(current_res)
-    return adata_all, res_all
+    return adata_all, cluster, res_all
 
-def formatOutput(adata_all,strOut):
+def formatOutput(adata_all,clusters,strOut):
     plotSpaGCN(adata_all,os.path.dirname(strOut))
-    ut.writePkl(adata_all.obs.copy(),strOut)
+    # remove the SpaGCN added sample index at the end of each obs_names/spot name
+    ut.writePkl(clusters,strOut)
     return
 
 def process(D_dict,p):
@@ -195,6 +218,7 @@ def process(D_dict,p):
         sc.pp.normalize_per_cell(adata, min_counts=0)
         sc.pp.log1p(adata)
         sc.pp.scale(adata, max_value=10)
+        adata.obs_names = adata.obs_names + "_" + str(i)
         adata.obs['batch'] = i
         adata.obs['pixel_x_align'] = adata.obsm['spatial'][:,0].tolist()
         adata.obs['pixel_y_align'] = adata.obsm['spatial'][:,1].tolist()
@@ -218,12 +242,12 @@ def SpaGCN(strConfig,strRaw,strOut):
     preprocess(D_dict,config)
     center = alignSlices(D_dict,os.path.dirname(strOut))
     adj_dict,l_dict=process(D_dict,config['spg_p'])
-    adata_all,res_all = find_resolution_multispagcn(config['clusterN'],
+    adata_all,SpaGCN_clusters,res_all = find_resolution_multispagcn(config['clusterN'],
                                           list(D_dict.values()),
                                           list(adj_dict.values()),
                                           list(l_dict.values()),
                                           os.path.dirname(strOut))
-    return formatOutput(adata_all,strOut)
+    return formatOutput(adata_all,SpaGCN_clusters,strOut)
 
 def run(strConfig,strRaw,config):
     strOut=os.path.join(config['output'],mKey,config['prj_name']+".pkl")
@@ -245,7 +269,7 @@ def merge(D,allRes):
         print("\tSkip: the above file is missing!")
         return
     obs = ut.readPkl(strPkl)
-    obs.index = [re.sub(obs["dataset_batch"][i]+"$",obs["batch"][i],obs.index[i]) for i in range(obs.shape[0])]
+    #obs.index = [re.sub(obs["dataset_batch"][i]+"$",str(obs["batch"][i]),obs.index[i]) for i in range(obs.shape[0])]
     #D = sc.read_h5ad(strH5ad)#,backed="r+"
     selCol=~obs.columns.isin(D.obs.columns)
     if (~selCol).sum()>0:
@@ -254,6 +278,7 @@ def merge(D,allRes):
         D.obs = D.obs.merge(obs.loc[:,selCol],"left",left_index=True,right_index=True)
         modCol = D.obs.columns.isin(obs.columns[selCol])
         D.obs.loc[:,modCol]=D.obs.loc[:,modCol].apply(lambda x: ut.fillNA(x,'Missing'))
+        ut.plotVisium(D,strOut=os.path.dirname(strPkl),selObs=D.obs.columns[modCol].tolist(),ncol=1)
         #D.write(strH5ad)
 
 def main():

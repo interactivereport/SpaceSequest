@@ -1,4 +1,4 @@
-import sys,os,warnings,logging,shutil,random,re,functools
+import sys,os,warnings,logging,shutil,random,re,functools,glob
 import cmdUtility as cu
 import utility as ut
 import SpaGCN_run as spa
@@ -42,6 +42,18 @@ def main():
     ut.MsgInit()
     config,sInfo = ut.getConfig(strConfig)
     ut.sr_checkMeta(sInfo,config)
+    if config['reRunQC']:
+        print("WARNINGS: All previous results will be moved into archive folder")
+        strArchive = os.path.join(config['output'],"archive")
+        try:
+            shutil.rmtree(strArchive)
+        except:
+            pass
+        os.makedirs(strArchive,exist_ok=True)
+        for src in glob.glob(os.path.join(config['output'],"*")):
+            if os.path.basename(src).startswith(('config','QC',os.path.basename(config['sample_meta']))):
+                continue
+            shutil.move(src,strArchive)
     
     strH5ad = os.path.join(config['output'],config['prj_name']+".h5ad")
     if os.path.isfile(strH5ad):
@@ -56,10 +68,12 @@ def main():
         cu.submit_cmd({'rawRead':"python -u %s/src/visium.py saveRaw %s %s %s"%(strPipePath,strConfig,strSep,strH5ad_raw)},config)
         if not os.path.isfile(strSep):
             ut.msgError("Error in reading files!")
+    if config['reRunQC']:
+        return
     
     methods = []
     # logNormal
-    methods.append(functools.partial(ut.logNormal,strH5ad_raw,strH5ad,config['normScale']))
+    methods.append(functools.partial(ut.logNormal,strH5ad_raw,config))
     
     # apply SpaGCN
     if 'SpaGCN' in config['methods']:
@@ -80,19 +94,23 @@ def main():
     #apply SpaTalk
     if 'SpaTalk' in config['methods']:
         methods.append(functools.partial(st.run,strConfig,strH5ad_raw))
-    
+
     # Run all methods
     print("\n\t===== Running methods =====")
     strFinals=cu.submit_funs(methods,len(methods) if config['parallel'] else 1)
-
+    
     # merge all
     print("\n\t===== Merging methods =====")
-    D = ad.read_h5ad(strH5ad)
+    if os.path.isfile(strFinals['logNormal']):
+        D = ad.read_h5ad(strFinals['logNormal'])
+    else:
+        ut.msgError("Error: No return from logNormal which is required!")
     spa.merge(D,strFinals)
     bay.merge(D,strFinals)
     c2l.merge(D,strFinals)
     tan.merge(D,strFinals)
     st.merge(D,strFinals)
+    D.uns['visium'] = {'keys':{'slide_column':'library_id','img':['images','hires'],'scale':['scalefactors','tissue_hires_scalef'],'coordinates':'X_spatial'}}
     D.write(strH5ad)
     print("\n\n=== visium process is completed! ===")
 if __name__ == "__main__":

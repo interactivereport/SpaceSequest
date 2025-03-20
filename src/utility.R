@@ -2,9 +2,9 @@ loadUtilityPkg <- function(){
     require(BayesSpace)
     require(gsubfn)
 }
-suppressMessages(suppressWarnings(loadUtilityPkg()))
-msgError <- function(msg){
-    message("ERROR: ",msg)
+
+msgError <- function(...){
+    message("ERROR: ",...)
     q()
 }
 
@@ -23,8 +23,68 @@ getConfig <- function(strF){
     if(length(clusterN)==0)
         msgError("Numeric 'clusterN' is required!")
     config$clusterN <- clusterN
-    meta <- data.frame(data.table::fread(config$sample_meta))
-    return(list(config,meta))
+    meta <- data.frame(data.table::fread(config$sample_meta,header=T))
+    return(list(config=config,meta=meta))
+}
+
+writeHDF <- function(D,strF){
+    suppressPackageStartupMessages(require(rhdf5))
+    if(attr(class(D),"package")=='Matrix') D <- as.matrix(D)
+    D <- as.data.frame(D)
+    colnames(D) <- gsub(" ","_",colnames(D))
+    a <- suppressWarnings(file.remove(strF))
+    h5createFile(strF)
+    h5write(rownames(D),strF,"axis_row")
+    h5write(colnames(D),strF,"axis_col")
+    for(one in colnames(D)){
+        if(class(D[[one]][1])%in%c("numeric","character")){
+            h5write(D[[one]],strF,one)
+        }else if(class(D[[one]][1])%in%c("factor")){
+            h5createGroup(strF,one)
+            h5write(levels(D[[one]]),strF,paste0(one,"/value"))
+            h5write(as.integer(D[[one]]),strF,paste0(one,"/key"))
+        }else if(class(D[[one]][1])%in%c("logical")){
+            h5write(as.integer(D[[one]]),strF,one)
+        }else{
+            stop("writeHDF (R) unknown type: ",class(D[[one]][1]))
+        }
+    }
+    H5close()
+}
+readHDF <- function(strF){
+    suppressPackageStartupMessages(require(rhdf5))
+    hInfo <- h5ls(strF)
+    rName <- h5read(strF,"axis_row")
+    cName <- h5read(strF,"axis_col")
+    gName <- hInfo[hInfo$otype=='H5I_GROUP','name']
+    df <- list()
+    for(one in gName){
+        val <- h5read(strF,paste0(one,"/value"))
+        df[[one]] <- val[h5read(strF,paste0(one,"/key"))]
+    }
+    for(one in hInfo$name){
+        if(one %in% c("axis_row",'axis_col','key','value',gName)) next
+        df[[one]] <- h5read(strF,one)
+        if(sum(!df[[one]] %in%c(0,1))==0)
+            df[[one]]  <- df[[one]] ==1
+    }
+    H5close()
+    return(data.frame(df,row.names=rName)[,cName])
+}
+writeFeather <- function(D,strF){
+    suppressPackageStartupMessages(require(arrow))
+    if(attr(class(D),"package")=='Matrix') D <- as.matrix(D)
+    D <- data.frame(rowNames=rownames(D),D)
+    colnames(D) <- gsub(" ","_",colnames(D))
+    a <- arrow::write_feather(D,strF)
+}
+readFeather <- function(strF){
+    suppressPackageStartupMessages(require(arrow))
+    D <- arrow::read_feather(strF)
+    if("rowNames" %in% colnames(D)){
+        D <- data.frame(row.names=D[['rowNames']],D[-which(colnames(D)=='rowNames')])
+    }
+    return(D)
 }
 
 # reading visium as singleCellExperiment
@@ -41,6 +101,7 @@ sr_checkMeta <- function(config,meta){
     
 }
 sr_read <- function(meta,sName,strRDS=NULL){
+    suppressMessages(suppressWarnings(loadUtilityPkg()))
     message("Reading samples ...")
     if(!is.null(strRDS) && file.exists(strRDS)){
         message("\tThe raw file exists: ",strRDS,"\n\tIf a new read is required, please rename/remove the above file!")
@@ -48,13 +109,14 @@ sr_read <- function(meta,sName,strRDS=NULL){
     }
     all_slices <- list()
     for(i in 1:nrow(meta)){
-        message("\t",meta[i,sName])
-        all_slices[[meta[i,sName]]] <- readVisium(meta[i,sr_path_column])
-        colData(all_slices[[meta[i,sName]]]) <- cbind(colData(all_slices[[meta[i,sName]]]),
-                                                      setNames(data.frame(meta[i,sName]),batchKey))
+        sID <- as.character(meta[i,sName])
+        message("\t",sID)
+        all_slices[[sID]] <- readVisium(meta[i,sr_path_column])
+        colData(all_slices[[sID]]) <- cbind(colData(all_slices[[sID]]),
+                                                      setNames(data.frame(sID),batchKey))
     }
     sce <- do.call(cbind,all_slices)
-    colnames(sce) <- paste(colnames(sce),colData(sce)[[batchKey]],sep="-")
+    colnames(sce) <- paste(colnames(sce),colData(sce)[[batchKey]],sep="_")
     colData(sce)[[batchKey]] <- as.factor(colData(sce)[[batchKey]])
     if(!is.null(strRDS))
         saveRDS(sce,file=strRDS)

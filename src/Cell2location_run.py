@@ -85,7 +85,10 @@ def filter_genes(adata, cell_count_cutoff=15, cell_percentage_cutoff2=0.05, nonz
 def buildModel(config,strOne,selSample=None,use_gpu=False):
     from cell2location.models import RegressionModel
     print("Building model: use_gpu (%s)"%use_gpu)
-    strModel = os.path.join(os.path.dirname(strOne),"model",re.sub('pkl$','h5ad',os.path.basename(strOne)))
+    if selSample is None:# if all h5ad cells were used to build a model, all slices will use the same model
+        strModel = os.path.join(os.path.dirname(strOne),"model","full_sc_model.h5ad")
+    else:
+        strModel = os.path.join(os.path.dirname(strOne),"model",re.sub('pkl$','h5ad',os.path.basename(strOne)))
     os.makedirs(os.path.dirname(strModel),exist_ok=True)
     if os.path.isfile(strModel):
         print("\tLoading exist model file: ",strModel)
@@ -97,13 +100,25 @@ def buildModel(config,strOne,selSample=None,use_gpu=False):
         if D.shape[0] <10:
             print("Too few reference cells (%d) selected!"%D.shape[0])
             return None
+        if not D.raw is None and not D.raw.var is None:
+            gInfo = D.raw.var.copy()
+        else:
+            gInfo = D.var.copy()
+        if 'feature_name' in gInfo.columns:
+            print("\tUsing feature_name as gene names")
+            gInfo.index = gInfo.feature_name.tolist()
+        else:
+            print("\tUsing var_names as gene names")
         print("\tUsing %d cells to build the model"%D.shape[0])
         if not D.raw is None and not D.raw.X is None:
             print("\traw is available and used to build the cell2location model")
-            adata_ref = ad.AnnData(D.raw.X.copy(),obs=D.obs.copy(),var=D.var.copy(),dtype='int32')
+            adata_ref = ad.AnnData(D.raw.X.value.copy(),obs=D.obs.copy(),var=gInfo,dtype='int32')
         else:
             print("\traw is NOT available. X is assumed to contain UMI and used to build the cell2location model")
-            adata_ref = ad.AnnData(D.X.copy(),obs=D.obs.copy(),var=D.var.copy(),dtype='int32')
+            if 'value' in dir(D.X):
+                adata_ref = ad.AnnData(D.X.value.copy(),obs=D.obs.copy(),var=gInfo,dtype='int32')
+            else:
+                adata_ref = ad.AnnData(D.X.copy(),obs=D.obs.copy(),var=gInfo,dtype='int32')
         del D
         sc.pp.filter_cells(adata_ref, min_genes=1)
         sc.pp.filter_genes(adata_ref, min_cells=1)
@@ -115,18 +130,18 @@ def buildModel(config,strOne,selSample=None,use_gpu=False):
             plt.close()
             adata_ref = adata_ref[:, selected].copy()
             adata_ref.obs[config['annotation_obs']] =adata_ref.obs[config['annotation_obs']].astype(str)
-            RegressionModel.setup_anndata(adata=adata_ref,batch_key='Number',labels_key=config['annotation_obs'])
+            RegressionModel.setup_anndata(adata=adata_ref,batch_key=config['batch'],labels_key=config['annotation_obs'])
             mod = RegressionModel(adata_ref)
             mod.view_anndata_setup()
             print("\ttraining")
-            mod.train(max_epochs=300,batch_size=2500,train_size=1,lr=0.002,use_gpu=use_gpu)  # , use_gpu=True     
+            mod.train(max_epochs=300,batch_size=15000,train_size=1,lr=0.002,use_gpu=use_gpu)  # , use_gpu=True     ,batch_size=2500
             # plot ELBO loss history during training, removing first 20 epochs from the plot
             fig = plt.figure()
             mod.plot_history(20)
             pdf.savefig(bbox_inches="tight")
             plt.close()
             fig = plt.figure()
-            adata_ref = mod.export_posterior(adata_ref, sample_kwargs={'num_samples': 1000, 'batch_size': 2500, 'use_gpu': use_gpu})
+            adata_ref = mod.export_posterior(adata_ref, sample_kwargs={'num_samples': 1000, 'batch_size': 15000, 'use_gpu': use_gpu}) #'batch_size': 2500
             mod.plot_QC()
             pdf.savefig(bbox_inches="tight")
             plt.close()
@@ -140,16 +155,19 @@ def buildModel(config,strOne,selSample=None,use_gpu=False):
     else:
         inf_aver = adata_ref.var[[f'means_per_cluster_mu_fg_{i}'
                                   for i in adata_ref.uns['mod']['factor_names']]].copy()
-    inf_aver.columns = (mKey+"_")+adata_ref.uns['mod']['factor_names']
+    inf_aver.columns = [mKey+"_"+_ for _ in adata_ref.uns['mod']['factor_names']]
     return inf_aver
 
 def applyModel(adata,inf_aver,config,useGPU,strOne):
     import cell2location
+    print("Applying model: use_gpu (%s)"%useGPU)
     if os.path.isfile(strOne):
         print("\tUsing previous results:",strOne)
         print("\t\tPlease remove/rename the above file if a new run is wanted!")
     else:
-        intersect = np.intersect1d(adata.var_names, inf_aver.index)
+        intersect = adata.var_names.intersection(inf_aver.index) #np.intersect1d(adata.var_names, inf_aver.index)
+        if len(intersect) < 10:
+            ut.msgError("in cell2location, less than 10 genes overlap with reference!")
         adata = adata[:, intersect].copy()
         inf_aver = inf_aver.loc[intersect, :].copy()
         
@@ -172,7 +190,8 @@ def applyModel(adata,inf_aver,config,useGPU,strOne):
                   # use all data points in training because
                   # we need to estimate cell abundance at all locations
                   train_size=1,
-                  use_gpu=useGPU)
+                  use_gpu=useGPU,
+                  progress_bar_refresh_rate=0.2)
         adata = mod.export_posterior(adata, sample_kwargs={'num_samples': 1000, 'batch_size': mod.adata.n_obs, 'use_gpu': useGPU})
         adata.obs[adata.uns['mod']['factor_names']] = adata.obsm['q05_cell_abundance_w_sf']
         # Compute expected expression per cell type
@@ -212,7 +231,7 @@ def oneRun(strOut,strConfig,strH5ad,sName):
         return()
     config,sInfo = ut.getConfig(strConfig)
     sInfo.index = sInfo[config['sample_name']]
-    useGPU = False
+    useGPU = True
     if config['parallel']=="slurm":
         sysConfig = ut.getSys()
         useGPU = False if sysConfig.get("use_gpu") is None else sysConfig.get("use_gpu")
@@ -243,6 +262,9 @@ def check(config):
     if config.get("scH5ad") is None or config.get("annotation_obs") is None:
         print("___ Skip cell2location: no scH5ad (or annotation_obs) is provided! ___")
         return False
+    if config.get("batch") is None:
+        print("___ Skip cell2location: 'batch' is required for reference data! ___")
+        return False
     if not os.path.isfile(config["scH5ad"]):
         print("___ Skip cell2location: scH5ad (%s) does not exist! ___"%config["scH5ad"])
         return False
@@ -257,13 +279,13 @@ def check(config):
 
 def run(strConfig,strH5ad):
     config,sInfo = ut.getConfig(strConfig)
-    if not check(config):
-        return
     strOut = os.path.join(config['output'],mKey)
     strFinal = os.path.join(strOut,config['prj_name']+".pkl")
     if os.path.isfile(strFinal):
         print("\n\nUsing previous *Cell2location* results: %s\n\tIf a new process is wanted, please rename/remove the above file"%strFinal)
         return {mKey:strFinal}
+    if not check(config):
+        return
     os.makedirs(os.path.dirname(strOut),exist_ok=True)
     obsAnno = config.get("matchColumn")
     if config['parallel']=="slurm":
@@ -272,9 +294,10 @@ def run(strConfig,strH5ad):
     strCMD={}
     for one in sInfo[config['sample_name']]:
         strCMD['C2L_%s'%one] = "python -u %s/Cell2location_run.py oneRun %s %s %s %s"%(strPipePath,strOut,strConfig,strH5ad,one)
+    #print("\n".join(strCMD.values()))
     cu.submit_cmd(strCMD,config,condaEnv="condaEnv_C2L")
     
-    strCMD['C2L_Extract'] = "python -u %s/Cell2location_run.py Extract %s %s"%(strPipePath,strFinal,','.join(list(sInfo[config['sample_name']])))
+    strCMD['C2L_Extract'] = "python -u %s/Cell2location_run.py Extract %s %s"%(strPipePath,strFinal,','.join([str(_) for _ in sInfo[config['sample_name']]]))
     config['gpu'] = False
     cu.submit_cmd(strCMD,config,condaEnv="condaEnv_C2L")
     
@@ -297,6 +320,7 @@ def merge(D,allRes):
         D.obs = D.obs.merge(obs.loc[:,selCol],"left",left_index=True,right_index=True)
         modCol = D.obs.columns.isin(obs.columns[selCol])
         D.obs.loc[:,modCol]=D.obs.loc[:,modCol].apply(lambda x: ut.fillNA(x,0))
+        ut.plotVisium(D,strOut=os.path.dirname(strF),selObs=D.obs.columns[modCol].tolist())
         #D.write(strH5ad)
 
 def main():

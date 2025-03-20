@@ -23,6 +23,8 @@ gene_group:
         rm: False
 # normalize scale:
 normScale: 10000
+# if the reRunQC is True the process methods will NOT be executed and all previous results will be removed, so that you can adjust the above filtering parameters
+reRunQC: True
 # clustering
 clusterN: [14,15] # required
 
@@ -33,6 +35,7 @@ spg_p: 0.8
 rmGeneStart: ["MT-","Mt-","mt-"]
 # cell2location setting
 scH5ad: #the path to the processed/annotated single cell/nuclei RNAseq (could be paired)
+batch: # the batch/sample column in above h5ad
 annotation_obs: # the cell type annotation in above h5ad.obs to build the model
 matchColumn: #if paired, the column header (e.g. library_id) in sample meta table which indicated in the above obs (matching values with obs.library_id), otherwise all cells will be used for each spatial sample
 ref_cell_count_cutoff: 5

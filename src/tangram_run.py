@@ -29,19 +29,34 @@ def savePDF(plot,pdf):
     plt.close()
 def getRef(strRef,cluster_label,pair_sample=None):
     print("\tget sc/sn data")
-    ad_ref = ad.read_h5ad(strRef)
+    D = ad.read_h5ad(strRef,backed="r")
     if pair_sample is not None:
         print('\t\tsubset paired sample:',pair_sample)
         k = list(pair_sample.keys())[0]
-        ad_ref = ad_ref[ad_ref.obs[k]==pair_sample[k]]
-    if ad_ref.shape[0]<10:
-        print("\tToo few reference cells (%d) selected!"%ad_ref.shape[0])
-        return
-    if ad_ref.raw is not None and ad_ref.raw.X is not None:
-        print("\tUsing raw.X as reference")
-        ad_ref = ad.AnnData(ad_ref.raw.X,obs=ad_ref.obs,var=ad_ref.var,dtype='int32')
+        D = D[D.obs[k]==pair_sample[k]]
+    if D.shape[0] <10:
+        print("Too few reference cells (%d) selected!"%D.shape[0])
+        return None
+    if not D.raw is None and not D.raw.var is None:
+        gInfo = D.raw.var.copy()
     else:
-        print("*** Please make sure .X is the raw UMI in",strRef,"***")
+        gInfo = D.var.copy()
+    if 'feature_name' in gInfo.columns:
+        print("\tUsing feature_name as gene names")
+        gInfo.index = gInfo.feature_name.tolist()
+    else:
+        print("\tUsing var_names as gene names")
+    print("\tUsing %d cells to build the model"%D.shape[0])
+    if not D.raw is None and not D.raw.X is None:
+        print("\traw is available and used to build the cell2location model")
+        ad_ref = ad.AnnData(D.raw.X.value.copy(),obs=D.obs.copy(),var=gInfo,dtype='int32')
+    else:
+        print("\traw is NOT available. X is assumed to contain UMI and used to build the cell2location model")
+        if 'value' in dir(D.X):
+            ad_ref = ad.AnnData(D.X.value.copy(),obs=D.obs.copy(),var=gInfo,dtype='int32')
+        else:
+            ad_ref = ad.AnnData(D.X.copy(),obs=D.obs.copy(),var=gInfo,dtype='int32')
+    del D
     cluster_freq = ad_ref.obs[cluster_label].value_counts()
     cluster_keep = cluster_freq.index[cluster_freq>=2]
     if len(cluster_freq)!=len(cluster_keep):
@@ -354,12 +369,13 @@ def merge(D,allRes):
         D.obsm[tg_pred] = pd.DataFrame(index=D.obs_names).merge(tg_ct_pred,'left',left_index=True, right_index=True)#.to_numpy()
     if not tg_count in D.obsm.keys():
         print("\tmerging tg_count into obsm")
-        D.obsm[tg_count] = pd.DataFrame(index=D.obs_names).merge(tg_ct_count,'left',left_index=True, right_index=True)#.to_numpy()
+        D.obsm[tg_count] = pd.DataFrame(index=D.obs_names).merge(tg_ct_count.select_dtypes(include=['number']),'left',left_index=True, right_index=True)#.to_numpy()
     tg_ct_pred.columns = ['tg_'+one for one in tg_ct_pred.columns]
     if tg_ct_pred.columns.isin(D.obs.columns).sum()==0:
         print("\tmerging labels into obs")
         D.obs = D.obs.merge(tg_ct_pred,'left',left_index=True, right_index=True)
         D.obs[tg_ct_pred.columns] = D.obs[tg_ct_pred.columns].fillna(0)
+        ut.plotVisium(D,strOut=os.path.dirname(strF),selObs=tg_ct_pred.columns.tolist())
     #print("\tsaving")
     #D.write(strH5ad)
 

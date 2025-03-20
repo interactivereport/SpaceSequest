@@ -75,7 +75,7 @@ def run(strConfig,strH5ad):
                 A.X = csc_matrix(A.X)
                 A.write(strC2L)
             cmd = {}
-            cmd['SpaTalk'] = "Rscript %s/SpaTalk_run.R %s %s %s %s '%s'"%(strPipePath,strConfig,strH5ad,strOut,strRDS,strC2L)
+            cmd['SpaTalk'] = "Rscript %s/SpaTalk_run.R %s %s %s %s %s"%(strPipePath,strConfig,strH5ad,strOut,strRDS,strC2L)
             cu.submit_cmd(cmd,config)
         if not os.path.isfile(strRDS):
             print("___ Error SpaTalk: missing result file %s! "%strRDS)
