@@ -269,7 +269,6 @@ def merge(D,allRes):
         print("\tSkip: the above file is missing!")
         return
     obs = ut.readPkl(strPkl)
-    #obs.index = [re.sub(obs["dataset_batch"][i]+"$",str(obs["batch"][i]),obs.index[i]) for i in range(obs.shape[0])]
     #D = sc.read_h5ad(strH5ad)#,backed="r+"
     selCol=~obs.columns.isin(D.obs.columns)
     if (~selCol).sum()>0:

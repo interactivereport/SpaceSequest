@@ -64,4 +64,4 @@ variables:
   OPENBLAS_NUM_THREADS: 1
   PYTHONNOUSERSITE: 1
   MKL_NUM_THREADS: 1
-#D <- BayesSpace::readVisium("/share/data/customer_projects/Abbvie/2024-10-08/Spatial_Visium_OM24018/analysis/spaceranger/82/outs")
+  

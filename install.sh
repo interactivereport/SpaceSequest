@@ -47,9 +47,6 @@ git checkout f90ab255846821e15f8b3444b908eed0675f45d0
 #sed -i 's|sklearn|scikit-learn|g' pyproject.toml
 python3 setup.py build
 python3 setup.py install
-conda env config vars set PYTHONNOUSERSITE=1
-conda env config vars set OPENBLAS_NUM_THREADS=1
-conda env config vars set MKL_NUM_THREADS=1
 conda env config vars set PKG_CONFIG_PATH=$appEnvPath/lib/pkgconfig
 conda env config vars set LD_LIBRARY_PATH=$appEnvPath/lib:$LD_LIBRARY_PATH
 conda deactivate
