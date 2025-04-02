@@ -113,7 +113,7 @@ def saveVIP(strConfig):
     del cellBD
     print(" add transcript coordinates")
     trX = readData(config['transcript_loc_file'],fov_col,config['cell_id_col'],suf_loc=suffixLoc)
-    trX = trX[trX[fov_col].isin(D.obs[fov_col])]
+    trX = trX[trX[fov_col].isin(D.obs[fov_col])].apply(lambda x: x.fillna('undetermined') if x.dtype=='object' else x)
     if not config['tx_col'] in trX.columns:
         ut.msgError('\tError: missing transcript column %s in %s'%(config['tx_col'],config['transcript_loc_file']))
     for i in trX[fov_col].astype('str').unique():
