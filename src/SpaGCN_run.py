@@ -128,6 +128,7 @@ def find_resolution(n_clusters,adata_list,adj_list,l_list,clusterN_res=None):
         clusterN_res={'0':1,'1':100}
     resolutions = get_resolution(clusterN_res,n_clusters)
     oneContinue = 0
+    tryN=0
     while obtained_clusters != n_clusters and iteration < 50:
         current_res = sum(resolutions)/2
         clf=spg.multiSpaGCN()
@@ -136,7 +137,15 @@ def find_resolution(n_clusters,adata_list,adj_list,l_list,clusterN_res=None):
         random.seed(r_seed)
         torch.manual_seed(t_seed)
         np.random.seed(n_seed)
-        clf.train(adata_list,adj_list,l_list,init_spa=True,init="louvain",res=current_res, tol=5e-3, lr=0.05, max_epochs=200)
+        try:
+            clf.train(adata_list,adj_list,l_list,init_spa=True,init="louvain",res=current_res, tol=5e-3, lr=0.05, max_epochs=200)
+        except Exception as e:
+            if tryN>2:
+                raise
+            print("\tError in clf.train, try again!")
+            tryN +=1
+            continue
+        tryN=0
         y_pred, prob = clf.predict()
         labels = y_pred.astype('str')
         obtained_clusters = len(np.unique(labels))
