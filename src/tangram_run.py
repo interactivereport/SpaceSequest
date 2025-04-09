@@ -272,6 +272,8 @@ def oneRun(strConfig,strH5ad,sID):
     if config['parallel']=="slurm":
         sysConfig = ut.getSys()
         config['gpu'] = False if sysConfig.get("use_gpu") is None else sysConfig.get("use_gpu")
+    else:
+        config['gpu'] = False
     processOne(config['tg_scH5ad'],config['tg_annotation_obs'],strH5ad,sID,strOut,
         pair_sample=pair_sample,rmG=config['tg_rmGeneStart'],strImg=strImg,seg_method=config['tg_segment_method'],
         parallel='cuda:0' if config['gpu'] else 'cpu')
