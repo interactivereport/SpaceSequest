@@ -301,9 +301,10 @@ def sr_read(meta,config,strPkl=None,strH5ad=None):
 
 ## plot annotation
 def adjustAlpha(x,adjA):
-    if max(x)<=0:
+    if x.max()<=0:
         return adjA
-    x = x/max(x) #(alpha-min(alpha))/(max(alpha)-min(alpha))
+    x = x/x.max() #(alpha-min(alpha))/(max(alpha)-min(alpha))
+    x[x==0] = x[x!=0].min()/2
     a = 1-adjA
     b = 20**a
     alpha =(1+a**b)/(1+(a/x)**b)
