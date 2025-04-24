@@ -6,6 +6,7 @@ import BayesSpace_run as bay
 import Cell2location_run as c2l
 import tangram_run as tan
 import SpaTalk_run as st
+import RCTD_run as rctd
 import anndata as ad
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -94,7 +95,11 @@ def main():
     #apply SpaTalk
     if 'SpaTalk' in config['methods']:
         methods.append(functools.partial(st.run,strConfig,strH5ad_raw))
-
+        
+    #apply RCTD
+    if 'RCTD' in config['methods']:
+        methods.append(functools.partial(rctd.run,strConfig,strH5ad_raw))
+    
     # Run all methods
     print("\n\t===== Running methods =====")
     strFinals=cu.submit_funs(methods,len(methods) if config['parallel'] else 1)
@@ -110,6 +115,7 @@ def main():
     c2l.merge(D,strFinals)
     tan.merge(D,strFinals)
     st.merge(D,strFinals)
+    rctd.merge(D,strFinals)
     D.uns['visium'] = {'keys':{'slide_column':'library_id','img':['images','hires'],'scale':['scalefactors','tissue_hires_scalef'],'coordinates':'X_spatial'}}
     D.write(strH5ad)
     print("\n\n=== visium process is completed! ===")

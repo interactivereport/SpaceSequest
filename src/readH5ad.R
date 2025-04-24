@@ -7,11 +7,11 @@ suppressMessages(suppressWarnings(PKGloading()))
 getobs <- function(strH5ad){
   message("\tobtainning obs ...")
   obs <- h5read(strH5ad,"obs")
-  sel <- names(obs)[sapply(obs,function(x)return(is.null(names(x))))&!grepl("^_|index$|^barcode$",names(obs))]
+  sel <- names(obs)[sapply(obs,function(x)return(is.null(names(x))))&!grepl("^_|index$|^barcode$|^cell_id&",names(obs))]
   meta <- do.call(cbind.data.frame, obs[sel])
   #meta <- do.call(cbind.data.frame, obs[grep("^_",names(obs),invert=T)])
   #dimnames(meta) <- list(obs[["_index"]],grep("^_",names(obs),invert=T,value=T))
-  rownames(meta) <- obs[[grep("index$|^barcode$",names(obs))]]
+  rownames(meta) <- getID(strH5ad,h5ls(strH5ad),'/obs') #obs[[grep("index$|^barcode$",names(obs))]]
   for(one in names(obs[["__categories"]])){
     if(min(meta[,one])<0){
       ann <- meta[,one]+1
@@ -33,18 +33,22 @@ getobs <- function(strH5ad){
   return(meta)
 }
 getID <- function(strH5ad,keys,grp){
-  if("_index" %in% keys$name[grepl(grp,keys$group)]){
+  if("feature_name" %in% keys$name[grepl(grp,keys$group)]){
+    gName <- h5read(strH5ad,paste0(grp,"/feature_name"))
+    if(sum(c("categories","codes")%in%names(gName))==2)
+      gName <- gName$categories[1+gName$codes]
+    return(gName)
+  }else if("cell_id" %in% keys$name[grepl(grp,keys$group)]){
+     cID <- h5read(strH5ad,paste0(grp,"/cell_id"))
+     if(sum(c("categories","codes")%in%names(cID))==2)
+         cID <- cID$categories[1+cID$codes]
+     return(cID)
+  }else if("_index" %in% keys$name[grepl(grp,keys$group)]){
     return(h5read(strH5ad,paste0(grp,"/_index")))
   }else if("index" %in% keys$name[grepl(grp,keys$group)]){
     return(h5read(strH5ad,paste0(grp,"/index")))
   }else if("barcode" %in% keys$name[grepl(grp,keys$group)]){
     return(h5read(strH5ad,paste0(grp,"/barcode")))
-  }else if("feature_name" %in% keys$name[grepl(grp,keys$group)]){
-    gName <- h5read(strH5ad,paste0(grp,"/feature_name"))
-    if(sum(c("categories","codes")%in%names(gName))==2){
-      gName <- gName$categories[1+gName$codes]
-    }
-    return(gName)
   }else{
     stop(paste("unknown adata format: Neither index or _index exists in group",grp))
   }

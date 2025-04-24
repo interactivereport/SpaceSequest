@@ -23,7 +23,7 @@ strPipePath=os.path.dirname(os.path.realpath(__file__))
 def msgError(msg=""):
     if not msg.startswith('Questions'):
         print("Error:",end=" ")
-    print(msg)
+    print("Error: ",msg)
     exit()
 def MsgInit():
     print("\n\n*****",datetime.now().strftime("%Y-%m-%d %H:%M:%S"),"*****")
@@ -276,6 +276,10 @@ def sr_read(meta,config,strPkl=None,strH5ad=None):
         print("\t",meta[sName][i])
         oneD = sc.read_visium(meta[sr_path_column][i],library_id=meta[sName][i])
         oneD.var_names_make_unique()
+        if config.get('UMI_dtype') is None:
+            config['UMI_dtype'] = 'int32'
+        print("\t\tMake UMI as X %s!"%config['UMI_dtype'])
+        oneD.X = oneD.X.astype(config['UMI_dtype'])
         if 'spatial' in oneD.obsm.keys():
             oneD.obsm['X_spatial'] = oneD.obsm['spatial']
         #    del oneD.obsm['spatial'] # cannot delete, since the SpaGCN needs it 
@@ -340,10 +344,10 @@ def plotVisiumOne(adata,sid,col,ax,fig,alpha=1,nMap='viridis',cMap='Set1',dotsiz
         a=ax.legend(handles=legend_handles,labels=colors.keys(),ncols=math.ceil(len(grps)/11),
             bbox_to_anchor=(1.05, 1),loc='upper left')
     a=ax.set_title("%s: %s"%(sid,col))
-def plotVisiumFun(adata,strPDF=None,selObs=None,genes=None,alpha=0.9,subSize=4,ncol=4,nMap='viridis',cMap='Set3',dotsize=2,sIDs=None,sortID=True):
+def plotVisiumFun(adata,strPDF=None,obs=None,genes=None,alpha=0.9,subSize=4,ncol=4,nMap='viridis',cMap='Set3',dotsize=2,sIDs=None,sortID=True):
     sel = []
-    if selObs is not None:
-        sel += adata.obs.columns[adata.obs.columns.isin(selObs)].tolist()
+    if obs is not None:
+        sel += adata.obs.columns[adata.obs.columns.isin(obs)].tolist()
     if genes is not None:
         sel += adata.var_names[adata.var_names.isin(genes)].tolist()
     if len(sel)==0:
@@ -392,9 +396,9 @@ def plotVisiumFun(adata,strPDF=None,selObs=None,genes=None,alpha=0.9,subSize=4,n
     else:
         fig.savefig(strPDF,bbox_inches="tight")
         plt.close()
-def plotVisium(adata,strOut=None,selObs=None,genes=None,alpha=0.9,subSize=4,ncol=4,nMap='viridis',cMap='Set3',dotsize=2):
+def plotVisium(adata,strOut=None,obs=None,genes=None,alpha=0.9,subSize=4,ncol=4,nMap='viridis',cMap='Set3',dotsize=2):
     for one in adata.obs[batchKey].unique():
-        plotVisiumFun(adata,os.path.join(strOut,one+".pdf"),selObs=selObs,genes=genes,alpha=alpha,subSize=subSize,ncol=ncol,nMap=nMap,cMap=cMap,dotsize=dotsize,sIDs=[one])
+        plotVisiumFun(adata,os.path.join(strOut,one+".pdf"),obs=obs,genes=genes,alpha=alpha,subSize=subSize,ncol=ncol,nMap=nMap,cMap=cMap,dotsize=dotsize,sIDs=[one])
     
 ## standard logNormal normalization
 def logNormal(strH5ad,config):
@@ -406,7 +410,7 @@ def logNormal(strH5ad,config):
     print("*** logNormal ***")
     os.makedirs(os.path.dirname(logH5ad),exist_ok=True)
     D = sc.read_h5ad(strH5ad)
-    D.raw = D
+    D.raw = D.copy()
     sc.pp.highly_variable_genes(D,flavor='seurat_v3',n_top_genes=3000,inplace=True)
     sc.pp.normalize_total(D,target_sum=config['normScale'])
     sc.pp.log1p(D)

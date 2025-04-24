@@ -31,7 +31,8 @@ main <- function(strConfig){
   
   
   #sample,cluster,group,alt,ref,covars[comma separated],method[default NEBULA]
-  compInfo <- as.data.frame(data.table::fread(strDEG))
+  #compInfo <- as.data.frame(data.table::fread(strDEG))
+  suppressMessages(compInfo <- as.data.frame(data.table::fread(paste("grep -v '^#'",strDEG))))
   if(nrow(compInfo)==0){
     message("Empty comparison description file!\nDONE")
     q()
@@ -95,6 +96,7 @@ main <- function(strConfig){
                 cside_gene_threshold=config$cside_gene_threshold,
                 cside_log_fc=config$cside_log_fc,
                 cside_fdr=config$cside_fdr,
+                cside_core = config$cside_core,
                 
                 #core=floor(as.numeric(gsub("G","",config$memory))/16),
                 ver=pipelineV))
@@ -142,6 +144,7 @@ scRNAseq_DE <- function(
     cside_gene_threshold=5e-5,
     cside_log_fc=0.4,
     cside_fdr=0.05,
+    cside_core=4,
     
     ver='v1',
     core=1,

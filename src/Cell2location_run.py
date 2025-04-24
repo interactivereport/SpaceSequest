@@ -320,7 +320,7 @@ def merge(D,allRes):
         D.obs = D.obs.merge(obs.loc[:,selCol],"left",left_index=True,right_index=True)
         modCol = D.obs.columns.isin(obs.columns[selCol])
         D.obs.loc[:,modCol]=D.obs.loc[:,modCol].apply(lambda x: ut.fillNA(x,0))
-        ut.plotVisium(D,strOut=os.path.dirname(strF),selObs=D.obs.columns[modCol].tolist())
+        ut.plotVisium(D,strOut=os.path.dirname(strF),obs=D.obs.columns[modCol].tolist())
         #D.write(strH5ad)
 
 def main():

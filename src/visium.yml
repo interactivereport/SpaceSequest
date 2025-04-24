@@ -5,6 +5,7 @@ output: OUTPUT
 sample_name: Sample_Name # this is the column header in the following meta file which specify the sample name
 sample_meta: SAMPLE
 # filtering
+UMI_dtype: int32 # the X type to read the express matrix, default integer
 UMI_count_gene: 15 #the minimal number of UMI required for a gene to be included
 UMI_count_cell: 100 #the minimal number of UMI required for a cell to be included 
 min_cells: 20 #filtering genes by minimal cell, please increase this when there is a large number of cells
@@ -23,7 +24,7 @@ gene_group:
         rm: False
 # normalize scale:
 normScale: 10000
-# if the reRunQC is True the process methods will NOT be executed and all previous results will be removed, so that you can adjust the above filtering parameters
+# if the reRunQC is True the process methods will NOT be executed and all previous results will be removed, you can adjust the above filtering parameters
 reRunQC: True
 # clustering
 clusterN: [14,15] # required
@@ -35,7 +36,7 @@ spg_p: 0.8
 rmGeneStart: ["MT-","Mt-","mt-"]
 # cell2location setting
 scH5ad: #the path to the processed/annotated single cell/nuclei RNAseq (could be paired)
-batch: # the batch/sample column in above h5ad
+batch: # the batch column in above h5ad
 annotation_obs: # the cell type annotation in above h5ad.obs to build the model
 matchColumn: #if paired, the column header (e.g. library_id) in sample meta table which indicated in the above obs (matching values with obs.library_id), otherwise all cells will be used for each spatial sample
 ref_cell_count_cutoff: 5
@@ -43,6 +44,13 @@ ref_cell_percentage_cutoff2: 0.03
 ref_nonz_mean_cutoff: 1.12
 N_cells_per_location: 5
 detection_alpha: 20
+# RCTD setting
+rctd_scH5ad: #the path to the processed/annotated single cell/nuclei RNAseq (could be paired)
+rctd_annotation_obs: # the cell type annotation in above h5ad.obs to build the model
+rctd_downsample: 2000 # the max cell number per above annotation, top cells by total UMI will be selected
+rctd_doublet_mode: full #options: doublet, full and multi #https://rdrr.io/github/dmcable/RCTD/f/documentation/README.md
+rctd_ignore_annotation: # the list of cell annotations to be ignored, such as unknow cell type or doublets
+
 # tangram setting (This might be the same as above, but still required)
 tg_scH5ad: #the path to the processed/annotated single cell/nuclei RNAseq (could be paired)
 tg_annotation_obs: # the cell type annotation in above h5ad.obs to build the model

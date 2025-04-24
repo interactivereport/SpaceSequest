@@ -2,6 +2,7 @@ import os, time, sys, re, yaml, sqlite3, json, math
 import utility as ut
 import cmdUtility as cU
 import pandas as pd
+import numpy as np
 
 strPipePath=os.path.dirname(os.path.realpath(__file__))
 
@@ -58,11 +59,10 @@ def runDEG(strConfig):
     if "spDEG task creation completed" in msg:
         with open("%s_spDEG.cmd.json"%prefix,"r") as f:
             spDEGtask = json.load(f)
-        if not config.get('memory') is None:
-            memG=int(re.sub("G$","",config.get('memory')))
-        else:
-            memG = math.ceil(os.path.getsize(config.get('UMI'))*50/1e9)
-        cU.submit_cmd(spDEGtask,config,math.ceil(memG/16),memG)
+        memG = math.ceil(os.path.getsize(config.get('UMI'))*50/1e9) if config.get('memory') is None else int(re.sub("G$","",config.get('memory')))
+        cU.submit_cmd(spDEGtask,config,
+            math.ceil(memG/16) if config.get('core') is None else config['core'],
+            memG)
         formatDEG(prefix)
 
 def formatDEG(prefix):
@@ -74,7 +74,7 @@ def formatDEG(prefix):
     for onePath in DEGpaths:
         for f in os.listdir(onePath):
             strCSV = os.path.join(onePath,f)
-            if not os.path.isfile(strCSV) or not f.endswith("csv"):
+            if not os.path.isfile(strCSV) or not f.endswith("csv") or f.endswith('sampleInfo.csv'):
                 continue
             print("\tprocessing: ",f)
             tab = pd.read_csv(strCSV).iloc[:,0:4]
