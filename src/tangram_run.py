@@ -10,6 +10,7 @@ import numpy as np
 import matplotlib as mpl
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
+from PIL import Image
 
 import cmdUtility as cu
 import utility as ut
