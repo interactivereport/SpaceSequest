@@ -232,9 +232,9 @@ SpaTalk_run <- function(config,strH5ad,strOut,strFinal,strC2L=""){
         #remove cell type with less cells
         ct_count <- table(scRef_obs[[config$tg_annotation_obs]])
         config$st_rm_ct <- unique(c(config$st_rm_ct,names(ct_count)[ct_count<config$st_rm_ct_min_cell]))
-        if(config$st_mc_core>config$cores){
-            message("\t___ reset st_mc_core is cores (",config$cores,")")
-            config$st_mc_core <- config$cores
+        if(config$st_mc_core>config$core){
+            message("\t___ reset st_mc_core is cores (",config$core,")")
+            config$st_mc_core <- config$core
         }
         c2l <- NULL
         if(nchar(strC2L)>3 && file.exists(strC2L)) c2l <- t(getX(strC2L))
