@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+config=$1
+src="$(dirname $0)/src"
+
+if [[ ! -f "$src/.env" ]]; then
+  echo "geomx: Please run ./install to setup necessary env variables"
+  exit
+fi
+
+#condaEnv=$(head -n 1 $src/sys.yml)
+#condaEnv=${condaEnv:1}
+
+module load Anaconda3
+conda activate geomx
+
+set -e
+if [[ -f "$config" ]]; then
+  echo "Starting GeoMx pipeline."
+  Rscript $src/GeoMx_pipeline.R $config 2>&1 | tee -a $config.$(date +%Y%m%d).log
+elif [[ -d "$config" ]]; then
+  echo "Starting GeoMx pipeline."
+  if [[ ! -f "$config/config.yml" ]]; then
+      cp $src/GeoMx_template.yml $config/config.yml
+      echo "Config file copied."
+  else
+      echo "Config file exists. Stop copying config file."
+  fi
+  if [[ ! -f "$config/compareInfo.csv" ]]; then
+      cp $src/GeoMx_compareInfo_template.csv $config/compareInfo.csv
+  else
+      echo "compareInfo.csv file exists. Stop copying config file."
+  fi
+else
+    echo "Starting GeoMx pipeline."
+    echo "Please provide a path or a config file to the pipeline."
+    echo "Example1: geomx path/to/working/dir"
+    echo "Example2: geomx path/to/config.yml"
+fi

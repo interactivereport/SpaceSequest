@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+config=$1
+src="$(dirname $0)/src"
+
+if [[ ! -f "$src/.env" ]]; then
+  echo "cosmx: Please run ./install to setup necessary env variables"
+  exit
+fi
+
+#condaEnv=$(head -n 1 $src/sys.yml)
+#condaEnv=${condaEnv:1}
+
+module load Anaconda3
+conda activate cosmx_xenium
+
+set -e
+if [[ -f "$config" ]]; then
+  echo "##################################################################"
+  echo "Starting CosMx pipeline."
+  SampleMetaPath=`awk '$1=="sampleMeta:"' $config|awk '{print $2}'`
+  SampleNum=`awk 'NR>1' $SampleMetaPath|wc -l|awk '{print $1}'`
+  echo "Number of data to process: "$SampleNum
+  for sampleid in $(eval echo {1..$SampleNum});do
+      echo "Running on data: "$sampleid
+      Rscript $src/CosMx_pipeline.R $config $src $sampleid 2>&1 | tee -a $config.$(date +%Y%m%d).log
+  done
+  Rscript $src/CosMx_merger.R $config 2>&1 | tee -a $config.$(date +%Y%m%d).log
+elif [[ -d "$config" ]]; then
+  echo "Starting CosMx pipeline."
+  if [[ ! -f "$config/config.yml" ]]; then
+      cp $src/CosMx_template.yml $config/config.yml
+      echo "Config file copied."
+  else
+      echo "Config file exists. Stop copying config file."
+  fi
+  if [[ ! -f "$config/sampleMeta.csv" ]]; then
+      cp $src/CosMx_sampleMeta.csv $config/sampleMeta.csv
+  else
+      echo "sampleMeta.csv file exists. Stop copying config file."
+  fi
+else
+    echo "Starting CosMx pipeline."
+    echo "Please provide a path or a config file to the pipeline."
+    echo "Example1: cosmx path/to/working/dir"
+    echo "Example2: cosmx path/to/config.yml"
+fi

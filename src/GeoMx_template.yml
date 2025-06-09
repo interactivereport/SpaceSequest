@@ -1,0 +1,9 @@
+#config file for GeoMx. Please avoid using spaces in names or paths. All items are required.
+project_ID: test #name of the project
+data_path:  #path to DCC files
+data_annotation:  #sample meta information
+annotation_sheet: Template #Sheet name of annotation Excel file
+pkcs_file:  #path to the pkc file
+output_dir:  #path for output files
+comparison:  #comparison file to define DE groups
+quickomics: True #Generate Quickomics files. Default as 'True'

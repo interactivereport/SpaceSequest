@@ -1,0 +1,9 @@
+#config file for Xenium. Please avoid using spaces in names or paths.
+project_ID: demoXenium #required
+sampleMeta:  #path to the sampleMeta file, required
+output_dir:  #output directory, required
+cluster_resolution: 0.3 #resolution for the FindClusters step
+reference:  #Azimuth reference, for example, 'humancortexref', optional 
+reference_name:  #column name of the cell type label you would like to transfer. Required if reference is used.
+integrate_data: True #True or False to merge/integrate all the data in the sampleMeta file
+integrate_with_harmony: True #True or False to use Harmony for integration. Default as True
