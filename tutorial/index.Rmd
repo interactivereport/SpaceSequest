@@ -1,16 +1,42 @@
 --- 
 title: "SpaceSequest: pipeline for spatial transcriptomics data analysis" 
 author:
+  - name: Yu (Henry) Sun (Corresponding Author)
+    email: yuhenry.sun@biogen.com
+    affiliation: Biogen
   - name: Sarbottam Piya
-    email: sarbottam.piya@biogen.com
     affiliation: Biogen
-  - name: ...
-    email: ...
-    affiliation: ...
-  - name: Baohong Zhang (Corresponding Author)
-    email: baohong.zhang@biogen.com
+  - name: Zhengyu Ouyang
+    affiliation: BioInfoRx
+  - name: Jake Gagnon
     affiliation: Biogen
-  - name: These authors contribute equally ...
+  - name: Yirui Chen
+    affiliation: Biogen
+  - name: Shaolong Cao
+    affiliation: Biogen
+  - name: Haotian Zhang
+    affiliation: Biogen
+  - name: Baobao Song
+    affiliation: Biogen
+  - name: Jing Zhu
+    affiliation: Biogen
+  - name: Khyati Chandratre
+    affiliation: Biogen
+  - name: Houlin Yu
+    affiliation: Biogen
+  - name: Wenxing Hu
+    affiliation: Biogen
+  - name: Matthew Ryals
+    affiliation: PharmaLex
+  - name: Fergal Cassey
+    affiliation: Biogen
+  - name: Dann Huh
+    affiliation: Biogen
+  - name: Mingyao Li
+    affiliation: University of Pennsylvania
+  - name: Baohong Zhang
+    affiliation: Biogen
+  - name: These authors contribute equally, Yu (Henry) Sun, Sarbottam Piya, Zhengyu Ouyang
 address:
   - code: Research Data Sciences, Translational Biology, Biogen, Inc
     address: 225 Binney St, Cambridge, MA 02142, USA
@@ -21,5 +47,8 @@ site: bookdown::bookdown_site
 ---
 
 # Preface
-This is a *user manual* written using Bookdown, which provides a detailed guide for SpaceSequest
+This is a *user manual* written using Bookdown, which provides a detailed guide for SpaceSequest.
 
+[![](https://interactivereport.github.io/SpaceSequest/images/Cover.png)](https://interactivereport.github.io/SpaceSequest/images/Cover.png){target="_blank"}
+
+**Cover Image: Overview of SpaceSequest components.** SpaceSequest contains five modules to perform standarized data analysis generated from 10x Genomics Visium, Visium HD, and Xenium, as well as Bruker (acquired from the previous NanoString Technologies) GeoMx and CosMx platforms.
