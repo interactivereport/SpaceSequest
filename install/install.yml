@@ -31,6 +31,7 @@ dependencies:
   - bioconductor-biocparallel=1.28.3
   - bioconductor-deseq2=1.34.0
   - bioconductor-apeglm=1.16.0
+  - bioconductor-glmgampoi
   - r-base=4.1.0
   - r-nloptr=2.0.3
   - r-igraph=1.3.0

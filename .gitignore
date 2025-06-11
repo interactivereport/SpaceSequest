@@ -2,3 +2,16 @@
 .Rhistory
 .RData
 .Ruserdata
+.env
+sys.yml
+ipython*
+*ipynb*
+*Rproj
+*pycache*
+example/
+edgeTool
+Sarbottam
+test/
+src/cos*
+src/celery.py
+CeLEry*

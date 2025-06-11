@@ -2,6 +2,7 @@
 # The conda env specified below will be removed if exists
 appEnvPath="/share/anaconda3/envs/SpaceSequest"
 appEnvPath_C2L="/share/anaconda3/envs/SpaceSequest_C2L"
+appEnvPath_Add="/share/anaconda3/envs/SpaceSequest_Add"
 
 if [[ -z "$appEnvPath" ]]; then
   echo "Please set appEnvPath where you want the conda env to be installed"
@@ -21,10 +22,12 @@ set -e
 src="$(dirname $0)/src"
 conda env remove -p $appEnvPath
 conda env remove -p $appEnvPath_C2L
+conda env remove -p $appEnvPath_Add
 condaPath=$(dirname $(dirname $condaPath))
 # mamba is not in the base conda
-conda create -y -p $appEnvPath -c conda-forge python=3.9 mamba=2.0.2
+conda create -y -p $appEnvPath -c conda-forge python=3.9 mamba=2.0.2 conda
 conda create -y -p $appEnvPath_C2L -c conda-forge python=3.9 pandas=2.0.3 conda
+conda create -y -p $appEnvPath_Add -c conda-forge conda mamba python=3.11
 
 # for SpaGCN & BayesSpace & CeLEry
 source $condaPath/etc/profile.d/conda.sh
@@ -63,6 +66,11 @@ conda env config vars set PKG_CONFIG_PATH=$appEnvPath_C2L/lib/pkgconfig
 conda env config vars set LD_LIBRARY_PATH=$appEnvPath_C2L/lib:$LD_LIBRARY_PATH
 conda deactivate
 
+# for additional conda env
+conda activate $appEnvPath_Add
+mamba env update -f install/additional.yml
+conda deactivate
+
 # pytables this might be needed
 # cd $appEnvPath/lib
 # ln -s libblosc2.so.4 libblosc2.so.2
@@ -72,8 +80,9 @@ sed -i 's|R_LIBS_USER|#R_LIBS_USER|g' $appEnvPath/lib/R/etc/Renviron
 sed -i 's|R_LIBS_USER|#R_LIBS_USER|g' $appEnvPath_C2L/lib/R/etc/Renviron
 
 # setup needed env variables
-echo "export condaEnv='source $condaPath/etc/profile.d/conda.sh;conda activate $appEnvPath'" > $src/.env
-echo "export condaEnv_C2L='source $condaPath/etc/profile.d/conda.sh;conda activate $appEnvPath_C2L'" >> $src/.env
+echo "export condaEnv='source $appEnvPath/etc/profile.d/conda.sh;conda activate'" > $src/.env
+echo "export condaEnv_C2L='source $appEnvPath_C2L/etc/profile.d/conda.sh;conda activate'" >> $src/.env
+echo "export condaEnv_Add='source $appEnvPath_Add/etc/profile.d/conda.sh;conda activate'" >> $src/.env
 echo "export PATH=$PATH" >> $src/.env
 echo "export SGE_EXECD_PORT=$SGE_EXECD_PORT" >> $src/.env
 echo "export SGE_QMASTER_PORT=$SGE_QMASTER_PORT" >> $src/.env

@@ -1,0 +1,28 @@
+---
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - conda
+  - mamba
+  - r-base=4.3.0
+  - r-azimuth=0.5
+  - r-ggplot2
+  - r-progressr
+  - r-seurat=5.2.1
+  - r-yaml
+  - r-harmony=0.1
+  - r-arrow
+  - r-biocmanager
+  - r-cowplot
+  - r-knitr
+  - r-pheatmap
+  - r-readxl
+  - r-reshape2
+  - r-rtsne
+  - r-scales
+  - r-umap
+  - bioconductor-glmgampoi
+  - bioconductor-geomxtools
+  - bioconductor-nanostringnctools
+  - bioconductor-preprocesscore

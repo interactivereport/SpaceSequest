@@ -11,8 +11,10 @@ fi
 #condaEnv=$(head -n 1 $src/sys.yml)
 #condaEnv=${condaEnv:1}
 
-module load Anaconda3
-conda activate cosmx_xenium
+#module load Anaconda3
+#conda activate cosmx_xenium
+source $src/.env
+eval $condaEnv_Add
 
 set -e
 if [[ -f "$config" ]]; then
