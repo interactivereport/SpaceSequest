@@ -69,6 +69,7 @@ conda deactivate
 # for additional conda env
 conda activate $appEnvPath_Add
 mamba env update -f install/additional.yml
+R -q -e 'if(!require(GenomeInfoDbData)) BiocManager::install("GenomeInfoDbData",update=F,ask=F)'
 conda deactivate
 
 # pytables this might be needed
