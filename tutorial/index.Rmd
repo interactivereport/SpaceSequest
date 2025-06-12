@@ -47,7 +47,7 @@ site: bookdown::bookdown_site
 ---
 
 # Preface
-This is a *user manual* written using Bookdown, which provides a detailed guide for SpaceSequest.
+This is a *user manual* written using Bookdown, which provides a detailed user guide for SpaceSequest.
 
 [![](https://interactivereport.github.io/SpaceSequest/images/Cover.png)](https://interactivereport.github.io/SpaceSequest/images/Cover.png){target="_blank"}
 

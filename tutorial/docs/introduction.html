@@ -22,7 +22,7 @@
 
 
 
-<meta name="date" content="2025-06-09" />
+<meta name="date" content="2025-06-12" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -98,7 +98,28 @@
             <section class="normal" id="section-">
 <div id="introduction" class="section level1 hasAnchor" number="2">
 <h1><span class="header-section-number">Chapter 2</span> Introduction<a href="introduction.html#introduction" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>SpaceSequest is a pipeline for spatial transcriptomics data analysis.</p>
+<p>Spatial transcriptomics has emerged as one of the most powerful tools for gaining biological insights, enabling researchers to uncover intricate relationships between gene expression patterns and tissue architecture. Recent advances in the field have resulted in a variety of new platforms, including Visium, Visium HD, and Xenium from 10x Genomics, as well as GeoMx and CosMx from Bruker/NanoString Technologies, which has now been acquired by the Bruker Corporation. However, the existence of diverse spatial transcriptomics platforms and various data formats poses challenges in standardizing data analysis. Thus, there remains a critical gap in the availability of a comprehensive pipeline capable of conducting end-to-end analysis that is necessary to extract biological insights from multiple spatial transcriptomics platforms.</p>
+<p>Here, we present SpaceSequest, a tailored pipeline that utilizes cutting-edge computational methodologies to conduct a thorough analysis, enabling the extraction of crucial biological insights from five major spatial transcriptomics technologies. SpaceSequest performs</p>
+<ul>
+<li><p>standardized quality control and general data processing.</p></li>
+<li><p>key analyses customized for each spatial platform</p></li>
+<li><p>automated cell type annotation and deconvolution</p></li>
+<li><p>high-quality figure and analysis result generation. In addition, SpaceSequest allows for smooth integration with cellxgene VIP and Quickomics for user-friendly data access and interactive visualization.</p></li>
+</ul>
+<p>SpaceSequest is a unified pipeline for spatial transcriptomics data analysis. It currently handles a wide range of data types generated from five spatial transcriptomics platforms, namely, 10x Genomics Visium, Visium HD, Xenium, Bruker/NanoString GeoMx and CosMx.</p>
+<p>This pipeline contains the following programs:</p>
+<ul>
+<li><p><em>visium</em></p>
+<p>This script analyzes 10x Genomics Visium data. It takes SpaceRanger output directory as input, together with a config.yml file. The output will be saved in multiple folders corresponding to the name of the software used, such as, <a href="https://www.nature.com/articles/s41587-021-00935-2" target="_blank">BayesSpace</a>, <a href="https://www.nature.com/articles/s41587-021-01139-4" target="_blank">c2l (cell2location)</a>, <a href="https://www.nature.com/articles/s41592-021-01255-8" target="_blank">SpaGCN</a>, <a href="https://www.nature.com/articles/s41467-022-32111-8" target="_blank">SpaTalk</a>, and <a href="https://www.nature.com/articles/s41592-021-01264-7" target="_blank">tangram</a>.</p></li>
+<li><p><em>visiumhd</em></p>
+<p>This script performs analyses related to Visium HD spatial transcriptomics data. It starts the analysis from SpaceRanger bin-level outputs, and runs a series of steps for QC, cell type annotation, and clustering analysis.</p></li>
+<li><p><em>xenium</em></p>
+<p>This script directly takes Xenium data as input, runs through gene/cell level quality control and various downstream analyses.</p></li>
+<li><p><em>cosmx</em></p>
+<p>This script performs CosMx data analysis. This includes quality control, cell type annotation (label transfer from a reference dataset), and clustering analysis.</p></li>
+<li><p><em>geomx</em></p>
+<p>This script takes GeoMx .dcc files as input, performs sample- and probe-level quality control, and runs a series of steps to call differentially expressed genes. The output will be summarized into <a href="https://academic.oup.com/bioinformatics/article/37/20/3670/6254183" target="_blank">Quickomics</a> format for further interactive exploration.</p></li>
+</ul>
 
 </div>
             </section>
