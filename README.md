@@ -47,7 +47,7 @@ visium
 
 ## 2. Run a demo dataset
 
-Here, we use a public Visium HD data to demonstrate the `visiumhd` workflow of SpaceSequest. For workflows that process other spatial datasets, please find more details in the full tutorial.
+Here, we use a public Visium HD data to demonstrate the `visiumhd` workflow of SpaceSequest. For workflows that process other spatial datasets, please find more details in the [full tutorial](https://interactivereport.github.io/SpaceSequest/tutorial/docs/index.html).
 
 First, download the `Binned_outputs (all bin levels)` and `Spatial outputs` folders from the `Output and supplemental files` tab of the following two links, and decompress them if needed:
 
