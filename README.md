@@ -55,10 +55,11 @@ Sample1: Mouse brain FFPE: https://www.10xgenomics.com/datasets/visium-hd-cytass
 
 Sample2: Mouse brain fixed frozen: https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-mouse-brain-fixed-frozen
 
-Create directories to store these binned outputs:
+Create directories to store these binned outputs, and download a mouse brain reference data from [Azimuth](https://azimuth.hubmapconsortium.org/references/#Mouse%20-%20Motor%20Cortex) in Seurat format: [allen_mop_2020.rds](https://seurat.nygenome.org/azimuth/demo_datasets/allen_mop_2020.rds).
 
 ```
 ~/Data/
+    ├── allen_mop_2020.rds
     ├── Sample1_FFPE/
         └── binned_outputs/
     ├── Sample2_Fixed/
@@ -75,16 +76,16 @@ The above script will generate two template files: a config.yml file, and a samp
 
 config.yml file:
 ```
-#config file for VisiumHD. Please avoid using spaces in names or paths. All items are required.
-project_ID: VisiumHD_demo          #required
-sampleMeta: ~/Data/sampleMeta.csv  #path to the sampleMeta file
-output_dir: ~/Data/output          #output directory
-bin_resolution: 8um                #defaul 8um, also 16um or 2um are available
-cluster_resolution: 0.3            #resolution for the FindClusters step
-reference:                         #path to an Azimuth reference data, optional 
-reference_name: subclass           #column name of the cell type label you would like to transfer
-integrate_data: True               #True or False to merge/integrate all the data in the sampleMeta file
-integrate_with_harmony: True       #True or False to use Harmony for integration. Default as True
+#config file for VisiumHD. Please avoid using spaces in names or paths.
+project_ID: VisiumHD_demo             #required
+sampleMeta: ~/Data/sampleMeta.csv     #path to the sampleMeta file
+output_dir: ~/Data/output             #output directory
+bin_resolution: 8um                   #defaul 8um, also 16um or 2um are available
+cluster_resolution: 0.3               #resolution for the FindClusters step
+reference: ~/Data/allen_mop_2020.rds  #path to an Azimuth reference data, optional 
+reference_name: subclass              #column name of the cell type label you would like to transfer
+integrate_data: True                  #True or False to merge/integrate all the data in the sampleMeta file
+integrate_with_harmony: True          #True or False to use Harmony for integration. Default as True
 ```
 
 sampleMeta.csv file:
