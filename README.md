@@ -49,7 +49,7 @@ visium
 
 Here, we use a public Visium HD data to demonstrate the `visiumhd` workflow of SpaceSequest. For workflows that process other spatial datasets, please find more details in the full tutorial.
 
-First, download the `Binned_outputs (all bin levels)` folder from the `Output and supplemental files` tab of the following two links:
+First, download the `Binned_outputs (all bin levels)` and `Spatial outputs` folders from the `Output and supplemental files` tab of the following two links, and decompress them if needed:
 
 Sample1: Mouse brain FFPE: https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-libraries-of-mouse-brain-he
 
@@ -61,8 +61,10 @@ Create directories to store these binned outputs, and download a mouse brain ref
 ~/Data/
     ├── allen_mop_2020.rds
     ├── Sample1_FFPE/
+        ├── spatial
         └── binned_outputs/
     ├── Sample2_Fixed/
+        ├── spatial
         └── binned_outputs/
 ```
 
