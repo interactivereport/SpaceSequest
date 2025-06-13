@@ -47,6 +47,58 @@ visium
 
 ## 2. Run a demo dataset
 
+Here, we use a public Visium HD data to demonstrate the `visiumhd` workflow of SpaceSequest. For workflows that process other spatial datasets, please find more details in the full tutorial.
+
+First, download the `Binned_outputs (all bin levels)` folder from the `Output and supplemental files` tab of the following two links:
+
+Sample1: Mouse brain FFPE: https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-libraries-of-mouse-brain-he
+
+Sample2: Mouse brain fixed frozen: https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-mouse-brain-fixed-frozen
+
+Create directories to store these binned outputs:
+
+```
+~/Data/
+    ├── Sample1_FFPE/
+        └── binned_outputs/
+    ├── Sample2_Fixed/
+        └── binned_outputs/
+```
+
+Then launch the main workflow script:
+
+```
+visiumhd ~/Data/
+```
+
+The above script will generate two template files: a config.yml file, and a sampleMeta.csv file. We can fill in the information about these two public datasets:
+
+config.yml file:
+```
+#config file for VisiumHD. Please avoid using spaces in names or paths. All items are required.
+project_ID: VisiumHD_demo          #required
+sampleMeta: ~/Data/sampleMeta.csv  #path to the sampleMeta file
+output_dir: ~/Data/output          #output directory
+bin_resolution: 8um                #defaul 8um, also 16um or 2um are available
+cluster_resolution: 0.3            #resolution for the FindClusters step
+reference:                         #path to an Azimuth reference data, optional 
+reference_name: subclass           #column name of the cell type label you would like to transfer
+integrate_data: True               #True or False to merge/integrate all the data in the sampleMeta file
+integrate_with_harmony: True       #True or False to use Harmony for integration. Default as True
+```
+
+sampleMeta.csv file:
+```
+Sample,Directory
+Mouse_brain_FFPE,~/Data/Sample1_FFPE
+Mouse_brain_FixedFrozen,~/Data/Sample2_Fixed
+```
+
+Run the pipeline:
+```
+visiumhd ~/Data/config.yml
+```
+
 ## 3. Output
 
 ## 4. Additional information
