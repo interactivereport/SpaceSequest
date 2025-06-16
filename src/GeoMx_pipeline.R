@@ -358,5 +358,6 @@ if (yaml$quickomics == TRUE){
 }
 
 print("GeoMx pipeline finished")
+print("##################################################################")
 #End of the GeoMx workflow
 ##################################
