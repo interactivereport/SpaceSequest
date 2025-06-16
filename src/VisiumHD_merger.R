@@ -97,7 +97,7 @@ print("Running ScaleData...")
 MergedData <- ScaleData(MergedData)
 
 print("Selecting 50,000 cells for the sketch assay...")
-MergedData <- SketchData(object = MergedData, ncells = 50000, method = "LeverageScore", sketched.assay = "sketch")
+MergedData <- SketchData(object = MergedData, ncells = 50000, method = "LeverageScore", sketched.assay = "sketch", features=VariableFeatures(MergedData)) #Adding features parameter to avoid a bug
 DefaultAssay(MergedData) <- "sketch"
 
 print("Running sketch FindVariableFeatures...")
