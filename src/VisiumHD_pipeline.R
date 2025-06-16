@@ -107,7 +107,7 @@ print("Running ScaleData...")
 Data <- ScaleData(Data)
 
 print("Selecting 50,000 cells for the sketch assay...")
-Data <- SketchData(object = Data, ncells = 50000, method = "LeverageScore", sketched.assay = "sketch")
+Data <- SketchData(object = Data, ncells = 50000, method = "LeverageScore", sketched.assay = "sketch", features=VariableFeatures(Data))  #Adding features parameter to avoid a bug
 DefaultAssay(Data) <- "sketch"
 
 print("Running sketch FindVariableFeatures...")
