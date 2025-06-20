@@ -35,3 +35,8 @@ This pipeline contains the following programs:
  - *geomx*
    
    This script takes GeoMx .dcc files as input, performs sample- and probe-level quality control, and runs a series of steps to call differentially expressed genes. The output will be summarized into [Quickomics](https://academic.oup.com/bioinformatics/article/37/20/3670/6254183){target="_blank"} format for further interactive exploration.
+   
+   
+## Visium
+Demo run directory: /data/SpaceSequest_demo/1_Visium
+Demo data: 10x Visium data are from mouse brain (paper, and GEO record). A single-cell RNA-seq reference was created using the Azimuth mouse brain cortex reference.
