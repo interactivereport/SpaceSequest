@@ -116,11 +116,11 @@ visium ~/SpaceSequest_demo/1_Visium</code></pre>
 <p>After this step, fill in the config.yml file and the sample.csv file (Click the superlink to view the example). Please pay attention to the required items in the config.yml file as they are essential for the pipeline to run.</p>
 <pre><code>#Highlighting several key items:
 
-prj_name: Visium_demo                                                                          #Prefix of the final output
+prj_name: Visium_demo        #Prefix of the final output
 
 output: ~/SpaceSequest_demo/1_Visium/Run_pipeline
 
-methods: [SpaGCN,BayesSpace,cell2location,tangram,SpaTalk]       #Software to run
+methods: [SpaGCN,BayesSpace,cell2location,tangram,SpaTalk]  #Software to run
 
 #cell2location setting. This is for cell type deconvolution using a reference single-cell RNA-seq data
 
@@ -142,13 +142,13 @@ st_annotation_obs: Cell_type
 
 #Parallel setting                                                                                                                                
 
-parallel: &quot;slurm&quot;        #Use &quot;slurm&quot; for Edge HPC                                                                                                  
+parallel: &quot;slurm&quot;    #Use &quot;slurm&quot; for Edge HPC                                                                                                  
 
 core: 10
 
-memory: 50G            #if provided (e.g. 100G), it will be used to request cluster scheduler                                                               
+memory: 50G   #if provided (e.g. 100G), it will be used to request cluster scheduler                                                               
 
-jobID: j47                   # please make sure this job id is different with your other projects which would be run at the same time      
+jobID: j47   # please make sure this job id is different with your other projects which would be run at the same time      
 </code></pre>
 <p>For the sample.csv file, the first two columns (Sample_Name,SpaceRanger_path) are required, and here we added two more columns:</p>
 <pre><code>Sample_Name,SpaceRanger_path,Treatment,Image_hires
