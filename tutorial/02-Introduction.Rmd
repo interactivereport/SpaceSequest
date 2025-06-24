@@ -39,4 +39,8 @@ This pipeline contains the following programs:
    
 ## Visium
 Demo run directory: /data/SpaceSequest_demo/1_Visium
-Demo data: 10x Visium data are from mouse brain (paper, and GEO record). A single-cell RNA-seq reference was created using the Azimuth mouse brain cortex reference.
+Demo data: 10x Visium data are from mouse brain (paper, and GEO record). A single-cell RNA-seq reference was created using the Azimuth mouse brain cortex reference
+
+
+
+##############.
