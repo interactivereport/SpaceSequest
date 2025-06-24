@@ -30,7 +30,7 @@
   
   
 <link rel="prev" href="index.html"/>
-
+<link rel="next" href="demo.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -76,9 +76,14 @@
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Preface</a></li>
-<li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a>
+<li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a></li>
+<li class="chapter" data-level="3" data-path="demo.html"><a href="demo.html"><i class="fa fa-check"></i><b>3</b> Demo</a>
 <ul>
-<li class="chapter" data-level="2.1" data-path="introduction.html"><a href="introduction.html#visium"><i class="fa fa-check"></i><b>2.1</b> Visium</a></li>
+<li class="chapter" data-level="3.1" data-path="demo.html"><a href="demo.html#visium"><i class="fa fa-check"></i><b>3.1</b> Visium</a></li>
+<li class="chapter" data-level="3.2" data-path="demo.html"><a href="demo.html#xenium"><i class="fa fa-check"></i><b>3.2</b> Xenium</a></li>
+<li class="chapter" data-level="3.3" data-path="demo.html"><a href="demo.html#visiumhd"><i class="fa fa-check"></i><b>3.3</b> VisiumHD</a></li>
+<li class="chapter" data-level="3.4" data-path="demo.html"><a href="demo.html#geomx"><i class="fa fa-check"></i><b>3.4</b> GeoMX</a></li>
+<li class="chapter" data-level="3.5" data-path="demo.html"><a href="demo.html#cosmx"><i class="fa fa-check"></i><b>3.5</b> CosMX</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -112,31 +117,26 @@
 <p>SpaceSequest is a unified pipeline for spatial transcriptomics data analysis. It currently handles a wide range of data types generated from five spatial transcriptomics platforms, namely, 10x Genomics Visium, Visium HD, Xenium, Bruker/NanoString GeoMx and CosMx.</p>
 <p>This pipeline contains the following programs:</p>
 <ul>
-<li><p><em>visium</em></p>
+<li><p><strong>Visium</strong></p>
 <p>This script analyzes 10x Genomics Visium data. It takes SpaceRanger output directory as input, together with a config.yml file. The output will be saved in multiple folders corresponding to the name of the software used, such as, <a href="https://www.nature.com/articles/s41587-021-00935-2" target="_blank">BayesSpace</a>, <a href="https://www.nature.com/articles/s41587-021-01139-4" target="_blank">c2l (cell2location)</a>, <a href="https://www.nature.com/articles/s41592-021-01255-8" target="_blank">SpaGCN</a>, <a href="https://www.nature.com/articles/s41467-022-32111-8" target="_blank">SpaTalk</a>, and <a href="https://www.nature.com/articles/s41592-021-01264-7" target="_blank">tangram</a>.</p></li>
-<li><p><em>visiumhd</em></p>
+<li><p><strong>VisiumHD</strong></p>
 <p>This script performs analyses related to Visium HD spatial transcriptomics data. It starts the analysis from SpaceRanger bin-level outputs, and runs a series of steps for QC, cell type annotation, and clustering analysis.</p></li>
-<li><p><em>xenium</em></p>
+<li><p><strong>Xenium</strong></p>
 <p>This script directly takes Xenium data as input, runs through gene/cell level quality control and various downstream analyses.</p></li>
-<li><p><em>cosmx</em></p>
+<li><p><strong>CosMX</strong></p>
 <p>This script performs CosMx data analysis. This includes quality control, cell type annotation (label transfer from a reference dataset), and clustering analysis.</p></li>
-<li><p><em>geomx</em></p>
+<li><p><strong>GeoMX</strong></p>
 <p>This script takes GeoMx .dcc files as input, performs sample- and probe-level quality control, and runs a series of steps to call differentially expressed genes. The output will be summarized into <a href="https://academic.oup.com/bioinformatics/article/37/20/3670/6254183" target="_blank">Quickomics</a> format for further interactive exploration.</p></li>
 </ul>
-<div id="visium" class="section level2 hasAnchor" number="2.1">
-<h2><span class="header-section-number">2.1</span> Visium<a href="introduction.html#visium" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Demo run directory: /data/SpaceSequest_demo/1_Visium
-Demo data: 10x Visium data are from mouse brain (paper, and GEO record). A single-cell RNA-seq reference was created using the Azimuth mouse brain cortex reference</p>
 
-</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="index.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="demo.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

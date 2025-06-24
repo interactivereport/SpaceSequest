@@ -49,6 +49,6 @@ site: bookdown::bookdown_site
 # Preface
 This is a *user manual* written using Bookdown, which provides a detailed user guide for SpaceSequest.
 
-[![](https://interactivereport.github.io/SpaceSequest/images/Cover.png)](https://interactivereport.github.io/SpaceSequest/images/Cover.png){target="_blank"}
+[![](https://interactivereport.github.io/SpaceSequest/images/Cover.png)](https://interactivereport.github.io/SpaceSequest/images/CoverImage.png){target="_blank"}
 
 **Cover Image: Overview of SpaceSequest components.** SpaceSequest contains five modules to perform standarized data analysis generated from 10x Genomics Visium, Visium HD, and Xenium, as well as Bruker (acquired from the previous NanoString Technologies) GeoMx and CosMx platforms.

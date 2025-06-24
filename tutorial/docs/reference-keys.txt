@@ -1,3 +1,8 @@
 preface
 introduction
+demo
 visium
+xenium
+visiumhd
+geomx
+cosmx
