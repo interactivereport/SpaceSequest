@@ -10,8 +10,9 @@ dependencies:
   - r-ggplot2
   - r-progressr
   - r-seurat=5.2.1
+  - r-seuratobject=5.0.2
   - r-yaml
-  - r-harmony=0.1
+  - r-harmony=1.2.3
   - r-arrow
   - r-biocmanager
   - r-cowplot
@@ -26,3 +27,4 @@ dependencies:
   - bioconductor-geomxtools
   - bioconductor-nanostringnctools
   - bioconductor-preprocesscore
+  - r-spacexr

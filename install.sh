@@ -69,7 +69,13 @@ conda deactivate
 # for additional conda env
 conda activate $appEnvPath_Add
 mamba env update -f install/additional.yml
+R -q -e 'BiocManager::install("preprocessCore",configure.args=c(preprocessCore="--disable-threading"),force=TRUE,update=F,type = "source")'
 R -q -e 'if(!require(GenomeInfoDbData)) BiocManager::install("GenomeInfoDbData",update=F,ask=F)'
+R -q -e 'if(!require(BSgenome.Hsapiens.UCSC.hg38)) BiocManager::install("BSgenome.Hsapiens.UCSC.hg38",update=F,ask=F)'
+R -q -e 'if(!require(EnsDb.Hsapiens.v86)) BiocManager::install("EnsDb.Hsapiens.v86",update=F,ask=F)'
+R -q -e 'if(!require(JASPAR2020)) BiocManager::install("JASPAR2020",update=F,ask=F)'
+R -q -e 'if(!require(GO.db)) BiocManager::install("GO.db",update=F,ask=F)'
+R -q -e 'if(!require(GeoMxWorkflows)) BiocManager::install("GeoMxWorkflows",update=F,ask=F)'
 conda deactivate
 
 # pytables this might be needed
