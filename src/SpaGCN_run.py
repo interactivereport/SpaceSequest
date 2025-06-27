@@ -224,6 +224,7 @@ def process(D_dict,p):
     for i in D_dict.keys():
         print("\t",i)
         adata = D_dict[i]
+        adata.X = adata.X.astype(np.float32)
         sc.pp.normalize_per_cell(adata, min_counts=0)
         sc.pp.log1p(adata)
         sc.pp.scale(adata, max_value=10)
