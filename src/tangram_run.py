@@ -378,7 +378,7 @@ def merge(D,allRes):
         print("\tmerging labels into obs")
         D.obs = D.obs.merge(tg_ct_pred,'left',left_index=True, right_index=True)
         D.obs[tg_ct_pred.columns] = D.obs[tg_ct_pred.columns].fillna(0)
-        ut.plotVisium(D,strOut=os.path.dirname(strF),selObs=tg_ct_pred.columns.tolist())
+        ut.plotVisium(D,strOut=os.path.dirname(strF),obs=tg_ct_pred.columns.tolist())
     #print("\tsaving")
     #D.write(strH5ad)
 
