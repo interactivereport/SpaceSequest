@@ -90,6 +90,10 @@ def saveVIP(strConfig):
     fov_col = fov.columns[0]
     print(" read expression")
     gExp = readData(config['expression_file'],fov_col,config['cell_id_col'],cID2index=True,rm_fov_col=True)
+    nonNum_col = list(gExp.dtypes[~gExp.dtypes.apply(lambda x: pd.api.types.is_numeric_dtype(x))].index)
+    if len(nonNum_col)>0:
+        print("The following non-numeric columns are removed from expression matrix: %s"%", ".join(nonNum_col))
+        gExp.drop(columns=nonNum_col,inplace=True)
     print(" read cell meta information")
     cInfo = readData(config['meta_file'],fov_col,config['cell_id_col'],cID2index=True,suf_loc=suffixLoc)
     #cInfo[sample_col] = fov_prefix+cInfo[fov_col]
