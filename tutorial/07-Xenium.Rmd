@@ -1,0 +1,70 @@
+# Xenium
+
+## Input preparation
+
+## Pipeline setup
+
+## Results
+
+
+Demo run directory: ~/SpaceSequest_demo/2_Xenium
+
+Demo data: FFPE Human Brain data from 10x: https://www.10xgenomics.com/datasets/xenium-human-brain-preview-data-1-standard
+
+The Xenium raw data is stored at ~/SpaceSequest_demo/2_Xenium/data with h5, cell_boundaries, transcripts, etc. This directory needs to be specified in the sampleMeta.csv file, which will be mentioned later.
+
+```
+#First step, generate config and sampleMeta file
+
+xenium ~/SpaceSequest_demo/2_Xenium
+```
+
+After this step, fill in the config.yml file and the sampleMeta.csv file as below. Please pay attention to the required items in the config.yml file as they are essential for the pipeline to run:
+
+```
+#Highlighting several key items:
+
+project_ID: Xenium_demo  #required
+
+sampleMeta: ~/SpaceSequest_demo/2_Xenium/sampleMeta.csv  #path to the sampleMeta file, required. It will create this dir for you if it doesn't exist
+
+output_dir: ~/SpaceSequest_demo/2_Xenium/output   #output directory, required
+
+cluster_resolution: 0.3   #resolution for the FindClusters step
+
+reference: humancortexref   #Azimuth reference, for example, 'humancortexref', optional
+
+reference_name: subclass   #column name of the cell type label you would like to transfer. Required if reference is used.
+
+integrate_data: True   #True or False to merge/integrate all the data in the sampleMeta file
+
+integrate_with_harmony: True   #True or False to use Harmony for integration. Default as True
+```
+For the sampleMeta.csv file, the first two columns are required: Sample and Directory. Users can add more metadata columns as shown below:
+```
+Sample,Directory,Tissue,Species
+
+Human_brain,~/SpaceSequest/Xemuim_public/data,Brain,Human
+```
+
+Then we can run the xenium script by passing the config.yml to it. We suggest submitting the command using sbatch:
+```
+#Run the data
+
+xenium ~/SpaceSequest_demo/1_Visium/config.yml
+```
+The pipeline will process/QC the data, run clustering and cell type annotation (if reference provided), and finally return an integrated Rdata file. All plots and files are stored in the output_dir directory specified in the config.yml file.
+
+<!-- 
+# [![](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.Tissue.png){#fig:XeniumA width="48%"}](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.Tissue.png)
+# [![](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.UMAP.png){#fig:XeniumB width="48%"}](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.UMAP.png)
+Figure 2. Xenium spatial-transcriptomics output. (Left) Tissue image with capture spots overlaid. (Right) UMAP embedding of spatial barcodes colored by cluster.
+-->
+
+::: {#fig:xenium .figure}
+![Figure 2A](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.Tissue.png){width=48%}
+![Figure 2B](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.UMAP.png){width=48%}
+
+:::
+Figure 2. Xenium spatial-transcriptomics output. (Left) Tissue image with capture spots overlaid. (Right) UMAP embedding of spatial barcodes coloured by cluster.
+

@@ -1,0 +1,68 @@
+# CosMX
+
+## Input preparation
+
+## Pipeline setup
+
+## Results
+
+Demo run directory: ~/SpaceSequest_demo/5_CosMx
+    
+Demo run dataset: a public data provided by NanoString, human frontal cortex FFPE: [https://nanostring.com/products/cosmx-spatial-molecular-imager/ffpe-dataset/human-frontal-cortex-ffpe-dataset/](https://nanostring.com/products/cosmx-spatial-molecular-imager/ffpe-dataset/human-frontal-cortex-ffpe-dataset/){target="_blank"}
+    
+To test the data integration function, I duplicated this data to two same datasets: S3 and S4, stored under the data folder in the 5_CosMx directory.
+
+First, we initiate the pipeline using the following script. This will generate templates of config.yml and sampleMeta.csv:
+
+```
+#First step, generate config and sampleMeta file
+
+cosmx ~/SpaceSequest_demo/5_CosMx
+```
+
+Then, fill in the config.yml file and the sampleMeta.csv file as below:
+```
+#config file for CosMx. Please avoid using spaces in names or paths. All items are required.
+
+project_ID: CoxMx_demo      #required project name
+
+sampleMeta: ~/SpaceSequest_demo/5_CosMx/sampleMeta.csv         #path to the sampleMeta file
+
+output_dir: ~/SpaceSequest_demo/5_CosMx/output        #output directory
+
+cluster_resolution: 0.3   #resolution for the FindClusters step, default 0.3
+
+reference: humancortexref      #Azimuth reference name, optional
+
+reference_name: subclass      #column name of the cell type label you would like to transfer. Required when reference is used.
+
+integrate_data: True       #True or False to merge/integrate all the data in the sampleMeta file
+
+integrate_with_harmony: True       #True or False to use Harmony for integration. Default as True
+```
+
+The sampleMeta.csv file contains sample name and several key input files of CosMx:
+```
+Sample,Directory,exprMat_file,fov_file,metadata_file,tx_file,polygon_file
+
+S3,~/SpaceSequest_demo/5_CosMx/data/S3,S3_exprMat_file.csv,S3_fov_positions_file.csv,S3_metadata_file.csv,S3_tx_file.csv,S3-polygons.csv
+
+S4,~/SpaceSequest_demo/5_CosMx/data/S4,S4_exprMat_file.csv,S4_fov_positions_file.csv,S4_metadata_file.csv,S4_tx_file.csv,S4-polygons.csv
+```
+
+Then run the pipeline as below:
+```
+#Run the data
+
+cosmx ~/SpaceSequest_demo/5_CosMx/config.yml
+```
+
+Finally check the results in the output_dir folder specified in the config.yml file. The output files contain some plots (UMAP for original cluster and annotated cell types), and Rdata files storing the results.
+
+::: {#fig:CosMX .figure}
+![Figure 4A](https://interactivereport.github.io/SpaceSequest/images/CoxMx_image.png){width=48%}
+![Figure 4B](https://interactivereport.github.io/SpaceSequest/images/CoxMx_UMAP.png){width=48%}
+
+:::
+
+Figure 4. CosMX spatial-transcriptomics output. (Left) Tissue image with capture spots overlaid. (Right) UMAP embedding of spatial barcodes colored by cluster.

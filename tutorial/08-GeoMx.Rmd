@@ -1,0 +1,63 @@
+# GeoMX
+
+## Fastq to DCC conversion
+
+## Pipeline setup
+
+## Results
+
+## Quickomics exploration
+
+Demo run directory: ~/SpaceSequest_demo/4_GeoMx
+
+Demo dataset is a public data provided by NanoString: http://nanostring-public-share.s3-website-us-west-2.amazonaws.com/GeoScriptHub/Kidney_Dataset_for_GeomxTools.zip
+    
+This is a kidney dataset, and in our demo run, we will run data processing, quality control, and differential expression analysis by comparing two kidney cell types: Glomerulus v.s. Tubule
+    
+First, we initiate the pipeline using the following script. This will generate templates of config.yml and compareInfo.csv:
+
+```
+#First step, generate config and sampleMeta file
+
+geomx ~/SpaceSequest_demo/4_GeoMx
+```
+
+After this step, fill in the config.yml file and the sampleMeta.csv file as below:
+
+```
+#config file for GeoMx. Please avoid using spaces in names or paths. All items are required.
+
+project_ID: GeoMx_demo  #name of the project
+
+data_path: ~/SpaceSequest_demo/4_GeoMx/Kidney_Dataset/dccs    #path to DCC files
+
+data_annotation: ~/SpaceSequest_demo/4_GeoMx/Kidney_Dataset/annotation/kidney_demo_AOI_Annotations_selected_clean.xlsx        #sample meta information
+
+annotation_sheet: Template      #Sheet name of annotation Excel file
+
+pkcs_file: ~/SpaceSequest_demo/4_GeoMx/Kidney_Dataset/pkcs/TAP_H_WTA_v1.0.pkc       #path to the pkc file
+
+output_dir: ~/SpaceSequest_demo/4_GeoMx/results      #path for output files
+
+comparison: ~/SpaceSequest_demo/4_GeoMx/compareInfo.csv   #comparison file to define DE groups
+
+quickomics: True                                  
+```
+Then prepare the compareInfo.csv file to define differential expression analysis comparisons:
+
+```
+CompareName,Model,Group_name,Group_test,Group_ctrl,Analysis_method
+
+Glome_vs_Tubule,~region,region,glomerulus,tubule,Linear
+```
+Currently, we only support running a Linear model to compare two conditions, without covariate adjustments. More DE methods will be added later.
+
+Run the pipeline as below:
+```
+#Run the data
+
+geomx ~/SpaceSequest_demo/4_GeoMx/config.yml
+
+```
+Finally check the results in the output_dir folder specified in the config.yml file. The output files contain DE analysis results, and if Quickomics parameter was set to True, it will create mutiple .csv files to create a Quickomics visualization link. An example can be found here (Q3 normalized values were used to create the link): http://compbio.biogen.com:3838/Quickomics/?unlisted=PRJ_GeoMx_demo_Ij4YyG
+

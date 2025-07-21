@@ -1,0 +1,21 @@
+# Additional tools
+
+In this section, we introduce two additional tools to further analyze CosMx and Visium HD data.
+
+## cosMx2VIP
+
+We have introduced previously that NanoString CosMx data can be analyzed through SpaceSequest `cosmx` workflow. However, the `cosmx` workflow does not incorporate the original images for visiualization. Here, we developed another tool, called cosMx2VIP, to add CosMx images to create an integrated object, which can be further visualized by [Cellxgene VIP](https://github.com/interactivereport/cellxgene_VIP){target="_blank"}. Cellxgene VIP not only hosts single-cell RNA-seq datasets, it also loads spatial transcriptomics data and display the image and data simutaneously. Here, we will go through the process step-by-step.
+
+### Input file set up
+
+In this section, we will go through input files that are necessary for running the cosMx2VIP workflow.
+
+Here, we use the public CosMx dataset from the NanoString website again: 
+
+### Run the workflow
+
+### Results
+
+## Visium HD color function
+
+To facilitate the analysis of Visium HD and extract meaningful information from the image, we developed a new function called `getVisiumHDspotCol` to calculate the mean RGB intensities when a paired high-resolution immunofluorescence image is available.

@@ -1,0 +1,248 @@
+# Data preparation 
+
+In this section, we will go through the necessary files for each spatial transcriptomics platform, and highlight the best practice to prepare the data input files.
+
+## Visium
+
+The 10x Genomics [Visium](https://www.10xgenomics.com/platforms/visium){target="_blank"} is a spatial transcriptomics platform that allows gene expression profiling while preserving the spatial location of each profiling spot (55 µm in diameter). The original sequencing output is in [Fastq format](https://en.wikipedia.org/wiki/FASTQ_format){target="_blank"}. Fastq files need to run through the workflow developed by 10x Genomics called [Space Ranger](http://10xgenomics.com/support/software/space-ranger/2.1/getting-started/what-is-space-ranger){target="_blank"}. A detailed tutorial of Space Ranger can be found through here: [https://www.10xgenomics.com/support/software/space-ranger/2.1/tutorials](https://www.10xgenomics.com/support/software/space-ranger/2.1/tutorials){target="_blank"}.
+
+Here is the file hierarchy of the original Fastq files. Reference file folder and probe set file can be downloaded from 10x Genomics website, see more details [here](https://www.10xgenomics.com/support/software/space-ranger/downloads){target="_blank"}. Here, the dataset is downloaded from an Alzheimer's disease (AD) mouse model [paper](https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.12821){target="_blank"}, with GEO entry: [GSE203424](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE203424){target="_blank"}.
+
+```
+~/Data
+  └── PSAPP-CO1/
+      #First sample, sequenced on four lanes, with R1 and R2 for each lane
+      ├── PSAPP-CO1_S1_L001_R1_001.fastq.gz
+      ├── PSAPP-CO1_S1_L001_R2_001.fastq.gz
+      ├── PSAPP-CO1_S1_L002_R1_001.fastq.gz
+      ├── PSAPP-CO1_S1_L002_R2_001.fastq.gz
+      ├── PSAPP-CO1_S1_L003_R1_001.fastq.gz
+      ├── PSAPP-CO1_S1_L003_R2_001.fastq.gz
+      ├── PSAPP-CO1_S1_L004_R1_001.fastq.gz
+      ├── PSAPP-CO1_S1_L004_R2_001.fastq.gz
+      
+  └── WT-CO1
+      #Second sample, sequenced on two lanes, with R1 and R2 for each lane
+      ├── WT-CO1_S1_L001_R1_001.fastq.gz
+      ├── WT-CO1_S1_L001_R2_001.fastq.gz
+      ├── WT-CO1_S1_L002_R1_001.fastq.gz
+      ├── WT-CO1_S1_L002_R2_001.fastq.gz
+      ├── WT-CO1_S1_L003_R1_001.fastq.gz
+      ├── WT-CO1_S1_L003_R2_001.fastq.gz
+      ├── WT-CO1_S1_L004_R1_001.fastq.gz
+      └── WT-CO1_S1_L004_R2_001.fastq.gz
+  └── /images/
+      ├── GSM6171782_WT_CO1_tissue_hires_image.tiff
+      └── GSM6171784_PSAPP_CO1_tissue_hires_image.tiff
+  └── Reference_files
+      └── refdata-gex-mm10-2020-A/
+```
+
+Here is an example of a typical Space Ranger run, using the first sample, WT-CO1, as an example:
+
+```
+spaceranger count --id="WT-CO1" \
+    --transcriptome=~/Data/Reference_files/refdata-gex-mm10-2020-A \
+    --fastqs=~/Data/Fastq_files \
+    --cytaimage=~/Data/Sample1.tif \
+    --probe-set=~/Data/Reference_files/Visium_Mouse_Transcriptome_Probe_Set_v2.0_mm10-2020-A.csv \
+    --slide=H1-ABDCEFJ \    #Using a random slide ID for illustration
+    --area=A1 \
+    --localcores=4 \
+    --localmem=256 \
+    --create-bam=false
+```
+
+Space Ranger output files:
+
+```
+~/Data/WT-CO1
+  └── outs
+    ├── analysis/
+    ├── filtered_feature_bc_matrix/
+        ├── barcodes.tsv.gz
+        ├── features.tsv.gz
+        └── matrix.mtx.gz
+    ├── raw_feature_bc_matrix/
+        ├── barcodes.tsv.gz
+        ├── features.tsv.gz
+        └── matrix.mtx.gz
+    ├── spatial/
+        ├── aligned_fiducials.jpg
+        ├── detected_tissue_image.jpg
+        ├── scalefactors_json.json
+        ├── tissue_hires_image.png
+        ├── tissue_lowres_image.png
+        └── tissue_positions_list.csv
+    ├── cloupe.cloupe
+    ├── filtered_feature_bc_matrix.h5
+    ├── metrics_summary.csv
+    ├── molecule_info.h5
+    ├── possorted_genome_bam.bam
+    ├── possorted_genome_bam.bam.bai
+    ├── raw_feature_bc_matrix.h5
+    ├── spatial_enrichment.csv
+    └── web_summary.html
+```
+
+When running the SpaceSequest `visium` script, the workflow requires the path to the `out` directory of Space Ranger output.
+
+## Visium HD
+
+10x Genomics [Visium HD (High-Definition Spatial Transcriptomics)](https://www.10xgenomics.com/platforms/visium/product-family){target="_blank"} is an advanced spatial transcriptomics platform with higher spatial resolution than the standard Visium. It's designed to capture gene expression at a finer scale - subcellular or near single-cell level. Unlike standard Visium where each spot is ~55 µm in diameter, Visium HD provides much denser arrays with smallest 2x2 µm squares.
+
+Here is the file hierarchy of the original Fastq files. Reference file folder and probe set file can be downloaded from 10x Genomics website, see more details [here](https://www.10xgenomics.com/support/software/space-ranger/downloads){target="_blank"}.
+
+```
+~/Data
+  └── /Fastq_files/
+      #First sample, sequenced on two lanes, with R1 and R2 for each lane
+      ├── Sample1_S1_L001_R1_001.fastq.gz
+      ├── Sample1_S1_L001_R2_001.fastq.gz
+      ├── Sample1_S1_L002_R1_001.fastq.gz
+      ├── Sample1_S1_L002_R2_001.fastq.gz
+    
+      #Second sample, sequenced on two lanes, with R1 and R2 for each lane
+      ├── Sample2_S2_L001_R1_001.fastq.gz
+      ├── Sample2_S2_L001_R2_001.fastq.gz
+      ├── Sample2_S2_L002_R1_001.fastq.gz
+      └── Sample2_S2_L002_R2_001.fastq.gz
+  └── /CytAssist_images/
+      ├── Sample1.tif
+      └── Sample2.tif
+  └── Reference_files
+      ├── refdata-gex-mm10-2020-A/
+      └── Visium_Mouse_Transcriptome_Probe_Set_v2.0_mm10-2020-A.csv
+```
+
+Here is an example of a typical Space Ranger run, using Sample 1 as an example:
+
+```
+spaceranger count --id="Sample1" \
+    --sample="Sample1" \
+    --transcriptome=~/Data/Reference_files/refdata-gex-mm10-2020-A \
+    --fastqs=~/Data/Fastq_files \
+    --cytaimage=~/Data/Sample1.tif \
+    --probe-set=~/Data/Reference_files/Visium_Mouse_Transcriptome_Probe_Set_v2.0_mm10-2020-A.csv \
+    --slide=H1-ABDCEFJ \    #Using a random slide ID for illustration
+    --area=A1 \
+    --localcores=4 \
+    --localmem=256 \
+    --create-bam=false
+```
+
+Space Ranger output files:
+
+```
+~/Data/Sample1
+  └── outs
+    ├── analysis/
+    ├── filtered_feature_bc_matrix/
+        ├── barcodes.tsv.gz
+        ├── features.tsv.gz
+        └── matrix.mtx.gz
+    ├── raw_feature_bc_matrix/
+        ├── barcodes.tsv.gz
+        ├── features.tsv.gz
+        └── matrix.mtx.gz
+    ├── spatial/
+        ├── aligned_fiducials.jpg
+        ├── detected_tissue_image.jpg
+        ├── scalefactors_json.json
+        ├── tissue_hires_image.png
+        ├── tissue_lowres_image.png
+        └── tissue_positions_list.csv
+    ├── cloupe.cloupe
+    ├── filtered_feature_bc_matrix.h5
+    ├── metrics_summary.csv
+    ├── molecule_info.h5
+    ├── possorted_genome_bam.bam
+    ├── possorted_genome_bam.bam.bai
+    ├── raw_feature_bc_matrix.h5
+    ├── spatial_enrichment.csv
+    └── web_summary.html
+```
+
+When running the SpaceSequest `visiumhd` script, the workflow requires the path to the `out` directory of Space Ranger output.
+
+## Xenium
+
+10x Genomics Xenium is a next-generation in situ spatial transcriptomics platform which is distinct from Visium and Visium HD. Unlike Visium, which captures RNA via barcoded spots followed by sequencing, [Xenium](https://www.10xgenomics.com/platforms/xenium){target="_blank"} directly detects transcripts on the tissue section through highly multiplexed fluorescence imaging. This approach allows single-molecule resolution and subcellular spatial mapping of hundreds to thousands of genes simultaneously, resulting in true in situ transcriptomics measurements.
+
+Xenium data can be processed by 10x Genomics Xenium Ranger software. A detailed overview can be found at: [https://www.10xgenomics.com/support/software/xenium-ranger/latest](https://www.10xgenomics.com/support/software/xenium-ranger/latest){target="_blank"}.
+
+Outputs from Xenium Onboard Analysis (XOA) analysis can be used to run Xenium Ranger, as described [here](https://www.10xgenomics.com/support/software/xenium-ranger/latest/analysis/inputs/XR-input-overview){target="_blank"}.
+
+The output files of Xenium Ranger, with a test dataset available through: 10x Genomics's website:
+
+[https://www.10xgenomics.com/datasets/xenium-human-brain-preview-data-1-standard](https://www.10xgenomics.com/datasets/xenium-human-brain-preview-data-1-standard){target="_blank"}.
+
+```
+~/Data/Xenium
+  └── outs
+    #output folders
+    ├── analysis/
+    ├── filtered_feature_bc_matrix/
+        ├── barcodes.tsv.gz
+        ├── features.tsv.gz
+        └── matrix.mtx.gz
+    ├── cell_features/
+    ├── cell_id/
+    ├── cell_summary/
+    ├── density/
+    ├── grids/
+    ├── masks/
+    ├── polygon_num_vertices/
+    ├── polygon_vertices/
+    ├── seg_mask_value/
+    
+    #Single files
+    ├── analysis_summary.html
+    ├── analysis.tar
+    ├── analysis.zarr.zip
+    ├── cell_boundaries.csv.gz
+    ├── cell_boundaries.parquet
+    ├── cell_feature_matrix.h5
+    ├── cell_feature_matrix.tar
+    ├── cell_feature_matrix.zarr.zip
+    ├── cells.csv.gz
+    ├── cells.parquet
+    ├── cells.zarr.zip
+    ├── experiment.xenium
+    ├── gene_panel.json
+    ├── metrics_summary.csv
+    ├── morphology_focus.ome.tif
+    ├── morphology_mip.ome.tif
+    ├── morphology.ome.tif
+    ├── nucleus_boundaries.csv
+    ├── nucleus_boundaries.parquet
+    ├── transcripts.csv.gz
+    ├── transcripts.parquet
+    └── transcripts.zarr.zip
+```
+
+## CosMX
+
+NanoString (Now Bruker Corporation) [CosMx Spatial Molecular Imager (SMI)](https://nanostring.com/products/cosmx-spatial-molecular-imager/){target="_blank"} is a highly multiplexed, single-molecule in site spatial transcriptomics platform designed for subcellular-resolution spatial profiling of RNA and proteins. It differs from 10x platforms (Visium, Visium HD, Xenium) in that it captures direct spatial imaging=-based transcript detection with ultra-high plex (up to thousands of genes) and provides spatially resolved single-cell and subcellular data across the whole imaging region.
+
+Here, we use an demo dataset from the NanoString website: [CosMx Human Frontal Cortex FFPE Dataset](https://nanostring.com/products/cosmx-spatial-molecular-imager/ffpe-dataset/human-frontal-cortex-ffpe-dataset/){target="_blank"}.
+
+```
+~/S3/
+    ├── S3_exprMat_file.csv
+    ├── S3_fov_positions_file.csv
+    ├── S3_metadata_file.csv
+    ├── S3-polygons.csv
+    └── S3_tx_file.csv
+```
+
+These input files are sufficient to run the SpaceSequest `cosmx` workflow. If you are interested in incorporting the images, additional files need to be downloaded. The download link for: flatFiles (1.95 Gb) [https://smi-public.objects.liquidweb.services/6k_release/flatFiles.zip](https://smi-public.objects.liquidweb.services/6k_release/flatFiles.zip){target="_blank"}, and RawFiles (602 Gb) [https://smi-public.objects.liquidweb.services/6k_release/RawFiles.zip](https://smi-public.objects.liquidweb.services/6k_release/RawFiles.zip){target="_blank"}. Please be careful to click the links directly as they are very large zip files.
+
+## GeoMX
+
+Last but not least, [NanoString GeoMx Digital Spatial Profiler (DSP)](https://nanostring.com/products/geomx-digital-spatial-profiler/geomx-dsp-overview/){target="_blank"} is a spatial transcritomics (and also proteomics) platform designed for profiling gene expression and proteins in a region-of-interest (ROI)-based manner. GeoMx does not capture continuous spatial data across an entire tissue section. Instead, it relies on user-defined ROIs, allowing targeted, high-plex profiling in selected tissue compartments, such as tumor and neignborhood non-tumor cells.
+
+GeoMx libraries can be sequenced using a sequencer, which geneerate fastq files. Illumina data analysis platform provides [GeoMx® NGS Pipeline](https://www.illumina.com/products/by-type/informatics-products/basespace-sequence-hub/apps/nanostring-geomxr-ngs-pipeline.html){target="_blank"}, which can be directly used to convert fastq to DCC files. Other software suite may also include this pipeline, such as [Cumulus](https://cumulus.readthedocs.io/en/stable/geomxngs/index.html){target="_blank"}.
+
+The converted files are text files with .dcc as suffix. These dcc files can directly be used to run SpaceSequest `geomx` workflow.
+

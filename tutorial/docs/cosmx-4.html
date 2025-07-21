@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 9 CosMX | SpaceSequest: pipeline for spatial transcriptomics data analysis</title>
+  <meta name="description" content="Chapter 9 CosMX | SpaceSequest: pipeline for spatial transcriptomics data analysis" />
+  <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 9 CosMX | SpaceSequest: pipeline for spatial transcriptomics data analysis" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 9 CosMX | SpaceSequest: pipeline for spatial transcriptomics data analysis" />
+  
+  
+  
+
+
+
+<meta name="date" content="2025-07-19" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="geomx-3.html"/>
+<link rel="next" href="demo.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">scRNASequest</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Preface</a></li>
+<li class="chapter" data-level="2" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>2</b> Introduction</a></li>
+<li class="chapter" data-level="3" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>3</b> Installation</a></li>
+<li class="chapter" data-level="4" data-path="data-preparation.html"><a href="data-preparation.html"><i class="fa fa-check"></i><b>4</b> Data preparation</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="data-preparation.html"><a href="data-preparation.html#visium"><i class="fa fa-check"></i><b>4.1</b> Visium</a></li>
+<li class="chapter" data-level="4.2" data-path="data-preparation.html"><a href="data-preparation.html#visiumhd"><i class="fa fa-check"></i><b>4.2</b> VisiumHD</a></li>
+<li class="chapter" data-level="4.3" data-path="data-preparation.html"><a href="data-preparation.html#xenium"><i class="fa fa-check"></i><b>4.3</b> Xenium</a></li>
+<li class="chapter" data-level="4.4" data-path="data-preparation.html"><a href="data-preparation.html#cosmx"><i class="fa fa-check"></i><b>4.4</b> CosMX</a></li>
+<li class="chapter" data-level="4.5" data-path="data-preparation.html"><a href="data-preparation.html#geomx"><i class="fa fa-check"></i><b>4.5</b> GeoMX</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="visium-1.html"><a href="visium-1.html"><i class="fa fa-check"></i><b>5</b> Visium</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="visium-1.html"><a href="visium-1.html#spaceranger-run"><i class="fa fa-check"></i><b>5.1</b> SpaceRanger run</a></li>
+<li class="chapter" data-level="5.2" data-path="visium-1.html"><a href="visium-1.html#pipeline-setup"><i class="fa fa-check"></i><b>5.2</b> Pipeline setup</a></li>
+<li class="chapter" data-level="5.3" data-path="visium-1.html"><a href="visium-1.html#results"><i class="fa fa-check"></i><b>5.3</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="visiumhd-1.html"><a href="visiumhd-1.html"><i class="fa fa-check"></i><b>6</b> VisiumHD</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="visiumhd-1.html"><a href="visiumhd-1.html#spaceranger-run-1"><i class="fa fa-check"></i><b>6.1</b> SpaceRanger run</a></li>
+<li class="chapter" data-level="6.2" data-path="visiumhd-1.html"><a href="visiumhd-1.html#pipeline-setup-1"><i class="fa fa-check"></i><b>6.2</b> Pipeline setup</a></li>
+<li class="chapter" data-level="6.3" data-path="visiumhd-1.html"><a href="visiumhd-1.html#results-1"><i class="fa fa-check"></i><b>6.3</b> Results</a></li>
+<li class="chapter" data-level="6.4" data-path="visiumhd-1.html"><a href="visiumhd-1.html#geomx-1"><i class="fa fa-check"></i><b>6.4</b> GeoMX</a></li>
+<li class="chapter" data-level="6.5" data-path="visiumhd-1.html"><a href="visiumhd-1.html#cosmx-1"><i class="fa fa-check"></i><b>6.5</b> CosMX</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="xenium-1.html"><a href="xenium-1.html"><i class="fa fa-check"></i><b>7</b> Xenium</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="xenium-1.html"><a href="xenium-1.html#input-preparation"><i class="fa fa-check"></i><b>7.1</b> Input preparation</a></li>
+<li class="chapter" data-level="7.2" data-path="xenium-1.html"><a href="xenium-1.html#pipeline-setup-2"><i class="fa fa-check"></i><b>7.2</b> Pipeline setup</a></li>
+<li class="chapter" data-level="7.3" data-path="xenium-1.html"><a href="xenium-1.html#results-2"><i class="fa fa-check"></i><b>7.3</b> Results</a></li>
+<li class="chapter" data-level="7.4" data-path="xenium-1.html"><a href="xenium-1.html#visiumhd-2"><i class="fa fa-check"></i><b>7.4</b> VisiumHD</a></li>
+<li class="chapter" data-level="7.5" data-path="xenium-1.html"><a href="xenium-1.html#geomx-2"><i class="fa fa-check"></i><b>7.5</b> GeoMX</a></li>
+<li class="chapter" data-level="7.6" data-path="xenium-1.html"><a href="xenium-1.html#cosmx-2"><i class="fa fa-check"></i><b>7.6</b> CosMX</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="geomx-3.html"><a href="geomx-3.html"><i class="fa fa-check"></i><b>8</b> GeoMX</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="geomx-3.html"><a href="geomx-3.html#fastq-to-dcc-conversion"><i class="fa fa-check"></i><b>8.1</b> Fastq to DCC conversion</a></li>
+<li class="chapter" data-level="8.2" data-path="geomx-3.html"><a href="geomx-3.html#pipeline-setup-3"><i class="fa fa-check"></i><b>8.2</b> Pipeline setup</a></li>
+<li class="chapter" data-level="8.3" data-path="geomx-3.html"><a href="geomx-3.html#results-3"><i class="fa fa-check"></i><b>8.3</b> Results</a></li>
+<li class="chapter" data-level="8.4" data-path="geomx-3.html"><a href="geomx-3.html#quickomics-exploration"><i class="fa fa-check"></i><b>8.4</b> Quickomics exploration</a></li>
+<li class="chapter" data-level="8.5" data-path="geomx-3.html"><a href="geomx-3.html#cosmx-3"><i class="fa fa-check"></i><b>8.5</b> CosMX</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="cosmx-4.html"><a href="cosmx-4.html"><i class="fa fa-check"></i><b>9</b> CosMX</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="cosmx-4.html"><a href="cosmx-4.html#input-preparation-1"><i class="fa fa-check"></i><b>9.1</b> Input preparation</a></li>
+<li class="chapter" data-level="9.2" data-path="cosmx-4.html"><a href="cosmx-4.html#pipeline-setup-4"><i class="fa fa-check"></i><b>9.2</b> Pipeline setup</a></li>
+<li class="chapter" data-level="9.3" data-path="cosmx-4.html"><a href="cosmx-4.html#results-4"><i class="fa fa-check"></i><b>9.3</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="demo.html"><a href="demo.html"><i class="fa fa-check"></i><b>10</b> Demo</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="demo.html"><a href="demo.html#visium-2"><i class="fa fa-check"></i><b>10.1</b> Visium</a></li>
+<li class="chapter" data-level="10.2" data-path="demo.html"><a href="demo.html#xenium-2"><i class="fa fa-check"></i><b>10.2</b> Xenium</a></li>
+<li class="chapter" data-level="10.3" data-path="demo.html"><a href="demo.html#visiumhd-3"><i class="fa fa-check"></i><b>10.3</b> VisiumHD</a></li>
+<li class="chapter" data-level="10.4" data-path="demo.html"><a href="demo.html#geomx-4"><i class="fa fa-check"></i><b>10.4</b> GeoMX</a></li>
+<li class="chapter" data-level="10.5" data-path="demo.html"><a href="demo.html#cosmx-5"><i class="fa fa-check"></i><b>10.5</b> CosMX</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">SpaceSequest: pipeline for spatial transcriptomics data analysis</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="cosmx-4" class="section level1 hasAnchor" number="9">
+<h1><span class="header-section-number">Chapter 9</span> CosMX<a href="cosmx-4.html#cosmx-4" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="input-preparation-1" class="section level2 hasAnchor" number="9.1">
+<h2><span class="header-section-number">9.1</span> Input preparation<a href="cosmx-4.html#input-preparation-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+</div>
+<div id="pipeline-setup-4" class="section level2 hasAnchor" number="9.2">
+<h2><span class="header-section-number">9.2</span> Pipeline setup<a href="cosmx-4.html#pipeline-setup-4" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+</div>
+<div id="results-4" class="section level2 hasAnchor" number="9.3">
+<h2><span class="header-section-number">9.3</span> Results<a href="cosmx-4.html#results-4" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Demo run directory: /edgehpc/dept/compbio/projects/SpaceSequest_demo/5_CosMx</p>
+<p>Demo run dataset: a public data provided by NanoString, human frontal cortex FFPE: <a href="https://nanostring.com/products/cosmx-spatial-molecular-imager/ffpe-dataset/human-frontal-cortex-ffpe-dataset/" class="uri">https://nanostring.com/products/cosmx-spatial-molecular-imager/ffpe-dataset/human-frontal-cortex-ffpe-dataset/</a></p>
+<p>To test the data integration function, I duplicated this data to two same datasets: S3 and S4, stored under the data folder in the 5_CosMx directory.</p>
+<p>First, we initiate the pipeline using the following script. This will generate templates of config.yml and sampleMeta.csv:</p>
+<pre><code>#First step, generate config and sampleMeta file
+
+cosmx /edgehpc/dept/compbio/projects/SpaceSequest_demo/5_CosMx</code></pre>
+<p>Then, fill in the config.yml file and the sampleMeta.csv file as below:</p>
+<pre><code>#config file for CosMx. Please avoid using spaces in names or paths. All items are required.
+
+project_ID: CoxMx_demo      #required project name
+
+sampleMeta: /edgehpc/dept/compbio/projects/SpaceSequest_demo/5_CosMx/sampleMeta.csv         #path to the sampleMeta file
+
+output_dir: /edgehpc/dept/compbio/projects/SpaceSequest_demo/5_CosMx/output        #output directory
+
+cluster_resolution: 0.3   #resolution for the FindClusters step, default 0.3
+
+reference: humancortexref      #Azimuth reference name, optional
+
+reference_name: subclass      #column name of the cell type label you would like to transfer. Required when reference is used.
+
+integrate_data: True       #True or False to merge/integrate all the data in the sampleMeta file
+
+integrate_with_harmony: True       #True or False to use Harmony for integration. Default as True</code></pre>
+<p>The sampleMeta.csv file contains sample name and several key input files of CosMx:</p>
+<pre><code>Sample,Directory,exprMat_file,fov_file,metadata_file,tx_file,polygon_file
+
+S3,/edgehpc/dept/compbio/projects/SpaceSequest_demo/5_CosMx/data/S3,S3_exprMat_file.csv,S3_fov_positions_file.csv,S3_metadata_file.csv,S3_tx_file.csv,S3-polygons.csv
+
+S4,/edgehpc/dept/compbio/projects/SpaceSequest_demo/5_CosMx/data/S4,S4_exprMat_file.csv,S4_fov_positions_file.csv,S4_metadata_file.csv,S4_tx_file.csv,S4-polygons.csv</code></pre>
+<p>Then run the pipeline as below:</p>
+<pre><code>#Run the data
+
+cosmx /edgehpc/dept/compbio/projects/SpaceSequest_demo/5_CosMx/config.yml</code></pre>
+<p>Finally check the results in the output_dir folder specified in the config.yml file. The output files contain some plots (UMAP for original cluster and annotated cell types), and Rdata files storing the results.</p>
+<div id="fig:CosMX" class="figure">
+<p><img src="https://interactivereport.github.io/SpaceSequest/images/CoxMx_image.png" style="width:48.0%" alt="Figure 4A" />
+<img src="https://interactivereport.github.io/SpaceSequest/images/CoxMx_UMAP.png" style="width:48.0%" alt="Figure 4B" /></p>
+</div>
+<p>Figure 4. CosMX spatial-transcriptomics output. (Left) Tissue image with capture spots overlaid. (Right) UMAP embedding of spatial barcodes colored by cluster.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="geomx-3.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="demo.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/interactivereport/scRNAsequest/edit/gh-pages/09-CosMx.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/interactivereport/scRNAsequest/blob/gh-pages/09-CosMx.Rmd",
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

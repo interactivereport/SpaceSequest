@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Page not found | bookdownproj.knit</title>
+  <title>Chapter 7 GeoMX | bookdownproj.knit</title>
   <meta name="description" content="" />
   <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Page not found | bookdownproj.knit" />
+  <meta property="og:title" content="Chapter 7 GeoMX | bookdownproj.knit" />
   <meta property="og:type" content="book" />
   
   
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Page not found | bookdownproj.knit" />
+  <meta name="twitter:title" content="Chapter 7 GeoMX | bookdownproj.knit" />
   
   
   
@@ -28,8 +28,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-
-
+<link rel="prev" href="xenium-1.html"/>
+<link rel="next" href="cosmx-1.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -148,19 +148,65 @@
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="page-not-found" class="section level1">
-<h1>Page not found</h1>
-<p>The page you requested cannot be found (perhaps it was moved or renamed).</p>
-<p>You may want to try searching to find the page's new location, or use
-the table of contents to find the page you are looking for.</p>
+<div id="geomx-1" class="section level1 hasAnchor" number="7">
+<h1><span class="header-section-number">Chapter 7</span> GeoMX<a href="geomx-1.html#geomx-1" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="fastq-to-dcc-conversion" class="section level2 hasAnchor" number="7.1">
+<h2><span class="header-section-number">7.1</span> Fastq to DCC conversion<a href="geomx-1.html#fastq-to-dcc-conversion" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+</div>
+<div id="pipeline-setup-2" class="section level2 hasAnchor" number="7.2">
+<h2><span class="header-section-number">7.2</span> Pipeline setup<a href="geomx-1.html#pipeline-setup-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+</div>
+<div id="results-3" class="section level2 hasAnchor" number="7.3">
+<h2><span class="header-section-number">7.3</span> Results<a href="geomx-1.html#results-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+</div>
+<div id="quickomics-exploration" class="section level2 hasAnchor" number="7.4">
+<h2><span class="header-section-number">7.4</span> Quickomics exploration<a href="geomx-1.html#quickomics-exploration" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Demo run directory: ~/SpaceSequest_demo/4_GeoMx</p>
+<p>Demo dataset is a public data provided by NanoString: <a href="http://nanostring-public-share.s3-website-us-west-2.amazonaws.com/GeoScriptHub/Kidney_Dataset_for_GeomxTools.zip" class="uri">http://nanostring-public-share.s3-website-us-west-2.amazonaws.com/GeoScriptHub/Kidney_Dataset_for_GeomxTools.zip</a></p>
+<p>This is a kidney dataset, and in our demo run, we will run data processing, quality control, and differential expression analysis by comparing two kidney cell types: Glomerulus v.s. Tubule</p>
+<p>First, we initiate the pipeline using the following script. This will generate templates of config.yml and compareInfo.csv:</p>
+<pre><code>#First step, generate config and sampleMeta file
+
+geomx ~/SpaceSequest_demo/4_GeoMx</code></pre>
+<p>After this step, fill in the config.yml file and the sampleMeta.csv file as below:</p>
+<pre><code>#config file for GeoMx. Please avoid using spaces in names or paths. All items are required.
+
+project_ID: GeoMx_demo  #name of the project
+
+data_path: ~/SpaceSequest_demo/4_GeoMx/Kidney_Dataset/dccs    #path to DCC files
+
+data_annotation: ~/SpaceSequest_demo/4_GeoMx/Kidney_Dataset/annotation/kidney_demo_AOI_Annotations_selected_clean.xlsx        #sample meta information
+
+annotation_sheet: Template      #Sheet name of annotation Excel file
+
+pkcs_file: ~/SpaceSequest_demo/4_GeoMx/Kidney_Dataset/pkcs/TAP_H_WTA_v1.0.pkc       #path to the pkc file
+
+output_dir: ~/SpaceSequest_demo/4_GeoMx/results      #path for output files
+
+comparison: ~/SpaceSequest_demo/4_GeoMx/compareInfo.csv   #comparison file to define DE groups
+
+quickomics: True                                  </code></pre>
+<p>Then prepare the compareInfo.csv file to define differential expression analysis comparisons:</p>
+<pre><code>CompareName,Model,Group_name,Group_test,Group_ctrl,Analysis_method
+
+Glome_vs_Tubule,~region,region,glomerulus,tubule,Linear</code></pre>
+<p>Currently, we only support running a Linear model to compare two conditions, without covariate adjustments. More DE methods will be added later.</p>
+<p>Run the pipeline as below:</p>
+<pre><code>#Run the data
+
+geomx ~/SpaceSequest_demo/4_GeoMx/config.yml
+</code></pre>
+<p>Finally check the results in the output_dir folder specified in the config.yml file. The output files contain DE analysis results, and if Quickomics parameter was set to True, it will create mutiple .csv files to create a Quickomics visualization link. An example can be found here (Q3 normalized values were used to create the link): <a href="http://compbio.biogen.com:3838/Quickomics/?unlisted=PRJ_GeoMx_demo_Ij4YyG" class="uri">http://compbio.biogen.com:3838/Quickomics/?unlisted=PRJ_GeoMx_demo_Ij4YyG</a></p>
+
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-
+<a href="xenium-1.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="cosmx-1.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -191,7 +237,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/interactivereport/scRNAsequest/edit/gh-pages/%s",
+"link": "https://github.com/interactivereport/scRNAsequest/edit/gh-pages/08-GeoMx.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -199,7 +245,7 @@ gitbook.start({
 "text": null
 },
 "view": {
-"link": "https://github.com/interactivereport/scRNAsequest/blob/gh-pages/%s",
+"link": "https://github.com/interactivereport/scRNAsequest/blob/gh-pages/08-GeoMx.Rmd",
 "text": null
 },
 "download": null,

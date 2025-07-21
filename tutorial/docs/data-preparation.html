@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 3 Data preparation | bookdownproj.knit</title>
+  <meta name="description" content="" />
+  <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 3 Data preparation | bookdownproj.knit" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 3 Data preparation | bookdownproj.knit" />
+  
+  
+  
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="installation.html"/>
+<link rel="next" href="visium-1.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">scRNASequest</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>SpaceSequest: A unified pipeline for spatial transcriptomics data analysis</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#preface"><i class="fa fa-check"></i>Preface</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>2</b> Installation</a></li>
+<li class="chapter" data-level="3" data-path="data-preparation.html"><a href="data-preparation.html"><i class="fa fa-check"></i><b>3</b> Data preparation</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="data-preparation.html"><a href="data-preparation.html#visium"><i class="fa fa-check"></i><b>3.1</b> Visium</a></li>
+<li class="chapter" data-level="3.2" data-path="data-preparation.html"><a href="data-preparation.html#visium-hd"><i class="fa fa-check"></i><b>3.2</b> Visium HD</a></li>
+<li class="chapter" data-level="3.3" data-path="data-preparation.html"><a href="data-preparation.html#xenium"><i class="fa fa-check"></i><b>3.3</b> Xenium</a></li>
+<li class="chapter" data-level="3.4" data-path="data-preparation.html"><a href="data-preparation.html#cosmx"><i class="fa fa-check"></i><b>3.4</b> CosMX</a></li>
+<li class="chapter" data-level="3.5" data-path="data-preparation.html"><a href="data-preparation.html#geomx"><i class="fa fa-check"></i><b>3.5</b> GeoMX</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="visium-1.html"><a href="visium-1.html"><i class="fa fa-check"></i><b>4</b> Visium</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="visium-1.html"><a href="visium-1.html#space-ranger-run"><i class="fa fa-check"></i><b>4.1</b> Space Ranger run</a></li>
+<li class="chapter" data-level="4.2" data-path="visium-1.html"><a href="visium-1.html#pipeline-run"><i class="fa fa-check"></i><b>4.2</b> Pipeline run</a></li>
+<li class="chapter" data-level="4.3" data-path="visium-1.html"><a href="visium-1.html#results"><i class="fa fa-check"></i><b>4.3</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="visiumhd.html"><a href="visiumhd.html"><i class="fa fa-check"></i><b>5</b> VisiumHD</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="visiumhd.html"><a href="visiumhd.html#spaceranger-run"><i class="fa fa-check"></i><b>5.1</b> SpaceRanger run</a></li>
+<li class="chapter" data-level="5.2" data-path="visiumhd.html"><a href="visiumhd.html#pipeline-setup"><i class="fa fa-check"></i><b>5.2</b> Pipeline setup</a></li>
+<li class="chapter" data-level="5.3" data-path="visiumhd.html"><a href="visiumhd.html#results-1"><i class="fa fa-check"></i><b>5.3</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="xenium-1.html"><a href="xenium-1.html"><i class="fa fa-check"></i><b>6</b> Xenium</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="xenium-1.html"><a href="xenium-1.html#input-preparation"><i class="fa fa-check"></i><b>6.1</b> Input preparation</a></li>
+<li class="chapter" data-level="6.2" data-path="xenium-1.html"><a href="xenium-1.html#pipeline-setup-1"><i class="fa fa-check"></i><b>6.2</b> Pipeline setup</a></li>
+<li class="chapter" data-level="6.3" data-path="xenium-1.html"><a href="xenium-1.html#results-2"><i class="fa fa-check"></i><b>6.3</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="geomx-1.html"><a href="geomx-1.html"><i class="fa fa-check"></i><b>7</b> GeoMX</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="geomx-1.html"><a href="geomx-1.html#fastq-to-dcc-conversion"><i class="fa fa-check"></i><b>7.1</b> Fastq to DCC conversion</a></li>
+<li class="chapter" data-level="7.2" data-path="geomx-1.html"><a href="geomx-1.html#pipeline-setup-2"><i class="fa fa-check"></i><b>7.2</b> Pipeline setup</a></li>
+<li class="chapter" data-level="7.3" data-path="geomx-1.html"><a href="geomx-1.html#results-3"><i class="fa fa-check"></i><b>7.3</b> Results</a></li>
+<li class="chapter" data-level="7.4" data-path="geomx-1.html"><a href="geomx-1.html#quickomics-exploration"><i class="fa fa-check"></i><b>7.4</b> Quickomics exploration</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="cosmx-1.html"><a href="cosmx-1.html"><i class="fa fa-check"></i><b>8</b> CosMX</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="cosmx-1.html"><a href="cosmx-1.html#input-preparation-1"><i class="fa fa-check"></i><b>8.1</b> Input preparation</a></li>
+<li class="chapter" data-level="8.2" data-path="cosmx-1.html"><a href="cosmx-1.html#pipeline-setup-3"><i class="fa fa-check"></i><b>8.2</b> Pipeline setup</a></li>
+<li class="chapter" data-level="8.3" data-path="cosmx-1.html"><a href="cosmx-1.html#results-4"><i class="fa fa-check"></i><b>8.3</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="additional-tools.html"><a href="additional-tools.html"><i class="fa fa-check"></i><b>9</b> Additional tools</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="additional-tools.html"><a href="additional-tools.html#cosmx2vip"><i class="fa fa-check"></i><b>9.1</b> cosMx2VIP</a>
+<ul>
+<li class="chapter" data-level="9.1.1" data-path="additional-tools.html"><a href="additional-tools.html#input-file-set-up"><i class="fa fa-check"></i><b>9.1.1</b> Input file set up</a></li>
+<li class="chapter" data-level="9.1.2" data-path="additional-tools.html"><a href="additional-tools.html#run-the-workflow"><i class="fa fa-check"></i><b>9.1.2</b> Run the workflow</a></li>
+<li class="chapter" data-level="9.1.3" data-path="additional-tools.html"><a href="additional-tools.html#results-5"><i class="fa fa-check"></i><b>9.1.3</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="additional-tools.html"><a href="additional-tools.html#visium-hd-color-function"><i class="fa fa-check"></i><b>9.2</b> Visium HD color function</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"></a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="data-preparation" class="section level1 hasAnchor" number="3">
+<h1><span class="header-section-number">Chapter 3</span> Data preparation<a href="data-preparation.html#data-preparation" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>In this section, we will go through the necessary files for each spatial transcriptomics platform, and highlight the best practice to prepare the data input files.</p>
+<div id="visium" class="section level2 hasAnchor" number="3.1">
+<h2><span class="header-section-number">3.1</span> Visium<a href="data-preparation.html#visium" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The 10x Genomics <a href="https://www.10xgenomics.com/platforms/visium" target="_blank">Visium</a> is a spatial transcriptomics platform that allows gene expression profiling while preserving the spatial location of each profiling spot (55 µm in diameter). The original sequencing output is in <a href="https://en.wikipedia.org/wiki/FASTQ_format" target="_blank">Fastq format</a>. Fastq files need to run through the workflow developed by 10x Genomics called <a href="http://10xgenomics.com/support/software/space-ranger/2.1/getting-started/what-is-space-ranger" target="_blank">Space Ranger</a>. A detailed tutorial of Space Ranger can be found through here: <a href="https://www.10xgenomics.com/support/software/space-ranger/2.1/tutorials" target="_blank">https://www.10xgenomics.com/support/software/space-ranger/2.1/tutorials</a>.</p>
+<p>Here is the file hierarchy of the original Fastq files. Reference file folder and probe set file can be downloaded from 10x Genomics website, see more details <a href="https://www.10xgenomics.com/support/software/space-ranger/downloads" target="_blank">here</a>. Here, the dataset is downloaded from an Alzheimer’s disease (AD) mouse model <a href="https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.12821" target="_blank">paper</a>, with GEO entry: <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE203424" target="_blank">GSE203424</a>.</p>
+<pre><code>~/Data
+  └── PSAPP-CO1/
+      #First sample, sequenced on four lanes, with R1 and R2 for each lane
+      ├── PSAPP-CO1_S1_L001_R1_001.fastq.gz
+      ├── PSAPP-CO1_S1_L001_R2_001.fastq.gz
+      ├── PSAPP-CO1_S1_L002_R1_001.fastq.gz
+      ├── PSAPP-CO1_S1_L002_R2_001.fastq.gz
+      ├── PSAPP-CO1_S1_L003_R1_001.fastq.gz
+      ├── PSAPP-CO1_S1_L003_R2_001.fastq.gz
+      ├── PSAPP-CO1_S1_L004_R1_001.fastq.gz
+      ├── PSAPP-CO1_S1_L004_R2_001.fastq.gz
+      
+  └── WT-CO1
+      #Second sample, sequenced on two lanes, with R1 and R2 for each lane
+      ├── WT-CO1_S1_L001_R1_001.fastq.gz
+      ├── WT-CO1_S1_L001_R2_001.fastq.gz
+      ├── WT-CO1_S1_L002_R1_001.fastq.gz
+      ├── WT-CO1_S1_L002_R2_001.fastq.gz
+      ├── WT-CO1_S1_L003_R1_001.fastq.gz
+      ├── WT-CO1_S1_L003_R2_001.fastq.gz
+      ├── WT-CO1_S1_L004_R1_001.fastq.gz
+      └── WT-CO1_S1_L004_R2_001.fastq.gz
+  └── /images/
+      ├── GSM6171782_WT_CO1_tissue_hires_image.tiff
+      └── GSM6171784_PSAPP_CO1_tissue_hires_image.tiff
+  └── Reference_files
+      └── refdata-gex-mm10-2020-A/</code></pre>
+<p>Here is an example of a typical Space Ranger run, using the first sample, WT-CO1, as an example:</p>
+<pre><code>spaceranger count --id=&quot;WT-CO1&quot; \
+    --transcriptome=~/Data/Reference_files/refdata-gex-mm10-2020-A \
+    --fastqs=~/Data/Fastq_files \
+    --cytaimage=~/Data/Sample1.tif \
+    --probe-set=~/Data/Reference_files/Visium_Mouse_Transcriptome_Probe_Set_v2.0_mm10-2020-A.csv \
+    --slide=H1-ABDCEFJ \    #Using a random slide ID for illustration
+    --area=A1 \
+    --localcores=4 \
+    --localmem=256 \
+    --create-bam=false</code></pre>
+<p>Space Ranger output files:</p>
+<pre><code>~/Data/WT-CO1
+  └── outs
+    ├── analysis/
+    ├── filtered_feature_bc_matrix/
+        ├── barcodes.tsv.gz
+        ├── features.tsv.gz
+        └── matrix.mtx.gz
+    ├── raw_feature_bc_matrix/
+        ├── barcodes.tsv.gz
+        ├── features.tsv.gz
+        └── matrix.mtx.gz
+    ├── spatial/
+        ├── aligned_fiducials.jpg
+        ├── detected_tissue_image.jpg
+        ├── scalefactors_json.json
+        ├── tissue_hires_image.png
+        ├── tissue_lowres_image.png
+        └── tissue_positions_list.csv
+    ├── cloupe.cloupe
+    ├── filtered_feature_bc_matrix.h5
+    ├── metrics_summary.csv
+    ├── molecule_info.h5
+    ├── possorted_genome_bam.bam
+    ├── possorted_genome_bam.bam.bai
+    ├── raw_feature_bc_matrix.h5
+    ├── spatial_enrichment.csv
+    └── web_summary.html</code></pre>
+<p>When running the SpaceSequest <code>visium</code> script, the workflow requires the path to the <code>out</code> directory of Space Ranger output.</p>
+</div>
+<div id="visium-hd" class="section level2 hasAnchor" number="3.2">
+<h2><span class="header-section-number">3.2</span> Visium HD<a href="data-preparation.html#visium-hd" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>10x Genomics <a href="https://www.10xgenomics.com/platforms/visium/product-family" target="_blank">Visium HD (High-Definition Spatial Transcriptomics)</a> is an advanced spatial transcriptomics platform with higher spatial resolution than the standard Visium. It’s designed to capture gene expression at a finer scale - subcellular or near single-cell level. Unlike standard Visium where each spot is ~55 µm in diameter, Visium HD provides much denser arrays with smallest 2x2 µm squares.</p>
+<p>Here is the file hierarchy of the original Fastq files. Reference file folder and probe set file can be downloaded from 10x Genomics website, see more details <a href="https://www.10xgenomics.com/support/software/space-ranger/downloads" target="_blank">here</a>.</p>
+<pre><code>~/Data
+  └── /Fastq_files/
+      #First sample, sequenced on two lanes, with R1 and R2 for each lane
+      ├── Sample1_S1_L001_R1_001.fastq.gz
+      ├── Sample1_S1_L001_R2_001.fastq.gz
+      ├── Sample1_S1_L002_R1_001.fastq.gz
+      ├── Sample1_S1_L002_R2_001.fastq.gz
+    
+      #Second sample, sequenced on two lanes, with R1 and R2 for each lane
+      ├── Sample2_S2_L001_R1_001.fastq.gz
+      ├── Sample2_S2_L001_R2_001.fastq.gz
+      ├── Sample2_S2_L002_R1_001.fastq.gz
+      └── Sample2_S2_L002_R2_001.fastq.gz
+  └── /CytAssist_images/
+      ├── Sample1.tif
+      └── Sample2.tif
+  └── Reference_files
+      ├── refdata-gex-mm10-2020-A/
+      └── Visium_Mouse_Transcriptome_Probe_Set_v2.0_mm10-2020-A.csv</code></pre>
+<p>Here is an example of a typical Space Ranger run, using Sample 1 as an example:</p>
+<pre><code>spaceranger count --id=&quot;Sample1&quot; \
+    --sample=&quot;Sample1&quot; \
+    --transcriptome=~/Data/Reference_files/refdata-gex-mm10-2020-A \
+    --fastqs=~/Data/Fastq_files \
+    --cytaimage=~/Data/Sample1.tif \
+    --probe-set=~/Data/Reference_files/Visium_Mouse_Transcriptome_Probe_Set_v2.0_mm10-2020-A.csv \
+    --slide=H1-ABDCEFJ \    #Using a random slide ID for illustration
+    --area=A1 \
+    --localcores=4 \
+    --localmem=256 \
+    --create-bam=false</code></pre>
+<p>Space Ranger output files:</p>
+<pre><code>~/Data/Sample1
+  └── outs
+    ├── analysis/
+    ├── filtered_feature_bc_matrix/
+        ├── barcodes.tsv.gz
+        ├── features.tsv.gz
+        └── matrix.mtx.gz
+    ├── raw_feature_bc_matrix/
+        ├── barcodes.tsv.gz
+        ├── features.tsv.gz
+        └── matrix.mtx.gz
+    ├── spatial/
+        ├── aligned_fiducials.jpg
+        ├── detected_tissue_image.jpg
+        ├── scalefactors_json.json
+        ├── tissue_hires_image.png
+        ├── tissue_lowres_image.png
+        └── tissue_positions_list.csv
+    ├── cloupe.cloupe
+    ├── filtered_feature_bc_matrix.h5
+    ├── metrics_summary.csv
+    ├── molecule_info.h5
+    ├── possorted_genome_bam.bam
+    ├── possorted_genome_bam.bam.bai
+    ├── raw_feature_bc_matrix.h5
+    ├── spatial_enrichment.csv
+    └── web_summary.html</code></pre>
+<p>When running the SpaceSequest <code>visiumhd</code> script, the workflow requires the path to the <code>out</code> directory of Space Ranger output.</p>
+</div>
+<div id="xenium" class="section level2 hasAnchor" number="3.3">
+<h2><span class="header-section-number">3.3</span> Xenium<a href="data-preparation.html#xenium" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>10x Genomics Xenium is a next-generation in situ spatial transcriptomics platform which is distinct from Visium and Visium HD. Unlike Visium, which captures RNA via barcoded spots followed by sequencing, <a href="https://www.10xgenomics.com/platforms/xenium" target="_blank">Xenium</a> directly detects transcripts on the tissue section through highly multiplexed fluorescence imaging. This approach allows single-molecule resolution and subcellular spatial mapping of hundreds to thousands of genes simultaneously, resulting in true in situ transcriptomics measurements.</p>
+<p>Xenium data can be processed by 10x Genomics Xenium Ranger software. A detailed overview can be found at: <a href="https://www.10xgenomics.com/support/software/xenium-ranger/latest" target="_blank">https://www.10xgenomics.com/support/software/xenium-ranger/latest</a>.</p>
+<p>Outputs from Xenium Onboard Analysis (XOA) analysis can be used to run Xenium Ranger, as described <a href="https://www.10xgenomics.com/support/software/xenium-ranger/latest/analysis/inputs/XR-input-overview" target="_blank">here</a>.</p>
+<p>The output files of Xenium Ranger, with a test dataset available through: 10x Genomics’s website:</p>
+<p><a href="https://www.10xgenomics.com/datasets/xenium-human-brain-preview-data-1-standard" target="_blank">https://www.10xgenomics.com/datasets/xenium-human-brain-preview-data-1-standard</a>.</p>
+<pre><code>~/Data/Xenium
+  └── outs
+    #output folders
+    ├── analysis/
+    ├── filtered_feature_bc_matrix/
+        ├── barcodes.tsv.gz
+        ├── features.tsv.gz
+        └── matrix.mtx.gz
+    ├── cell_features/
+    ├── cell_id/
+    ├── cell_summary/
+    ├── density/
+    ├── grids/
+    ├── masks/
+    ├── polygon_num_vertices/
+    ├── polygon_vertices/
+    ├── seg_mask_value/
+    
+    #Single files
+    ├── analysis_summary.html
+    ├── analysis.tar
+    ├── analysis.zarr.zip
+    ├── cell_boundaries.csv.gz
+    ├── cell_boundaries.parquet
+    ├── cell_feature_matrix.h5
+    ├── cell_feature_matrix.tar
+    ├── cell_feature_matrix.zarr.zip
+    ├── cells.csv.gz
+    ├── cells.parquet
+    ├── cells.zarr.zip
+    ├── experiment.xenium
+    ├── gene_panel.json
+    ├── metrics_summary.csv
+    ├── morphology_focus.ome.tif
+    ├── morphology_mip.ome.tif
+    ├── morphology.ome.tif
+    ├── nucleus_boundaries.csv
+    ├── nucleus_boundaries.parquet
+    ├── transcripts.csv.gz
+    ├── transcripts.parquet
+    └── transcripts.zarr.zip</code></pre>
+</div>
+<div id="cosmx" class="section level2 hasAnchor" number="3.4">
+<h2><span class="header-section-number">3.4</span> CosMX<a href="data-preparation.html#cosmx" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>NanoString (Now Bruker Corporation) <a href="https://nanostring.com/products/cosmx-spatial-molecular-imager/" target="_blank">CosMx Spatial Molecular Imager (SMI)</a> is a highly multiplexed, single-molecule in site spatial transcriptomics platform designed for subcellular-resolution spatial profiling of RNA and proteins. It differs from 10x platforms (Visium, Visium HD, Xenium) in that it captures direct spatial imaging=-based transcript detection with ultra-high plex (up to thousands of genes) and provides spatially resolved single-cell and subcellular data across the whole imaging region.</p>
+<p>Here, we use an demo dataset from the NanoString website: <a href="https://nanostring.com/products/cosmx-spatial-molecular-imager/ffpe-dataset/human-frontal-cortex-ffpe-dataset/" target="_blank">CosMx Human Frontal Cortex FFPE Dataset</a>.</p>
+<pre><code>~/S3/
+    ├── S3_exprMat_file.csv
+    ├── S3_fov_positions_file.csv
+    ├── S3_metadata_file.csv
+    ├── S3-polygons.csv
+    └── S3_tx_file.csv</code></pre>
+<p>These input files are sufficient to run the SpaceSequest <code>cosmx</code> workflow. If you are interested in incorporting the images, additional files need to be downloaded. The download link for: flatFiles (1.95 Gb) <a href="https://smi-public.objects.liquidweb.services/6k_release/flatFiles.zip" target="_blank">https://smi-public.objects.liquidweb.services/6k_release/flatFiles.zip</a>, and RawFiles (602 Gb) <a href="https://smi-public.objects.liquidweb.services/6k_release/RawFiles.zip" target="_blank">https://smi-public.objects.liquidweb.services/6k_release/RawFiles.zip</a>. Please be careful to click the links directly as they are very large zip files.</p>
+</div>
+<div id="geomx" class="section level2 hasAnchor" number="3.5">
+<h2><span class="header-section-number">3.5</span> GeoMX<a href="data-preparation.html#geomx" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Last but not least, <a href="https://nanostring.com/products/geomx-digital-spatial-profiler/geomx-dsp-overview/" target="_blank">NanoString GeoMx Digital Spatial Profiler (DSP)</a> is a spatial transcritomics (and also proteomics) platform designed for profiling gene expression and proteins in a region-of-interest (ROI)-based manner. GeoMx does not capture continuous spatial data across an entire tissue section. Instead, it relies on user-defined ROIs, allowing targeted, high-plex profiling in selected tissue compartments, such as tumor and neignborhood non-tumor cells.</p>
+<p>GeoMx libraries can be sequenced using a sequencer, which geneerate fastq files. Illumina data analysis platform provides <a href="https://www.illumina.com/products/by-type/informatics-products/basespace-sequence-hub/apps/nanostring-geomxr-ngs-pipeline.html" target="_blank">GeoMx® NGS Pipeline</a>, which can be directly used to convert fastq to DCC files. Other software suite may also include this pipeline, such as <a href="https://cumulus.readthedocs.io/en/stable/geomxngs/index.html" target="_blank">Cumulus</a>.</p>
+<p>The converted files are text files with .dcc as suffix. These dcc files can directly be used to run SpaceSequest <code>geomx</code> workflow.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="installation.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="visium-1.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/interactivereport/scRNAsequest/edit/gh-pages/04-Data_preparation.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/interactivereport/scRNAsequest/blob/gh-pages/04-Data_preparation.Rmd",
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

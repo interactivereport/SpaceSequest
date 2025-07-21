@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 Visium | bookdownproj.knit</title>
+  <meta name="description" content="" />
+  <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 4 Visium | bookdownproj.knit" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 4 Visium | bookdownproj.knit" />
+  
+  
+  
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="data-preparation.html"/>
+<link rel="next" href="visiumhd.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">scRNASequest</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>SpaceSequest: A unified pipeline for spatial transcriptomics data analysis</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#preface"><i class="fa fa-check"></i>Preface</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>2</b> Installation</a></li>
+<li class="chapter" data-level="3" data-path="data-preparation.html"><a href="data-preparation.html"><i class="fa fa-check"></i><b>3</b> Data preparation</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="data-preparation.html"><a href="data-preparation.html#visium"><i class="fa fa-check"></i><b>3.1</b> Visium</a></li>
+<li class="chapter" data-level="3.2" data-path="data-preparation.html"><a href="data-preparation.html#visium-hd"><i class="fa fa-check"></i><b>3.2</b> Visium HD</a></li>
+<li class="chapter" data-level="3.3" data-path="data-preparation.html"><a href="data-preparation.html#xenium"><i class="fa fa-check"></i><b>3.3</b> Xenium</a></li>
+<li class="chapter" data-level="3.4" data-path="data-preparation.html"><a href="data-preparation.html#cosmx"><i class="fa fa-check"></i><b>3.4</b> CosMX</a></li>
+<li class="chapter" data-level="3.5" data-path="data-preparation.html"><a href="data-preparation.html#geomx"><i class="fa fa-check"></i><b>3.5</b> GeoMX</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="visium-1.html"><a href="visium-1.html"><i class="fa fa-check"></i><b>4</b> Visium</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="visium-1.html"><a href="visium-1.html#space-ranger-run"><i class="fa fa-check"></i><b>4.1</b> Space Ranger run</a></li>
+<li class="chapter" data-level="4.2" data-path="visium-1.html"><a href="visium-1.html#pipeline-run"><i class="fa fa-check"></i><b>4.2</b> Pipeline run</a></li>
+<li class="chapter" data-level="4.3" data-path="visium-1.html"><a href="visium-1.html#results"><i class="fa fa-check"></i><b>4.3</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="visiumhd.html"><a href="visiumhd.html"><i class="fa fa-check"></i><b>5</b> VisiumHD</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="visiumhd.html"><a href="visiumhd.html#spaceranger-run"><i class="fa fa-check"></i><b>5.1</b> SpaceRanger run</a></li>
+<li class="chapter" data-level="5.2" data-path="visiumhd.html"><a href="visiumhd.html#pipeline-setup"><i class="fa fa-check"></i><b>5.2</b> Pipeline setup</a></li>
+<li class="chapter" data-level="5.3" data-path="visiumhd.html"><a href="visiumhd.html#results-1"><i class="fa fa-check"></i><b>5.3</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="xenium-1.html"><a href="xenium-1.html"><i class="fa fa-check"></i><b>6</b> Xenium</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="xenium-1.html"><a href="xenium-1.html#input-preparation"><i class="fa fa-check"></i><b>6.1</b> Input preparation</a></li>
+<li class="chapter" data-level="6.2" data-path="xenium-1.html"><a href="xenium-1.html#pipeline-setup-1"><i class="fa fa-check"></i><b>6.2</b> Pipeline setup</a></li>
+<li class="chapter" data-level="6.3" data-path="xenium-1.html"><a href="xenium-1.html#results-2"><i class="fa fa-check"></i><b>6.3</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="geomx-1.html"><a href="geomx-1.html"><i class="fa fa-check"></i><b>7</b> GeoMX</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="geomx-1.html"><a href="geomx-1.html#fastq-to-dcc-conversion"><i class="fa fa-check"></i><b>7.1</b> Fastq to DCC conversion</a></li>
+<li class="chapter" data-level="7.2" data-path="geomx-1.html"><a href="geomx-1.html#pipeline-setup-2"><i class="fa fa-check"></i><b>7.2</b> Pipeline setup</a></li>
+<li class="chapter" data-level="7.3" data-path="geomx-1.html"><a href="geomx-1.html#results-3"><i class="fa fa-check"></i><b>7.3</b> Results</a></li>
+<li class="chapter" data-level="7.4" data-path="geomx-1.html"><a href="geomx-1.html#quickomics-exploration"><i class="fa fa-check"></i><b>7.4</b> Quickomics exploration</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="cosmx-1.html"><a href="cosmx-1.html"><i class="fa fa-check"></i><b>8</b> CosMX</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="cosmx-1.html"><a href="cosmx-1.html#input-preparation-1"><i class="fa fa-check"></i><b>8.1</b> Input preparation</a></li>
+<li class="chapter" data-level="8.2" data-path="cosmx-1.html"><a href="cosmx-1.html#pipeline-setup-3"><i class="fa fa-check"></i><b>8.2</b> Pipeline setup</a></li>
+<li class="chapter" data-level="8.3" data-path="cosmx-1.html"><a href="cosmx-1.html#results-4"><i class="fa fa-check"></i><b>8.3</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="additional-tools.html"><a href="additional-tools.html"><i class="fa fa-check"></i><b>9</b> Additional tools</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="additional-tools.html"><a href="additional-tools.html#cosmx2vip"><i class="fa fa-check"></i><b>9.1</b> cosMx2VIP</a>
+<ul>
+<li class="chapter" data-level="9.1.1" data-path="additional-tools.html"><a href="additional-tools.html#input-file-set-up"><i class="fa fa-check"></i><b>9.1.1</b> Input file set up</a></li>
+<li class="chapter" data-level="9.1.2" data-path="additional-tools.html"><a href="additional-tools.html#run-the-workflow"><i class="fa fa-check"></i><b>9.1.2</b> Run the workflow</a></li>
+<li class="chapter" data-level="9.1.3" data-path="additional-tools.html"><a href="additional-tools.html#results-5"><i class="fa fa-check"></i><b>9.1.3</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="additional-tools.html"><a href="additional-tools.html#visium-hd-color-function"><i class="fa fa-check"></i><b>9.2</b> Visium HD color function</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"></a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="visium-1" class="section level1 hasAnchor" number="4">
+<h1><span class="header-section-number">Chapter 4</span> Visium<a href="visium-1.html#visium-1" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>10x Genomics Visium is a revolutionary technology that detects RNA expression and spatial location at the same time. Unlike traditional single-cell RNA-seq, which loses spatial information, Visium enables researches to map where gene activity occurs within the architecture of the intact tissue.</p>
+<p>In detail, tissue sections can be placed on specialized Visium slides that contain an array of spatially barcoded capture spots. Each spot captures mRNA transcripts from the overlying tissue area, and at the same time, records the spatial location using the barcodes. After high-throughput sequencing, these data can be mapped back onto high-resolution tissue images, allowing researchers to analyze the gene expression patterns from distinct histological regions.</p>
+<p><a href="https://ngisweden.scilifelab.se/wp-content/uploads/2021/02/Visium-gene-expression-slide-1024x390.png" target="_blank"><img src="https://ngisweden.scilifelab.se/wp-content/uploads/2021/02/Visium-gene-expression-slide-1024x390.png" /></a></p>
+<p><strong>10x Genomics Visium slide and barcoded spots</strong>: As illustrated in the figure above, each 10x Genomics Visium slide has multiple captures (4 for regular 6.5x6.5 mm, or 2 for 11x11 mm). The barcoded spots are 55 μm in diameter, with gaps between each spot. (Image from: <a href="https://www.10xgenomics.com/" target="_blank">https://www.10xgenomics.com/</a>)</p>
+<div id="space-ranger-run" class="section level2 hasAnchor" number="4.1">
+<h2><span class="header-section-number">4.1</span> Space Ranger run<a href="visium-1.html#space-ranger-run" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>If you start the analysis from Fastq raw data, <a href="https://www.10xgenomics.com/support/software/space-ranger/2.1" target="_blank">Space Ranger</a> is necessary to process the data to gene expression count matrix, with spttial barcodes resolved. As we mentioned before, Space Ranger requires Fastq files, high-resolution images, as well as key files (genome index, etc.) to run. We have illustrated these steps using a publicly available Visium data from an Alzheimer’s disease (AD) mouse model <a href="https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.12821" target="_blank">paper</a>, with GEO entry: <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE203424" target="_blank">GSE203424</a>. See <a href="data-preparation.html#data-preparation">data preparation</a> section 3.1.</p>
+<p>A typical Space Ranger run command:</p>
+<pre><code>spaceranger count --id=&quot;WT-CO1&quot; \
+    --transcriptome=~/Data/Reference_files/refdata-gex-mm10-2020-A \
+    --fastqs=~/Data/Fastq_files \
+    --cytaimage=~/Data/Sample1.tif \
+    --probe-set=~/Data/Reference_files/Visium_Mouse_Transcriptome_Probe_Set_v2.0_mm10-2020-A.csv \
+    --slide=H1-ABDCEFJ \    #Using a random slide ID for illustration
+    --area=A1 \
+    --localcores=4 \
+    --localmem=256 \
+    --create-bam=false</code></pre>
+</div>
+<div id="pipeline-run" class="section level2 hasAnchor" number="4.2">
+<h2><span class="header-section-number">4.2</span> Pipeline run<a href="visium-1.html#pipeline-run" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Here, we use the following run directory as an example: ~/SpaceSequest_demo/1_Visium</p>
+<p>Demo data: 10x Visium data are from mouse brain (<a href="https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.12821" target="_blank">paper</a>, and <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE203424" target="_blank">GEO record</a>). Also, we downloaded the <a href="https://azimuth.hubmapconsortium.org/references/#Mouse%20-%20Motor%20Cortex" target="_blank">Azimuth mouse brain cortex reference</a> for cell type deconvolution, with the following link: <a href="https://seurat.nygenome.org/azimuth/demo_datasets/allen_mop_2020.rds" target="_blank">https://seurat.nygenome.org/azimuth/demo_datasets/allen_mop_2020.rds</a>.</p>
+<p>The first step is to generate the config and sampleMeta file by running the <code>visium</code> command with the working directory.</p>
+<pre><code>visium ~/SpaceSequest_demo/1_Visium</code></pre>
+<p>After this step, users can fill in the config.yml file and the sample.csv file. Please pay attention to the required items in the config.yml file as they are essential for the pipeline to run.</p>
+<pre><code>#Highlighting several key items:
+
+prj_name: Visium_demo                                        #Prefix of the final output
+
+output: ~/SpaceSequest_demo/1_Visium/Run_pipeline            #Output directoy will be created by the pipeline
+
+methods: [SpaGCN,BayesSpace,cell2location,tangram,SpaTalk]   #Software to run
+
+
+#cell2location setting. This is for cell type deconvolution using a reference single-cell RNA-seq data
+
+scH5ad: ~/SpaceSequest_demo/1_Visium/Input_data/Demo_PSAPP.3Rep.Azimuth.Reference.h5ad 
+
+annotation_obs: Cell_type
+
+
+# tangram setting. This is for cell type deconvolution to map scRNA-seq to the spatial data and image
+
+tg_scH5ad: ~/SpaceSequest_demo/1_Visium/Input_data/Demo_PSAPP.3Rep.Azimuth.Reference.h5ad 
+
+tg_annotation_obs: Cell_type
+
+
+# SpaTalk seting. This is for cell-cell communication analysis
+
+st_scH5ad: ~/SpaceSequest_demo/1_Visium/Input_data/Demo_PSAPP.3Rep.Azimuth.Reference.h5ad 
+
+st_annotation_obs: Cell_type
+
+
+#Parallel and memory setting                                                                                                                                
+
+parallel: &quot;slurm&quot;    #Use &quot;slurm&quot; for Edge HPC                                                                                                  
+
+core: 10
+
+memory: 505G   #if provided (e.g. 100G), it will be used to request cluster scheduler                                                               
+
+jobID: j47   # please make sure this job id is different with your other projects which would be run at the same time      
+</code></pre>
+<p>For the sample.csv file, the first two columns (Sample_Name,SpaceRanger_path) are required, and here we added two more columns:</p>
+<pre><code>Sample_Name,SpaceRanger_path,Treatment,Image_hires
+
+PSAPP-CO1,/path/to/PSAPP-CO1/outs,Control,/path/to/PSAPP-CO1-image.png
+
+PSAPP-CO2,/path/to/PSAPP-CO2/outs,Control,/path/to/PSAPP-CO2-image.png
+
+PSAPP-TAM1,/path/to/PSAPP-TAM1/outs,Treated,/path/to/PSAPP-TAM1-image.png
+
+PSAPP-TAM2,/path/to/PSAPP-TAM2/outs,Treated,/path/to/PSAPP-TAM2-image.png</code></pre>
+<p>Then, move the config.yml and sample.csv into a new folder called Run_pipeline, and run the <code>visium</code> script by passing the config.yml parameter to it:</p>
+<pre><code>#Run the pipeline
+
+visium ~/SpaceSequest_demo/1_Visium/Run_pipeline/config.yml</code></pre>
+<p>Among the software used in the pipeline, SpaTalk may need more memory and time. By testing the above four datasets, 500 Gb is sufficient for SpaTalk, but 250 Gb resulted in an Out-of-memory (OOM) error.</p>
+</div>
+<div id="results" class="section level2 hasAnchor" number="4.3">
+<h2><span class="header-section-number">4.3</span> Results<a href="visium-1.html#results" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Finally, useds can check the results in the output directory. For each method, SpaceSequest generates a folder to store the results, for example: <em>BayesSpace</em>, <em>SpaGCN</em>, <em>SpaTalk</em>, etc. If there were any errors occurred, users can check the jxx (in this example, j47) folder to see the original scripts and error messages.</p>
+<p>Output directory:</p>
+<pre><code>~/SpaceSequest_demo/1_Visium
+  ├── BayesSpace/
+    ├── ...
+    ├── Visium_demo.pdf
+    ├── Visium_demo_raw.rds
+    └── Visium_demo.rds
+  ├── c2l/
+    ├── model/
+      ├── full_sc_model.h5ad
+      └── full_sc_model.pdf
+    ├── PSAPP-CO1.h5ad
+    ├── PSAPP-CO1.pdf
+    ├── PSAPP-CO1.pkl
+    ├── PSAPP-CO2.h5ad
+    └── ...
+  ├── SpaGCN/
+    ├── align.pdf
+    ├── align.pkl
+    ├── SpaGCN.pdf
+    └── ...
+  ├── SpaTalk/
+    ├── PSAPP-CO1/     #Multiple figures in each folder associated with each sample name.
+    ├── PSAPP-CO2/
+    ├── PSAPP-TAM1/
+    ├── PSAPP-TAM1/
+    └── Visium_demo_C2L.h5ad
+  ├── logNormal/
+    └── Visium_demo.h5ad
+  ├── tangram/
+    ├── tmp
+    ├── Visium_demo.pkl
+    ├── Visium_demo_sc_location.h5ad
+    └── Visium_demo_segment.h5ad
+  ├── QC/
+    ├── metrics_summary.csv
+    └── QC.pdf
+  ├── config.yml
+  ├── config.yml.20250719.log
+  └── sample.csv
+
+</code></pre>
+<p><a href="https://interactivereport.github.io/SpaceSequest/images/Visium_image.png"><img src="https://interactivereport.github.io/SpaceSequest/images/Visium_image.png" alt="Figure 1" /></a>
+Figure 1. Clustering results generated by BayesSpace for the Visium spatial transcriptomics dataset.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="data-preparation.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="visiumhd.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/interactivereport/scRNAsequest/edit/gh-pages/05-Visium.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/interactivereport/scRNAsequest/blob/gh-pages/05-Visium.Rmd",
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

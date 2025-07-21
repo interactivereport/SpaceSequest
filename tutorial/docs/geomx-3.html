@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 10 Demo | SpaceSequest: pipeline for spatial transcriptomics data analysis</title>
-  <meta name="description" content="Chapter 10 Demo | SpaceSequest: pipeline for spatial transcriptomics data analysis" />
+  <title>Chapter 8 GeoMX | SpaceSequest: pipeline for spatial transcriptomics data analysis</title>
+  <meta name="description" content="Chapter 8 GeoMX | SpaceSequest: pipeline for spatial transcriptomics data analysis" />
   <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 10 Demo | SpaceSequest: pipeline for spatial transcriptomics data analysis" />
+  <meta property="og:title" content="Chapter 8 GeoMX | SpaceSequest: pipeline for spatial transcriptomics data analysis" />
   <meta property="og:type" content="book" />
   
   
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 10 Demo | SpaceSequest: pipeline for spatial transcriptomics data analysis" />
+  <meta name="twitter:title" content="Chapter 8 GeoMX | SpaceSequest: pipeline for spatial transcriptomics data analysis" />
   
   
   
@@ -29,8 +29,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="cosmx-4.html"/>
-
+<link rel="prev" href="xenium-1.html"/>
+<link rel="next" href="cosmx-4.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -150,158 +150,19 @@
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="demo" class="section level1 hasAnchor" number="10">
-<h1><span class="header-section-number">Chapter 10</span> Demo<a href="demo.html#demo" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div id="visium-2" class="section level2 hasAnchor" number="10.1">
-<h2><span class="header-section-number">10.1</span> Visium<a href="demo.html#visium-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Demo run directory: ~/SpaceSequest_demo/1_Visium</p>
-<p>Demo data: 10x Visium data are from mouse brain (paper, and GEO record). A single-cell RNA-seq reference was created using the Azimuth mouse brain cortex reference</p>
-<pre><code>#First step, generate config and sampleMeta file
-
-visium ~/SpaceSequest_demo/1_Visium</code></pre>
-<p>After this step, fill in the config.yml file and the sample.csv file (Click the superlink to view the example). Please pay attention to the required items in the config.yml file as they are essential for the pipeline to run.</p>
-<pre><code>#Highlighting several key items:
-
-prj_name: Visium_demo        #Prefix of the final output
-
-output: ~/SpaceSequest_demo/1_Visium/Run_pipeline
-
-methods: [SpaGCN,BayesSpace,cell2location,tangram,SpaTalk]  #Software to run
-
-#cell2location setting. This is for cell type deconvolution using a reference single-cell RNA-seq data
-
-scH5ad: ~/SpaceSequest_demo/1_Visium/Input_data/Demo_PSAPP.3Rep.Azimuth.Reference.h5ad 
-
-annotation_obs: Cell_type
-
-# tangram setting
-
-tg_scH5ad: ~/SpaceSequest_demo/1_Visium/Input_data/Demo_PSAPP.3Rep.Azimuth.Reference.h5ad 
-
-tg_annotation_obs: Cell_type
-
-# SpaTalk seting
-
-st_scH5ad: ~/SpaceSequest_demo/1_Visium/Input_data/Demo_PSAPP.3Rep.Azimuth.Reference.h5ad 
-
-st_annotation_obs: Cell_type
-
-#Parallel setting                                                                                                                                
-
-parallel: &quot;slurm&quot;    #Use &quot;slurm&quot; for Edge HPC                                                                                                  
-
-core: 10
-
-memory: 50G   #if provided (e.g. 100G), it will be used to request cluster scheduler                                                               
-
-jobID: j47   # please make sure this job id is different with your other projects which would be run at the same time      
-</code></pre>
-<p>For the sample.csv file, the first two columns (Sample_Name,SpaceRanger_path) are required, and here we added two more columns:</p>
-<pre><code>Sample_Name,SpaceRanger_path,Treatment,Image_hires
-
-PSAPP-CO1,/path/to/PSAPP-CO1/outs,Control,/path/to/PSAPP-CO1-image.png
-
-PSAPP-TAM1,/path/to/PSAPP-TAM1/outs,Control,/path/to/PSAPP-TAM1-image.png</code></pre>
-<p>Then, move the config.yml and sample.csv into a new folder called Run_pipeline, and run the visium script by passing the config.yml to it:</p>
-<pre><code>#Run the data
-
-visium ~/SpaceSequest_demo/1_Visium/Run_pipeline/config.yml</code></pre>
-<p>Finally, you can check the results in the output directory. For each method, it generated a folder to store the results, for example: BayesSpace, SpaGCN, SpaTalk. If there were any errors occurred, you can check the j47 folder to see the original scripts and error messages.</p>
-<p><a href="https://interactivereport.github.io/SpaceSequest/images/Visium_image.png"><img src="https://interactivereport.github.io/SpaceSequest/images/Visium_image.png" alt="Figure 1" /></a>
-Figure 1. Clustering results generated by BayesSpace for the Visium spatial transcriptomics dataset.</p>
+<div id="geomx-3" class="section level1 hasAnchor" number="8">
+<h1><span class="header-section-number">Chapter 8</span> GeoMX<a href="geomx-3.html#geomx-3" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="fastq-to-dcc-conversion" class="section level2 hasAnchor" number="8.1">
+<h2><span class="header-section-number">8.1</span> Fastq to DCC conversion<a href="geomx-3.html#fastq-to-dcc-conversion" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 </div>
-<div id="xenium-2" class="section level2 hasAnchor" number="10.2">
-<h2><span class="header-section-number">10.2</span> Xenium<a href="demo.html#xenium-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Demo run directory: ~/SpaceSequest_demo/2_Xenium</p>
-<p>Demo data: FFPE Human Brain data from 10x: <a href="https://www.10xgenomics.com/datasets/xenium-human-brain-preview-data-1-standard" class="uri">https://www.10xgenomics.com/datasets/xenium-human-brain-preview-data-1-standard</a></p>
-<p>The Xenium raw data is stored at ~/SpaceSequest_demo/2_Xenium/data with h5, cell_boundaries, transcripts, etc. This directory needs to be specified in the sampleMeta.csv file, which will be mentioned later.</p>
-<pre><code>#First step, generate config and sampleMeta file
-
-xenium ~/SpaceSequest_demo/2_Xenium</code></pre>
-<p>After this step, fill in the config.yml file and the sampleMeta.csv file as below. Please pay attention to the required items in the config.yml file as they are essential for the pipeline to run:</p>
-<pre><code>#Highlighting several key items:
-
-project_ID: Xenium_demo  #required
-
-sampleMeta: /edgehpc/dept/compbio/projects/SpaceSequest_demo/2_Xenium/sampleMeta.csv  #path to the sampleMeta file, required. It will create this dir for you if it doesn&#39;t exist
-
-output_dir: /edgehpc/dept/compbio/projects/SpaceSequest_demo/2_Xenium/output   #output directory, required
-
-cluster_resolution: 0.3   #resolution for the FindClusters step
-
-reference: humancortexref   #Azimuth reference, for example, &#39;humancortexref&#39;, optional
-
-reference_name: subclass   #column name of the cell type label you would like to transfer. Required if reference is used.
-
-integrate_data: True   #True or False to merge/integrate all the data in the sampleMeta file
-
-integrate_with_harmony: True   #True or False to use Harmony for integration. Default as True</code></pre>
-<p>For the sampleMeta.csv file, the first two columns are required: Sample and Directory. Users can add more metadata columns as shown below:</p>
-<pre><code>Sample,Directory,Tissue,Species
-
-Human_brain,/edgehpc/dept/compbio/projects/SpaceSequest/Xemuim_public/data,Brain,Human</code></pre>
-<p>Then we can run the xenium script by passing the config.yml to it. We suggest submitting the command using sbatch:</p>
-<pre><code>#Run the data
-
-xenium /edgehpc/dept/compbio/projects/SpaceSequest_demo/1_Visium/config.yml</code></pre>
-<p>The pipeline will process/QC the data, run clustering and cell type annotation (if reference provided), and finally return an integrated Rdata file. All plots and files are stored in the output_dir directory specified in the config.yml file.</p>
-<!-- 
-# [![](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.Tissue.png){#fig:XeniumA width="48%"}](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.Tissue.png)
-# [![](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.UMAP.png){#fig:XeniumB width="48%"}](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.UMAP.png)
-Figure 2. Xenium spatial-transcriptomics output. (Left) Tissue image with capture spots overlaid. (Right) UMAP embedding of spatial barcodes colored by cluster.
--->
-<div id="fig:xenium" class="figure">
-<p><img src="https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.Tissue.png" style="width:48.0%" alt="Figure 2A" />
-<img src="https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.UMAP.png" style="width:48.0%" alt="Figure 2B" /></p>
+<div id="pipeline-setup-3" class="section level2 hasAnchor" number="8.2">
+<h2><span class="header-section-number">8.2</span> Pipeline setup<a href="geomx-3.html#pipeline-setup-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 </div>
-<p>Figure 2. Xenium spatial-transcriptomics output. (Left) Tissue image with capture spots overlaid. (Right) UMAP embedding of spatial barcodes coloured by cluster.</p>
+<div id="results-3" class="section level2 hasAnchor" number="8.3">
+<h2><span class="header-section-number">8.3</span> Results<a href="geomx-3.html#results-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 </div>
-<div id="visiumhd-3" class="section level2 hasAnchor" number="10.3">
-<h2><span class="header-section-number">10.3</span> VisiumHD<a href="demo.html#visiumhd-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Demo run directory: /edgehpc/dept/compbio/projects/SpaceSequest_demo/3_VisiumHD</p>
-<p>Demo data were downloaded from 10X genomics website, and stored in the above directory.</p>
-<p>Sample1: Mouse brain FFPE: <a href="https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-libraries-of-mouse-brain-he" class="uri">https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-libraries-of-mouse-brain-he</a></p>
-<p>Sample2: Mouse brain fixed frozen: <a href="https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-mouse-brain-fixed-frozen" class="uri">https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-mouse-brain-fixed-frozen</a></p>
-<pre><code>#First step, generate config and sampleMeta file
-
-visiumhd /edgehpc/dept/compbio/projects/SpaceSequest_demo/3_VisiumHD</code></pre>
-<p>After this step, fill in the config.yml file and the sampleMeta.csv file as below.</p>
-<pre><code>project_ID: VisiumHD_demo     #required
-
-sampleMeta: /edgehpc/dept/compbio/projects/SpaceSequest_demo/3_VisiumHD/sampleMeta.csv      #path to the sampleMeta file
-
-output_dir: /edgehpc/dept/compbio/projects/SpaceSequest_demo/3_VisiumHD/output     #output directory
-
-bin_resolution: 8um   #defaul 8um, also 16um or 2um are available
-
-cluster_resolution: 0.3      #resolution for the FindClusters step
-
-reference: /edgehpc/dept/compbio/projects/SpaceSequest_demo/3_VisiumHD/Reference/allen_mop_2020.rds  #path to an Azimuth reference data, optional
-
-reference_name: subclass     #column name of the cell type label you would like to transfer
-
-integrate_data: True        #True or False to merge/integrate all the data in the sampleMeta file
-
-integrate_with_harmony: True  #True or False to use Harmony for integration. Default as True</code></pre>
-<p>The sampleMeta.csv file contains file name and path to the Space Ranger output. It needs to have the h5 files and binned_outputs inside:</p>
-<pre><code>Sample,Directory
-
-Mouse_brain_FFPE,/edgehpc/dept/compbio/projects/SpaceSequest_demo/3_VisiumHD/Sample1_FFPE
-
-Mouse_brain_FixedFrozen,/edgehpc/dept/compbio/projects/SpaceSequest_demo/3_VisiumHD/Sample2_Fixed</code></pre>
-<p>Finally submit the following command using sbatch:</p>
-<pre><code>#Run the data
-
-visiumhd /edgehpc/dept/compbio/projects/SpaceSequest_demo/3_VisiumHD/config.yml</code></pre>
-<p>Finally check the results in the output_dir folder specified in the config.yml file. The output files contain some plots (QC plots, UMAP), and Rdata files storing the results.</p>
-<div id="fig:VisumHD" class="figure">
-<p><img src="https://interactivereport.github.io/SpaceSequest/images/VisiumHD_demo.Spatial.png" style="width:48.0%" alt="Figure 3A" />
-<img src="https://interactivereport.github.io/SpaceSequest/images/VisiumHD_demo.UMAP.png" style="width:48.0%" alt="Figure 3B" /></p>
-</div>
-<p>Figure 3. Visium HD spatial-transcriptomics output. (Left) Tissue image with capture spots overlaid. (Right) UMAP embedding of spatial barcodes colored by cluster.</p>
-</div>
-<div id="geomx-4" class="section level2 hasAnchor" number="10.4">
-<h2><span class="header-section-number">10.4</span> GeoMX<a href="demo.html#geomx-4" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="quickomics-exploration" class="section level2 hasAnchor" number="8.4">
+<h2><span class="header-section-number">8.4</span> Quickomics exploration<a href="geomx-3.html#quickomics-exploration" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Demo run directory: /edgehpc/dept/compbio/projects/SpaceSequest_demo/4_GeoMx</p>
 <p>Demo dataset is a public data provided by NanoString: <a href="http://nanostring-public-share.s3-website-us-west-2.amazonaws.com/GeoScriptHub/Kidney_Dataset_for_GeomxTools.zip" class="uri">http://nanostring-public-share.s3-website-us-west-2.amazonaws.com/GeoScriptHub/Kidney_Dataset_for_GeomxTools.zip</a></p>
 <p>This is a kidney dataset, and in our demo run, we will run data processing, quality control, and differential expression analysis by comparing two kidney cell types: Glomerulus v.s. Tubule</p>
@@ -339,8 +200,8 @@ geomx /edgehpc/dept/compbio/projects/SpaceSequest_demo/4_GeoMx/config.yml
 </code></pre>
 <p>Finally check the results in the output_dir folder specified in the config.yml file. The output files contain DE analysis results, and if Quickomics parameter was set to True, it will create mutiple .csv files to create a Quickomics visualization link. An example can be found here (Q3 normalized values were used to create the link): <a href="http://compbio.biogen.com:3838/Quickomics/?unlisted=PRJ_GeoMx_demo_Ij4YyG" class="uri">http://compbio.biogen.com:3838/Quickomics/?unlisted=PRJ_GeoMx_demo_Ij4YyG</a></p>
 </div>
-<div id="cosmx-5" class="section level2 hasAnchor" number="10.5">
-<h2><span class="header-section-number">10.5</span> CosMX<a href="demo.html#cosmx-5" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="cosmx-3" class="section level2 hasAnchor" number="8.5">
+<h2><span class="header-section-number">8.5</span> CosMX<a href="geomx-3.html#cosmx-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Demo run directory: /edgehpc/dept/compbio/projects/SpaceSequest_demo/5_CosMx</p>
 <p>Demo run dataset: a public data provided by NanoString, human frontal cortex FFPE: <a href="https://nanostring.com/products/cosmx-spatial-molecular-imager/ffpe-dataset/human-frontal-cortex-ffpe-dataset/" class="uri">https://nanostring.com/products/cosmx-spatial-molecular-imager/ffpe-dataset/human-frontal-cortex-ffpe-dataset/</a></p>
 <p>To test the data integration function, I duplicated this data to two same datasets: S3 and S4, stored under the data folder in the 5_CosMx directory.</p>
@@ -390,8 +251,8 @@ cosmx /edgehpc/dept/compbio/projects/SpaceSequest_demo/5_CosMx/config.yml</code>
           </div>
         </div>
       </div>
-<a href="cosmx-4.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="xenium-1.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="cosmx-4.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -422,7 +283,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/interactivereport/scRNAsequest/edit/gh-pages/bakcup_demo.Rmd",
+"link": "https://github.com/interactivereport/scRNAsequest/edit/gh-pages/08-GeoMx.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -430,7 +291,7 @@ gitbook.start({
 "text": null
 },
 "view": {
-"link": "https://github.com/interactivereport/scRNAsequest/blob/gh-pages/bakcup_demo.Rmd",
+"link": "https://github.com/interactivereport/scRNAsequest/blob/gh-pages/08-GeoMx.Rmd",
 "text": null
 },
 "download": null,

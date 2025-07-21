@@ -1,52 +1,29 @@
---- 
-title: "SpaceSequest: pipeline for spatial transcriptomics data analysis" 
-author:
-  - name: Yu (Henry) Sun (Corresponding Author)
-    email: yuhenry.sun@biogen.com
-    affiliation: Biogen
-  - name: Sarbottam Piya
-    affiliation: Biogen
-  - name: Zhengyu Ouyang
-    affiliation: BioInfoRx
-  - name: Jake Gagnon
-    affiliation: Biogen
-  - name: Yirui Chen
-    affiliation: Biogen
-  - name: Shaolong Cao
-    affiliation: Biogen
-  - name: Haotian Zhang
-    affiliation: Biogen
-  - name: Baobao Song
-    affiliation: Biogen
-  - name: Jing Zhu
-    affiliation: Biogen
-  - name: Khyati Chandratre
-    affiliation: Biogen
-  - name: Houlin Yu
-    affiliation: Biogen
-  - name: Wenxing Hu
-    affiliation: Biogen
-  - name: Matthew Ryals
-    affiliation: PharmaLex
-  - name: Fergal Cassey
-    affiliation: Biogen
-  - name: Dann Huh
-    affiliation: Biogen
-  - name: Mingyao Li
-    affiliation: University of Pennsylvania
-  - name: Baohong Zhang
-    affiliation: Biogen
-  - name: These authors contribute equally, Yu (Henry) Sun, Sarbottam Piya, Zhengyu Ouyang
-address:
-  - code: Research Data Sciences, Translational Biology, Biogen, Inc
-    address: 225 Binney St, Cambridge, MA 02142, USA
-  - code: Data Science, BioInfoRx, Inc
-    address: 510 Charmany Dr, Suite 275A, Madison, WI 53719, USA
-date: "`r Sys.Date()`"
-site: bookdown::bookdown_site
----
+# SpaceSequest: A unified pipeline for spatial transcriptomics data analysis {-}
 
-# Preface
+**Authors:**
+
+Yu (Henry) Sun^1^, Sarbottam Piya^1^, Zhengyu Ouyang^2^, Yirui Chen^1^, Jake Gagnon^3^, Shaolong Cao^1^, Haotian Zhang^1^, Baobao Song^1^, Jing Zhu^1^, Khyati Chandratre^1^, Houlin Yu^1^, Wenxing Hu^1^, Matthew Ryals^4^, Fergal Cassey^1^, Dann Huh^1^, Mingyao Li^5^, Baohong Zhang^1^
+
+**Affiliations:**
+
+^1^Research, Biogen Inc., Cambridge, MA, 02142, USA
+
+^2^Data Science, BioInfoRx Inc., Madison, WI, 53719, USA
+
+^3^Biostatistics, Biogen Inc., Cambridge, MA, 02142, USA
+
+^4^PharmaLex, 1700 District Ave., Burlington, MA, 01803, USA
+
+^5^Department of Biostatistics, Epidemiology and Informatics, Perelman School of Medicine, University of Pennsylvania, Philadelphia, PA, 19104, USA
+
+
+_These authors contribute equally, Yu (Henry) Sun, Sarbottam Piya, Zhengyu Ouyang_
+
+**Correspondence:** Yu (Henry) Sun, yuhenry.sun@biogen.com
+
+_`r Sys.Date()`_
+
+## Preface {-}
 This is a *user manual* written using Bookdown, which provides a detailed user guide for SpaceSequest.
 
 [![](https://interactivereport.github.io/SpaceSequest/images/CoverImage.png)](https://interactivereport.github.io/SpaceSequest/images/CoverImage.png){target="_blank"}
