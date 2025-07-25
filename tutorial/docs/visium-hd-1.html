@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 5 Visium HD | bookdownproj.knit</title>
+  <meta name="description" content="" />
+  <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 5 Visium HD | bookdownproj.knit" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 5 Visium HD | bookdownproj.knit" />
+  
+  
+  
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="visium-1.html"/>
+<link rel="next" href="xenium-1.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">scRNASequest</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>SpaceSequest: A unified pipeline for spatial transcriptomics data analysis</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#preface"><i class="fa fa-check"></i>Preface</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>2</b> Installation</a></li>
+<li class="chapter" data-level="3" data-path="data-preparation.html"><a href="data-preparation.html"><i class="fa fa-check"></i><b>3</b> Data preparation</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="data-preparation.html"><a href="data-preparation.html#visium"><i class="fa fa-check"></i><b>3.1</b> Visium</a></li>
+<li class="chapter" data-level="3.2" data-path="data-preparation.html"><a href="data-preparation.html#visium-hd"><i class="fa fa-check"></i><b>3.2</b> Visium HD</a></li>
+<li class="chapter" data-level="3.3" data-path="data-preparation.html"><a href="data-preparation.html#xenium"><i class="fa fa-check"></i><b>3.3</b> Xenium</a></li>
+<li class="chapter" data-level="3.4" data-path="data-preparation.html"><a href="data-preparation.html#cosmx"><i class="fa fa-check"></i><b>3.4</b> CosMX</a></li>
+<li class="chapter" data-level="3.5" data-path="data-preparation.html"><a href="data-preparation.html#geomx"><i class="fa fa-check"></i><b>3.5</b> GeoMX</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="visium-1.html"><a href="visium-1.html"><i class="fa fa-check"></i><b>4</b> Visium</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="visium-1.html"><a href="visium-1.html#space-ranger-run"><i class="fa fa-check"></i><b>4.1</b> Space Ranger run</a></li>
+<li class="chapter" data-level="4.2" data-path="visium-1.html"><a href="visium-1.html#pipeline-run"><i class="fa fa-check"></i><b>4.2</b> Pipeline run</a></li>
+<li class="chapter" data-level="4.3" data-path="visium-1.html"><a href="visium-1.html#results"><i class="fa fa-check"></i><b>4.3</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="visium-hd-1.html"><a href="visium-hd-1.html"><i class="fa fa-check"></i><b>5</b> Visium HD</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="visium-hd-1.html"><a href="visium-hd-1.html#space-ranger-run-1"><i class="fa fa-check"></i><b>5.1</b> Space Ranger run</a></li>
+<li class="chapter" data-level="5.2" data-path="visium-hd-1.html"><a href="visium-hd-1.html#pipeline-setup"><i class="fa fa-check"></i><b>5.2</b> Pipeline setup</a></li>
+<li class="chapter" data-level="5.3" data-path="visium-hd-1.html"><a href="visium-hd-1.html#results-1"><i class="fa fa-check"></i><b>5.3</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="xenium-1.html"><a href="xenium-1.html"><i class="fa fa-check"></i><b>6</b> Xenium</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="xenium-1.html"><a href="xenium-1.html#input-preparation"><i class="fa fa-check"></i><b>6.1</b> Input preparation</a></li>
+<li class="chapter" data-level="6.2" data-path="xenium-1.html"><a href="xenium-1.html#pipeline-setup-1"><i class="fa fa-check"></i><b>6.2</b> Pipeline setup</a></li>
+<li class="chapter" data-level="6.3" data-path="xenium-1.html"><a href="xenium-1.html#results-2"><i class="fa fa-check"></i><b>6.3</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="geomx-1.html"><a href="geomx-1.html"><i class="fa fa-check"></i><b>7</b> GeoMX</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="geomx-1.html"><a href="geomx-1.html#fastq-to-dcc-conversion"><i class="fa fa-check"></i><b>7.1</b> Fastq to DCC conversion</a></li>
+<li class="chapter" data-level="7.2" data-path="geomx-1.html"><a href="geomx-1.html#pipeline-setup-2"><i class="fa fa-check"></i><b>7.2</b> Pipeline setup</a></li>
+<li class="chapter" data-level="7.3" data-path="geomx-1.html"><a href="geomx-1.html#results-3"><i class="fa fa-check"></i><b>7.3</b> Results</a></li>
+<li class="chapter" data-level="7.4" data-path="geomx-1.html"><a href="geomx-1.html#quickomics-exploration"><i class="fa fa-check"></i><b>7.4</b> Quickomics exploration</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="cosmx-1.html"><a href="cosmx-1.html"><i class="fa fa-check"></i><b>8</b> CosMX</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="cosmx-1.html"><a href="cosmx-1.html#input-preparation-1"><i class="fa fa-check"></i><b>8.1</b> Input preparation</a></li>
+<li class="chapter" data-level="8.2" data-path="cosmx-1.html"><a href="cosmx-1.html#pipeline-setup-3"><i class="fa fa-check"></i><b>8.2</b> Pipeline setup</a></li>
+<li class="chapter" data-level="8.3" data-path="cosmx-1.html"><a href="cosmx-1.html#results-4"><i class="fa fa-check"></i><b>8.3</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="additional-tools.html"><a href="additional-tools.html"><i class="fa fa-check"></i><b>9</b> Additional tools</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="additional-tools.html"><a href="additional-tools.html#cosmx2vip"><i class="fa fa-check"></i><b>9.1</b> cosMx2VIP</a>
+<ul>
+<li class="chapter" data-level="9.1.1" data-path="additional-tools.html"><a href="additional-tools.html#input-file-set-up"><i class="fa fa-check"></i><b>9.1.1</b> Input file set up</a></li>
+<li class="chapter" data-level="9.1.2" data-path="additional-tools.html"><a href="additional-tools.html#run-the-workflow"><i class="fa fa-check"></i><b>9.1.2</b> Run the workflow</a></li>
+<li class="chapter" data-level="9.1.3" data-path="additional-tools.html"><a href="additional-tools.html#results-5"><i class="fa fa-check"></i><b>9.1.3</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="additional-tools.html"><a href="additional-tools.html#visium-hd-color-function"><i class="fa fa-check"></i><b>9.2</b> Visium HD color function</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"></a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="visium-hd-1" class="section level1 hasAnchor" number="5">
+<h1><span class="header-section-number">Chapter 5</span> Visium HD<a href="visium-hd-1.html#visium-hd-1" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p><a href="https://www.10xgenomics.com/support/spatial-gene-expression-hd" target="_blank">10x Genomics Visium HD</a> is a high-resolution spatial transcriptomics platform that captures the full transcriptome using thousands of gap-free, 2 μm squares. As one of the latest platforms that have the ability fo reach single-cell or even sub-cellular resolution, Visium HD enables researchers to discover new biology underlying certain conditions, and power the identification of disease-related biomarkers and potential therapeutic targets.</p>
+<p>The Space Ranger pipeline from 10x Genomics can be used to process Fastq raw data to gene expression matries. By default, the Space Ranger produces outputs at 3 resolutions: 2 μm, 8 μm, and 16 μm. We use 8 μm for the first-pass analysis, as it’s not too big or too small.</p>
+<p><a href="https://cdn.10xgenomics.com/image/upload/v1713545308/blog/Visium%20HD%20NPI/Visium%20HD%20slides.png" target="_blank"><img src="https://cdn.10xgenomics.com/image/upload/v1713545308/blog/Visium%20HD%20NPI/Visium%20HD%20slides.png" /></a></p>
+<p><strong>10x Genomics Visium HD slide and barcoded squares</strong>: As illustrated in the figure above, each 10x Genomics Visium HD slide has two captures (A1 and D1). The barcoded gap-free squares are 2 μm in size. (Image from: <a href="https://www.10xgenomics.com/" target="_blank">https://www.10xgenomics.com/</a>)</p>
+<div id="space-ranger-run-1" class="section level2 hasAnchor" number="5.1">
+<h2><span class="header-section-number">5.1</span> Space Ranger run<a href="visium-hd-1.html#space-ranger-run-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The Space Ranger running step is very similar to Visium. Necessary files inclue Fastq path, reference directory, image, slide ID, slide location, etc. Here, we will use a public demo dataset to guide you through these steps.</p>
+<p>The two public demo datasets are from the 10x Genomics website.</p>
+<p>1, <a href="https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-libraries-of-mouse-brain-he" target="_blank">Mouse brain FFPE sample</a></p>
+<p>2, <a href="https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-mouse-brain-fixed-frozen" target="_blank">Mouse brain fixed frozen</a></p>
+<p>A typical Space Ranger run command for Visium HD:</p>
+<pre><code>spaceranger count --id=&quot;Sample1_FFPE&quot; \
+    --transcriptome=~/Data/Reference_files/refdata-gex-mm10-2020-A \
+    --fastqs=~/Data/Fastq_files \
+    --cytaimage=~/Data/Sample1_FFPE.tif \
+    --probe-set=~/Data/Reference_files/Visium_Mouse_Transcriptome_Probe_Set_v2.0_mm10-2020-A.csv \
+    --slide=H1-ABDCEFJ \    #Using a random slide ID for illustration
+    --area=D1 \
+    --localcores=4 \
+    --localmem=256 \
+    --create-bam=false</code></pre>
+<p>The above command was run in the SpaceRanger folder as shown below. This will generate the Space Ranger result directories that can be used to run SpaceSequest.</p>
+<p>Here, we can skip the Space Ranger run because 10x Genomics website has provided Space Ranger results, so we can directly download and use them. SpaceSequest workflow requires a directory containing both <code>binned_outputs</code> and <code>spatial</code> folders.</p>
+<pre><code>~/SpaceSequest_demo/2_VisiumHD/
+  ├── Input_data/
+    └── Demo_PSAPP.3Rep.Azimuth.Reference.h5ad  #Downloaded from Azimuth website
+  └── SpaceRanger/
+    ├── Sample1_FFPE/
+      ├── ...
+      └── out/
+        ├── ...
+        ├── cloupe_008um.cloupe
+        ├── web_summary.html
+        ├── binned_outputs/
+          ├── square_002um/
+          ├── square_008um/
+          └── square_016um/
+        └── spatial/
+          ├── aligned_fiducials.jpg
+          ├── aligned_tissue_image.jpg
+          ├── cytassist_image.tiff
+          ├── detected_tissue_image.jpg
+          ├── tissue_hires_image.png
+          └── tissue_lowres_image.png
+    └── Sample2_Fixed/
+      ├── ...
+      └── out/
+        ├── ...
+        ├── cloupe_008um.cloupe
+        ├── web_summary.html
+        ├── binned_outputs/
+          ├── square_002um/
+          ├── square_008um/
+          └── square_016um/
+        └── spatial/</code></pre>
+</div>
+<div id="pipeline-setup" class="section level2 hasAnchor" number="5.2">
+<h2><span class="header-section-number">5.2</span> Pipeline setup<a href="visium-hd-1.html#pipeline-setup" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>To illustrate the pipeline setup steps, we set the running directory to be: ~/SpaceSequest_demo/2_VisiumHD/</p>
+<p>As the above step showed, we need to place the result folders (binned_outputs, spatial) inside each data folders (out folder under Sample1_FFPE and Sample2_Fixed).</p>
+<p>The first step is to generate the config and sampleMeta files by running the <code>visiumhd</code> command by passing the working directory to it.</p>
+<pre><code>visiumhd ~/SpaceSequest_demo/2_VisiumHD</code></pre>
+<p>After this step, fill in the config.yml file and the sampleMeta.csv file as below.</p>
+<pre><code>project_ID: VisiumHD_demo     #required
+
+sampleMeta: ~/SpaceSequest_demo/2_VisiumHD/sampleMeta.csv      #path to the sampleMeta file
+
+output_dir: ~/SpaceSequest_demo/2_VisiumHD/output     #output directory
+
+bin_resolution: 8um   #defaul 8um, also 16um or 2um are available
+
+cluster_resolution: 0.3      #resolution for the FindClusters step
+
+reference: ~/SpaceSequest_demo/2_VisiumHD/Reference/allen_mop_2020.rds  #path to an Azimuth reference data, optional
+
+reference_name: subclass     #column name of the cell type label you would like to transfer
+
+integrate_data: True        #True or False to merge/integrate all the data in the sampleMeta file
+
+integrate_with_harmony: True  #True or False to use Harmony for integration. Default as True</code></pre>
+<p>The sampleMeta.csv file contains file name and path to the Space Ranger output. It needs to have the <code>binned_outputs</code> inside.</p>
+<p>The first column sets the sample names for the final output files.</p>
+<pre><code>Sample,Directory
+
+Mouse_brain_FFPE,~/SpaceSequest_demo/2_VisiumHD/Sample1_FFPE/outs
+
+Mouse_brain_FixedFrozen,~/SpaceSequest_demo/2_VisiumHD/Sample2_Fixed/outs</code></pre>
+<p>Finally submit the following command:</p>
+<pre><code>#Run the data
+
+visiumhd ~/SpaceSequest_demo/2_VisiumHD/config.yml</code></pre>
+<p>Finally check the results in the output_dir folder specified in the config.yml file. The output files contain some plots (QC plots, UMAP), and Rdata files storing the results.</p>
+</div>
+<div id="results-1" class="section level2 hasAnchor" number="5.3">
+<h2><span class="header-section-number">5.3</span> Results<a href="visium-hd-1.html#results-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The output directory contains processing results for each individual data, as well as integrated dataset, if the <code>integrate_data</code> parameter was set to <code>True</code>.</p>
+<p>Main results in the directory:</p>
+<pre><code>~/SpaceSequest_demo/2_VisiumHD
+  #For Mouse_brain_FFPE
+  ├── ...
+  ├── VisiumHD_demo.Mouse_brain_FFPE.RData
+  ├── VisiumHD_demo.Mouse_brain_FFPE.plot.count_feature.png
+  ├── VisiumHD_demo.Mouse_brain_FFPE.plot.counts.png
+  ├── VisiumHD_demo.Mouse_brain_FFPE.plot.Spatial.annotated_cluster.png
+  ├── VisiumHD_demo.Mouse_brain_FFPE.plot.Spatial.cluster.png
+  ├── VisiumHD_demo.Mouse_brain_FFPE.plot.UMAP.full.png
+  └── VisiumHD_demo.Mouse_brain_FFPE.plot.UMAP.sketch.png
+  
+  #For Mouse_brain_FFPE
+  ├── ...
+  ├── VisiumHD_demo.Mouse_brain_FixedFrozen.RData
+  ├── VisiumHD_demo.Mouse_brain_FixedFrozen.plot.count_feature.png
+  ├── VisiumHD_demo.Mouse_brain_FixedFrozen.plot.counts.png
+  ├── VisiumHD_demo.Mouse_brain_FixedFrozen.plot.Spatial.annotated_cluster.png
+  ├── VisiumHD_demo.Mouse_brain_FixedFrozen.plot.Spatial.cluster.png
+  ├── VisiumHD_demo.Mouse_brain_FixedFrozen.plot.UMAP.full.png
+  └── VisiumHD_demo.Mouse_brain_FixedFrozen.plot.UMAP.sketch.png
+  
+  #Integrated results
+  ├── ...
+  ├── VisiumHD_demo.integrated.RData
+  ├── VisiumHD_demo.integrated.plot.UMAP.annotated.full.png
+  ├── VisiumHD_demo.integrated.plot.UMAP.dataset.full.png
+  ├── VisiumHD_demo.integrated.plot.UMAP.original_cluster.full.png
+  └── VisiumHD_demo.integrated.plot.UMAP.original_cluster.sketch.png
+  </code></pre>
+<p>Some example figures:</p>
+<div id="fig:VisumHD" class="figure">
+<p><img src="https://interactivereport.github.io/SpaceSequest/images/VisiumHD_demo.Spatial.png" style="width:48.0%" alt="Figure 3A" />
+<img src="https://interactivereport.github.io/SpaceSequest/images/VisiumHD_demo.UMAP.png" style="width:48.0%" alt="Figure 3B" /></p>
+</div>
+<p>Visium HD spatial-transcriptomics output. (Left) Tissue image with capture spots overlaid. (Right) UMAP embedding of spatial barcodes colored by cluster.</p>
+<p><a href="https://interactivereport.github.io/SpaceSequest/images/VIsiumHD_demo.Annotated.png"><img src="https://interactivereport.github.io/SpaceSequest/images/VIsiumHD_demo.Annotated.png" alt="Figure1" /></a></p>
+<p>Additional Visium HD results. (Left) Gene expression counts (nCount) at 8 μm resolution. (Right) Cell type annotation on the spatial tissue.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="visium-1.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="xenium-1.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/interactivereport/scRNAsequest/edit/gh-pages/06-VisiumHD.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/interactivereport/scRNAsequest/blob/gh-pages/06-VisiumHD.Rmd",
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

@@ -10,7 +10,7 @@ visium-1
 space-ranger-run
 pipeline-run
 results
-visiumhd
+visium-hd-1
 space-ranger-run-1
 pipeline-setup
 results-1
