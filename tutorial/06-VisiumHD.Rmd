@@ -89,15 +89,15 @@ After this step, fill in the config.yml file and the sampleMeta.csv file as belo
 ```
 project_ID: VisiumHD_demo     #required
 
-sampleMeta: ~/SpaceSequest_demo/3_VisiumHD/sampleMeta.csv      #path to the sampleMeta file
+sampleMeta: ~/SpaceSequest_demo/2_VisiumHD/sampleMeta.csv      #path to the sampleMeta file
 
-output_dir: ~/SpaceSequest_demo/3_VisiumHD/output     #output directory
+output_dir: ~/SpaceSequest_demo/2_VisiumHD/output     #output directory
 
 bin_resolution: 8um   #defaul 8um, also 16um or 2um are available
 
 cluster_resolution: 0.3      #resolution for the FindClusters step
 
-reference: ~/SpaceSequest_demo/3_VisiumHD/Reference/allen_mop_2020.rds  #path to an Azimuth reference data, optional
+reference: ~/SpaceSequest_demo/2_VisiumHD/Reference/allen_mop_2020.rds  #path to an Azimuth reference data, optional
 
 reference_name: subclass     #column name of the cell type label you would like to transfer
 
@@ -106,16 +106,18 @@ integrate_data: True        #True or False to merge/integrate all the data in th
 integrate_with_harmony: True  #True or False to use Harmony for integration. Default as True
 ```
 
-The sampleMeta.csv file contains file name and path to the Space Ranger output. It needs to have the h5 files and binned_outputs inside:
+The sampleMeta.csv file contains file name and path to the Space Ranger output. It needs to have the `binned_outputs` inside.
+
+The first column sets the sample names for the final output files.
 
 ```
 Sample,Directory
 
-Mouse_brain_FFPE,~/SpaceSequest_demo/3_VisiumHD/Sample1_FFPE
+Mouse_brain_FFPE,~/SpaceSequest_demo/2_VisiumHD/Sample1_FFPE/outs
 
-Mouse_brain_FixedFrozen,~/SpaceSequest_demo/3_VisiumHD/Sample2_Fixed
+Mouse_brain_FixedFrozen,~/SpaceSequest_demo/2_VisiumHD/Sample2_Fixed/outs
 ```
-Finally submit the following command using sbatch:
+Finally submit the following command:
 
 ```
 #Run the data
@@ -126,7 +128,43 @@ Finally check the results in the output_dir folder specified in the config.yml f
 
 ## Results
 
+The output directory contains processing results for each individual data, as well as integrated dataset, if the `integrate_data` parameter was set to `True`.
 
+Main results in the directory:
+
+```
+~/SpaceSequest_demo/2_VisiumHD
+  #For Mouse_brain_FFPE
+  ├── ...
+  ├── VisiumHD_demo.Mouse_brain_FFPE.RData
+  ├── VisiumHD_demo.Mouse_brain_FFPE.plot.count_feature.png
+  ├── VisiumHD_demo.Mouse_brain_FFPE.plot.counts.png
+  ├── VisiumHD_demo.Mouse_brain_FFPE.plot.Spatial.annotated_cluster.png
+  ├── VisiumHD_demo.Mouse_brain_FFPE.plot.Spatial.cluster.png
+  ├── VisiumHD_demo.Mouse_brain_FFPE.plot.UMAP.full.png
+  └── VisiumHD_demo.Mouse_brain_FFPE.plot.UMAP.sketch.png
+  
+  #For Mouse_brain_FFPE
+  ├── ...
+  ├── VisiumHD_demo.Mouse_brain_FixedFrozen.RData
+  ├── VisiumHD_demo.Mouse_brain_FixedFrozen.plot.count_feature.png
+  ├── VisiumHD_demo.Mouse_brain_FixedFrozen.plot.counts.png
+  ├── VisiumHD_demo.Mouse_brain_FixedFrozen.plot.Spatial.annotated_cluster.png
+  ├── VisiumHD_demo.Mouse_brain_FixedFrozen.plot.Spatial.cluster.png
+  ├── VisiumHD_demo.Mouse_brain_FixedFrozen.plot.UMAP.full.png
+  └── VisiumHD_demo.Mouse_brain_FixedFrozen.plot.UMAP.sketch.png
+  
+  #Integrated results
+  ├── ...
+  ├── VisiumHD_demo.integrated.RData
+  ├── VisiumHD_demo.integrated.plot.UMAP.annotated.full.png
+  ├── VisiumHD_demo.integrated.plot.UMAP.dataset.full.png
+  ├── VisiumHD_demo.integrated.plot.UMAP.original_cluster.full.png
+  └── VisiumHD_demo.integrated.plot.UMAP.original_cluster.sketch.png
+  
+```
+
+Some example figures:
 
 ::: {#fig:VisumHD .figure}
 ![Figure 3A](https://interactivereport.github.io/SpaceSequest/images/VisiumHD_demo.Spatial.png){width=48%}
@@ -134,4 +172,8 @@ Finally check the results in the output_dir folder specified in the config.yml f
 
 :::
 
-Figure 3. Visium HD spatial-transcriptomics output. (Left) Tissue image with capture spots overlaid. (Right) UMAP embedding of spatial barcodes colored by cluster.
+Visium HD spatial-transcriptomics output. (Left) Tissue image with capture spots overlaid. (Right) UMAP embedding of spatial barcodes colored by cluster.
+
+[![Figure1](https://interactivereport.github.io/SpaceSequest/images/VIsiumHD_demo.Annotated.png)](https://interactivereport.github.io/SpaceSequest/images/VIsiumHD_demo.Annotated.png)
+
+Additional Visium HD results. (Left) Gene expression counts (nCount) at 8 μm resolution. (Right) Cell type annotation on the spatial tissue.
