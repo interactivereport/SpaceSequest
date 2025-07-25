@@ -96,7 +96,7 @@
 </ul></li>
 <li class="chapter" data-level="5" data-path="visiumhd.html"><a href="visiumhd.html"><i class="fa fa-check"></i><b>5</b> VisiumHD</a>
 <ul>
-<li class="chapter" data-level="5.1" data-path="visiumhd.html"><a href="visiumhd.html#spaceranger-run"><i class="fa fa-check"></i><b>5.1</b> SpaceRanger run</a></li>
+<li class="chapter" data-level="5.1" data-path="visiumhd.html"><a href="visiumhd.html#space-ranger-run-1"><i class="fa fa-check"></i><b>5.1</b> Space Ranger run</a></li>
 <li class="chapter" data-level="5.2" data-path="visiumhd.html"><a href="visiumhd.html#pipeline-setup"><i class="fa fa-check"></i><b>5.2</b> Pipeline setup</a></li>
 <li class="chapter" data-level="5.3" data-path="visiumhd.html"><a href="visiumhd.html#results-1"><i class="fa fa-check"></i><b>5.3</b> Results</a></li>
 </ul></li>
@@ -156,8 +156,8 @@
 <p><strong>10x Genomics Visium slide and barcoded spots</strong>: As illustrated in the figure above, each 10x Genomics Visium slide has multiple captures (4 for regular 6.5x6.5 mm, or 2 for 11x11 mm). The barcoded spots are 55 μm in diameter, with gaps between each spot. (Image from: <a href="https://www.10xgenomics.com/" target="_blank">https://www.10xgenomics.com/</a>)</p>
 <div id="space-ranger-run" class="section level2 hasAnchor" number="4.1">
 <h2><span class="header-section-number">4.1</span> Space Ranger run<a href="visium-1.html#space-ranger-run" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>If you start the analysis from Fastq raw data, <a href="https://www.10xgenomics.com/support/software/space-ranger/2.1" target="_blank">Space Ranger</a> is necessary to process the data to gene expression count matrix, with spttial barcodes resolved. As we mentioned before, Space Ranger requires Fastq files, high-resolution images, as well as key files (genome index, etc.) to run. We have illustrated these steps using a publicly available Visium data from an Alzheimer’s disease (AD) mouse model <a href="https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.12821" target="_blank">paper</a>, with GEO entry: <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE203424" target="_blank">GSE203424</a>. See <a href="data-preparation.html#data-preparation">data preparation</a> section 3.1.</p>
-<p>A typical Space Ranger run command:</p>
+<p>If you start the analysis from Fastq raw data, <a href="https://www.10xgenomics.com/support/software/space-ranger/2.1" target="_blank">Space Ranger</a> is necessary to process the data to gene expression count matrix, with spatial barcodes resolved. As we mentioned before, Space Ranger requires Fastq files, high-resolution images, as well as key files (genome index, etc.) to run. We have illustrated these steps using a publicly available Visium data from an Alzheimer’s disease (AD) mouse model <a href="https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.12821" target="_blank">paper</a>, with GEO entry: <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE203424" target="_blank">GSE203424</a>. See <a href="data-preparation.html#data-preparation">data preparation</a> section 3.1.</p>
+<p>A typical Space Ranger run command for Visium:</p>
 <pre><code>spaceranger count --id=&quot;WT-CO1&quot; \
     --transcriptome=~/Data/Reference_files/refdata-gex-mm10-2020-A \
     --fastqs=~/Data/Fastq_files \
@@ -168,12 +168,23 @@
     --localcores=4 \
     --localmem=256 \
     --create-bam=false</code></pre>
+<p>This will generate the Space Ranger results that can be used to run SpaceSequest:</p>
+<pre><code>~/SpaceSequest_demo/1_Visium/
+  ├── Input_data/
+    └── Demo_PSAPP.3Rep.Azimuth.Reference.h5ad  #Downloaded from Azimuth website
+  └── SpaceRanger/
+    ├── PSAPP-CO1/
+      ├── ...
+      └── out/
+    ├── PSAPP-CO1/
+    ├── PSAPP-TAM1/
+    └── PSAPP-TAM1/</code></pre>
 </div>
 <div id="pipeline-run" class="section level2 hasAnchor" number="4.2">
 <h2><span class="header-section-number">4.2</span> Pipeline run<a href="visium-1.html#pipeline-run" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Here, we use the following run directory as an example: ~/SpaceSequest_demo/1_Visium</p>
 <p>Demo data: 10x Visium data are from mouse brain (<a href="https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.12821" target="_blank">paper</a>, and <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE203424" target="_blank">GEO record</a>). Also, we downloaded the <a href="https://azimuth.hubmapconsortium.org/references/#Mouse%20-%20Motor%20Cortex" target="_blank">Azimuth mouse brain cortex reference</a> for cell type deconvolution, with the following link: <a href="https://seurat.nygenome.org/azimuth/demo_datasets/allen_mop_2020.rds" target="_blank">https://seurat.nygenome.org/azimuth/demo_datasets/allen_mop_2020.rds</a>.</p>
-<p>The first step is to generate the config and sampleMeta file by running the <code>visium</code> command with the working directory.</p>
+<p>The first step is to generate the config and sampleMeta files by running the <code>visium</code> command by passing the working directory.</p>
 <pre><code>visium ~/SpaceSequest_demo/1_Visium</code></pre>
 <p>After this step, users can fill in the config.yml file and the sample.csv file. Please pay attention to the required items in the config.yml file as they are essential for the pipeline to run.</p>
 <pre><code>#Highlighting several key items:
@@ -219,13 +230,13 @@ jobID: j47   # please make sure this job id is different with your other project
 <p>For the sample.csv file, the first two columns (Sample_Name,SpaceRanger_path) are required, and here we added two more columns:</p>
 <pre><code>Sample_Name,SpaceRanger_path,Treatment,Image_hires
 
-PSAPP-CO1,/path/to/PSAPP-CO1/outs,Control,/path/to/PSAPP-CO1-image.png
+PSAPP-CO1,~/SpaceSequest_demo/1_Visium/SpaceRanger/PSAPP-CO1/outs,Control,~/SpaceSequest_demo/1_Visium/SpaceRanger/PSAPP-CO1-image.png
 
-PSAPP-CO2,/path/to/PSAPP-CO2/outs,Control,/path/to/PSAPP-CO2-image.png
+PSAPP-CO2,~/SpaceSequest_demo/1_Visium/SpaceRanger/PSAPP-CO2/outs,Control,~/SpaceSequest_demo/1_Visium/SpaceRanger/PSAPP-CO2-image.png
 
-PSAPP-TAM1,/path/to/PSAPP-TAM1/outs,Treated,/path/to/PSAPP-TAM1-image.png
+PSAPP-TAM1,~/SpaceSequest_demo/1_Visium/SpaceRanger/PSAPP-TAM1/outs,Treated,~/SpaceSequest_demo/1_Visium/SpaceRanger/PSAPP-TAM1-image.png
 
-PSAPP-TAM2,/path/to/PSAPP-TAM2/outs,Treated,/path/to/PSAPP-TAM2-image.png</code></pre>
+PSAPP-TAM2,~/SpaceSequest_demo/1_Visium/SpaceRanger/PSAPP-TAM2/outs,Treated,~/SpaceSequest_demo/1_Visium/SpaceRanger/PSAPP-TAM2-image.png</code></pre>
 <p>Then, move the config.yml and sample.csv into a new folder called Run_pipeline, and run the <code>visium</code> script by passing the config.yml parameter to it:</p>
 <pre><code>#Run the pipeline
 
@@ -274,11 +285,14 @@ visium ~/SpaceSequest_demo/1_Visium/Run_pipeline/config.yml</code></pre>
     └── QC.pdf
   ├── config.yml
   ├── config.yml.20250719.log
-  └── sample.csv
-
-</code></pre>
-<p><a href="https://interactivereport.github.io/SpaceSequest/images/Visium_image.png"><img src="https://interactivereport.github.io/SpaceSequest/images/Visium_image.png" alt="Figure 1" /></a>
-Figure 1. Clustering results generated by BayesSpace for the Visium spatial transcriptomics dataset.</p>
+  └── sample.csv</code></pre>
+<p>Example outputs:</p>
+<p><a href="https://interactivereport.github.io/SpaceSequest/images/Visium_image.png"><img src="https://interactivereport.github.io/SpaceSequest/images/Visium_image.png" alt="Figure1" /></a>
+Clustering results generated by BayesSpace for the Visium spatial transcriptomics dataset.</p>
+<p><a href="https://interactivereport.github.io/SpaceSequest/images/Cell2location.png"><img src="https://interactivereport.github.io/SpaceSequest/images/Cell2location.png" alt="Figure2" /></a>
+Cell2location result for cell type deconvolution using single-cell RNA-seq data, guided by a reference downloaded from Azimuth.</p>
+<p><a href="https://interactivereport.github.io/SpaceSequest/images/SpaGCN.png"><img src="https://interactivereport.github.io/SpaceSequest/images/SpaGCN.png" alt="Figure3" /></a>
+SpaGCN result for spatial domain identification.</p>
 
 </div>
 </div>

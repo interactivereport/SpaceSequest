@@ -96,7 +96,7 @@
 </ul></li>
 <li class="chapter" data-level="5" data-path="visiumhd.html"><a href="visiumhd.html"><i class="fa fa-check"></i><b>5</b> VisiumHD</a>
 <ul>
-<li class="chapter" data-level="5.1" data-path="visiumhd.html"><a href="visiumhd.html#spaceranger-run"><i class="fa fa-check"></i><b>5.1</b> SpaceRanger run</a></li>
+<li class="chapter" data-level="5.1" data-path="visiumhd.html"><a href="visiumhd.html#space-ranger-run-1"><i class="fa fa-check"></i><b>5.1</b> Space Ranger run</a></li>
 <li class="chapter" data-level="5.2" data-path="visiumhd.html"><a href="visiumhd.html#pipeline-setup"><i class="fa fa-check"></i><b>5.2</b> Pipeline setup</a></li>
 <li class="chapter" data-level="5.3" data-path="visiumhd.html"><a href="visiumhd.html#results-1"><i class="fa fa-check"></i><b>5.3</b> Results</a></li>
 </ul></li>
@@ -150,21 +150,68 @@
             <section class="normal" id="section-">
 <div id="visiumhd" class="section level1 hasAnchor" number="5">
 <h1><span class="header-section-number">Chapter 5</span> VisiumHD<a href="visiumhd.html#visiumhd" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div id="spaceranger-run" class="section level2 hasAnchor" number="5.1">
-<h2><span class="header-section-number">5.1</span> SpaceRanger run<a href="visiumhd.html#spaceranger-run" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>10x Genomics Visium HD is a high-resolution spatial transcriptomics platform that captures the full transcriptome using thousands of gap-free, 2 μm squares. As one of the latest platforms that have the ability fo reach single-cell or even sub-cellular resolution, Visium HD enables researchers to discover new biology underlying certain conditions, and power the identification of disease-related biomarkers and potential therapeutic targets.</p>
+<p>The Space Ranger pipeline from 10x Genomics can be used to process Fastq raw data to gene expression matries. By default, the Space Ranger produces outputs at 3 resolutions: 2 μm, 8 μm, and 16 μm. We use 8 μm for the first-pass analysis, as it’s not too big or too small.</p>
+<p><a href="https://cdn.10xgenomics.com/image/upload/v1713545308/blog/Visium%20HD%20NPI/Visium%20HD%20slides.png" target="_blank"><img src="https://cdn.10xgenomics.com/image/upload/v1713545308/blog/Visium%20HD%20NPI/Visium%20HD%20slides.png" /></a></p>
+<p><strong>10x Genomics Visium HD slide and barcoded squares</strong>: As illustrated in the figure above, each 10x Genomics Visium HD slide has two captures (A1 and D1). The barcoded gap-free squares are 2 μm in size. (Image from: <a href="https://www.10xgenomics.com/" target="_blank">https://www.10xgenomics.com/</a>)</p>
+<div id="space-ranger-run-1" class="section level2 hasAnchor" number="5.1">
+<h2><span class="header-section-number">5.1</span> Space Ranger run<a href="visiumhd.html#space-ranger-run-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The Space Ranger running step is very similar to Visium. Necessary files inclue Fastq path, reference directory, image, slide ID, slide location, etc. Here, we will use a public demo dataset to guide you through these steps.</p>
+<p>The two public demo datasets are from the 10x Genomics website.</p>
+<p>1, <a href="https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-libraries-of-mouse-brain-he" target="_blank">Mouse brain FFPE sample</a></p>
+<p>2, <a href="https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-mouse-brain-fixed-frozen" target="_blank">Mouse brain fixed frozen</a></p>
+<p>A typical Space Ranger run command for Visium HD:</p>
+<pre><code>spaceranger count --id=&quot;Sample1_FFPE&quot; \
+    --transcriptome=~/Data/Reference_files/refdata-gex-mm10-2020-A \
+    --fastqs=~/Data/Fastq_files \
+    --cytaimage=~/Data/Sample1_FFPE.tif \
+    --probe-set=~/Data/Reference_files/Visium_Mouse_Transcriptome_Probe_Set_v2.0_mm10-2020-A.csv \
+    --slide=H1-ABDCEFJ \    #Using a random slide ID for illustration
+    --area=D1 \
+    --localcores=4 \
+    --localmem=256 \
+    --create-bam=false</code></pre>
+<p>The above command was run in the SpaceRanger folder as shown below. This will generate the Space Ranger result directories that can be used to run SpaceSequest.</p>
+<p>Here, we can skip the Space Ranger run because 10x Genomics website has provided Space Ranger results, so we can directly download and use them. SpaceSequest workflow requires a directory containing both <code>binned_outputs</code> and <code>spatial</code> folders.</p>
+<pre><code>~/SpaceSequest_demo/2_VisiumHD/
+  ├── Input_data/
+    └── Demo_PSAPP.3Rep.Azimuth.Reference.h5ad  #Downloaded from Azimuth website
+  └── SpaceRanger/
+    ├── Sample1_FFPE/
+      ├── ...
+      └── out/
+        ├── ...
+        ├── cloupe_008um.cloupe
+        ├── web_summary.html
+        ├── binned_outputs/
+          ├── square_002um/
+          ├── square_008um/
+          └── square_016um/
+        └── spatial/
+          ├── aligned_fiducials.jpg
+          ├── aligned_tissue_image.jpg
+          ├── cytassist_image.tiff
+          ├── detected_tissue_image.jpg
+          ├── tissue_hires_image.png
+          └── tissue_lowres_image.png
+    └── Sample2_Fixed/
+      ├── ...
+      └── out/
+        ├── ...
+        ├── cloupe_008um.cloupe
+        ├── web_summary.html
+        ├── binned_outputs/
+          ├── square_002um/
+          ├── square_008um/
+          └── square_016um/
+        └── spatial/</code></pre>
 </div>
 <div id="pipeline-setup" class="section level2 hasAnchor" number="5.2">
 <h2><span class="header-section-number">5.2</span> Pipeline setup<a href="visiumhd.html#pipeline-setup" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-</div>
-<div id="results-1" class="section level2 hasAnchor" number="5.3">
-<h2><span class="header-section-number">5.3</span> Results<a href="visiumhd.html#results-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Demo run directory: ~/SpaceSequest_demo/3_VisiumHD</p>
-<p>Demo data were downloaded from 10X genomics website, and stored in the above directory.</p>
-<p>Sample1: Mouse brain FFPE: <a href="https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-libraries-of-mouse-brain-he" class="uri">https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-libraries-of-mouse-brain-he</a></p>
-<p>Sample2: Mouse brain fixed frozen: <a href="https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-mouse-brain-fixed-frozen" class="uri">https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-mouse-brain-fixed-frozen</a></p>
-<pre><code>#First step, generate config and sampleMeta file
-
-visiumhd ~/SpaceSequest_demo/3_VisiumHD</code></pre>
+<p>To illustrate the pipeline setup steps, we set the running directory to be: ~/SpaceSequest_demo/2_VisiumHD/</p>
+<p>As the above step showed, we need to place the result folders (binned_outputs, spatial) inside each data folders (out folder under Sample1_FFPE and Sample2_Fixed).</p>
+<p>The first step is to generate the config and sampleMeta files by running the <code>visiumhd</code> command by passing the working directory to it.</p>
+<pre><code>visiumhd ~/SpaceSequest_demo/2_VisiumHD</code></pre>
 <p>After this step, fill in the config.yml file and the sampleMeta.csv file as below.</p>
 <pre><code>project_ID: VisiumHD_demo     #required
 
@@ -192,8 +239,11 @@ Mouse_brain_FixedFrozen,~/SpaceSequest_demo/3_VisiumHD/Sample2_Fixed</code></pre
 <p>Finally submit the following command using sbatch:</p>
 <pre><code>#Run the data
 
-visiumhd ~/SpaceSequest_demo/3_VisiumHD/config.yml</code></pre>
+visiumhd ~/SpaceSequest_demo/2_VisiumHD/config.yml</code></pre>
 <p>Finally check the results in the output_dir folder specified in the config.yml file. The output files contain some plots (QC plots, UMAP), and Rdata files storing the results.</p>
+</div>
+<div id="results-1" class="section level2 hasAnchor" number="5.3">
+<h2><span class="header-section-number">5.3</span> Results<a href="visiumhd.html#results-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div id="fig:VisumHD" class="figure">
 <p><img src="https://interactivereport.github.io/SpaceSequest/images/VisiumHD_demo.Spatial.png" style="width:48.0%" alt="Figure 3A" />
 <img src="https://interactivereport.github.io/SpaceSequest/images/VisiumHD_demo.UMAP.png" style="width:48.0%" alt="Figure 3B" /></p>

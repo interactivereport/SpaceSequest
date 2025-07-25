@@ -11,7 +11,7 @@ space-ranger-run
 pipeline-run
 results
 visiumhd
-spaceranger-run
+space-ranger-run-1
 pipeline-setup
 results-1
 xenium-1

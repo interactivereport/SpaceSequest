@@ -1,24 +1,87 @@
 # VisiumHD
 
-## SpaceRanger run
+10x Genomics Visium HD is a high-resolution spatial transcriptomics platform that captures the full transcriptome using thousands of gap-free, 2 μm squares. As one of the latest platforms that have the ability fo reach single-cell or even sub-cellular resolution, Visium HD enables researchers to discover new biology underlying certain conditions, and power the identification of disease-related biomarkers and potential therapeutic targets.
+
+The Space Ranger pipeline from 10x Genomics can be used to process Fastq raw data to gene expression matries. By default, the Space Ranger produces outputs at 3 resolutions: 2 μm, 8 μm, and 16 μm. We use 8 μm for the first-pass analysis, as it's not too big or too small.
+
+[![](https://cdn.10xgenomics.com/image/upload/v1713545308/blog/Visium%20HD%20NPI/Visium%20HD%20slides.png)](https://cdn.10xgenomics.com/image/upload/v1713545308/blog/Visium%20HD%20NPI/Visium%20HD%20slides.png){target="_blank"}
+
+**10x Genomics Visium HD slide and barcoded squares**: As illustrated in the figure above, each 10x Genomics Visium HD slide has two captures (A1 and D1). The barcoded gap-free squares are 2 μm in size. (Image from: [https://www.10xgenomics.com/](https://www.10xgenomics.com/){target="_blank"})
+
+## Space Ranger run
+
+The Space Ranger running step is very similar to Visium. Necessary files inclue Fastq path, reference directory, image, slide ID, slide location, etc. Here, we will use a public demo dataset to guide you through these steps.
+
+The two public demo datasets are from the 10x Genomics website.
+
+1, [Mouse brain FFPE sample](https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-libraries-of-mouse-brain-he){target="_blank"}
+
+2, [Mouse brain fixed frozen](https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-mouse-brain-fixed-frozen){target="_blank"}
+
+A typical Space Ranger run command for Visium HD:
+
+```
+spaceranger count --id="Sample1_FFPE" \
+    --transcriptome=~/Data/Reference_files/refdata-gex-mm10-2020-A \
+    --fastqs=~/Data/Fastq_files \
+    --cytaimage=~/Data/Sample1_FFPE.tif \
+    --probe-set=~/Data/Reference_files/Visium_Mouse_Transcriptome_Probe_Set_v2.0_mm10-2020-A.csv \
+    --slide=H1-ABDCEFJ \    #Using a random slide ID for illustration
+    --area=D1 \
+    --localcores=4 \
+    --localmem=256 \
+    --create-bam=false
+```
+
+The above command was run in the SpaceRanger folder as shown below. This will generate the Space Ranger result directories that can be used to run SpaceSequest.
+
+Here, we can skip the Space Ranger run because 10x Genomics website has provided Space Ranger results, so we can directly download and use them. SpaceSequest workflow requires a directory containing both `binned_outputs` and `spatial` folders.
+
+```
+~/SpaceSequest_demo/2_VisiumHD/
+  ├── Input_data/
+    └── Demo_PSAPP.3Rep.Azimuth.Reference.h5ad  #Downloaded from Azimuth website
+  └── SpaceRanger/
+    ├── Sample1_FFPE/
+      ├── ...
+      └── out/
+        ├── ...
+        ├── cloupe_008um.cloupe
+        ├── web_summary.html
+        ├── binned_outputs/
+          ├── square_002um/
+          ├── square_008um/
+          └── square_016um/
+        └── spatial/
+          ├── aligned_fiducials.jpg
+          ├── aligned_tissue_image.jpg
+          ├── cytassist_image.tiff
+          ├── detected_tissue_image.jpg
+          ├── tissue_hires_image.png
+          └── tissue_lowres_image.png
+    └── Sample2_Fixed/
+      ├── ...
+      └── out/
+        ├── ...
+        ├── cloupe_008um.cloupe
+        ├── web_summary.html
+        ├── binned_outputs/
+          ├── square_002um/
+          ├── square_008um/
+          └── square_016um/
+        └── spatial/
+```
 
 ## Pipeline setup
 
-## Results
+To illustrate the pipeline setup steps, we set the running directory to be: ~/SpaceSequest_demo/2_VisiumHD/
 
+As the above step showed, we need to place the result folders (binned_outputs, spatial) inside each data folders (out folder under Sample1_FFPE and Sample2_Fixed).
 
-Demo run directory: ~/SpaceSequest_demo/3_VisiumHD
-
-Demo data were downloaded from 10X genomics website, and stored in the above directory.
-
-Sample1: Mouse brain FFPE: https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-libraries-of-mouse-brain-he
-
-Sample2: Mouse brain fixed frozen: https://www.10xgenomics.com/datasets/visium-hd-cytassist-gene-expression-mouse-brain-fixed-frozen
+The first step is to generate the config and sampleMeta files by running the `visiumhd` command by passing the working directory to it.
 
 ```
-#First step, generate config and sampleMeta file
-
-visiumhd ~/SpaceSequest_demo/3_VisiumHD
+visiumhd ~/SpaceSequest_demo/2_VisiumHD
 ```
 
 After this step, fill in the config.yml file and the sampleMeta.csv file as below.
@@ -57,9 +120,13 @@ Finally submit the following command using sbatch:
 ```
 #Run the data
 
-visiumhd ~/SpaceSequest_demo/3_VisiumHD/config.yml
+visiumhd ~/SpaceSequest_demo/2_VisiumHD/config.yml
 ```
 Finally check the results in the output_dir folder specified in the config.yml file. The output files contain some plots (QC plots, UMAP), and Rdata files storing the results.
+
+## Results
+
+
 
 ::: {#fig:VisumHD .figure}
 ![Figure 3A](https://interactivereport.github.io/SpaceSequest/images/VisiumHD_demo.Spatial.png){width=48%}
