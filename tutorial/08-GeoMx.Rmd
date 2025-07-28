@@ -1,6 +1,16 @@
 # GeoMX
 
+The GeoMx™ Digital Spatial Profiler (DSP) is a spatial transcriptomics platform developed by NanoString Technologies (Now Bruker Corporation), allowing researchers to quantify RNA and/or protein expression using FFPE (formalin-fixed, paraffin-embedded) or fresh frozen samples. GeoMx enables high-plex, spatially resolved profiling of tissues based on user-defined Region of interests (ROIs). These ROIs can be defined using multiple staining markers, and each ROI usually has at least 50–100 cells, but ideally 100–300+ cells per ROI for robust RNA signal. Thus, GeoMx cannot provide single-cell resolution spatial transcriptomics readout, but it allows better capture of lowly-expressed genes, due to its `mini-bulk` strategy.
+
+GeoMx experiment can be sequenced using NGS high-throughput sequencing, or counted using NanoString nCounter. Here, we discuss the data analysis using NGS-based readout, with DCC as pipeline input format.
+
+[![](https://nanostring.com/wp-content/uploads/IM_MK4289_geomx_workflow_simplified_R4-01.png)](https://nanostring.com/wp-content/uploads/IM_MK4289_geomx_workflow_simplified_R4-01.png){target="_blank"}
+
+**GeoMx workflow**: This figures shows the general workflow of GeoMx experiment. The whole workflow contains sample preparation, imaging, data collection, and downstream data analysis. (Image from: [https://nanostring.com/products/geomx-digital-spatial-profiler/geomx-dsp-overview/](https://nanostring.com/products/geomx-digital-spatial-profiler/geomx-dsp-overview/){target="_blank"})
+
 ## Fastq to DCC conversion
+
+
 
 ## Pipeline setup
 

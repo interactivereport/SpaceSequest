@@ -155,26 +155,65 @@
 <p><strong>10x Genomics Xenium workflow</strong>: As illustrated in the figure above, the whole workflow contains sample preparation, probe hybridization, imaging, and downstream data analysis. (Image from: <a href="https://www.10xgenomics.com/" target="_blank">https://www.10xgenomics.com/</a>)</p>
 <div id="input-preparation" class="section level2 hasAnchor" number="6.1">
 <h2><span class="header-section-number">6.1</span> Input preparation<a href="xenium-1.html#input-preparation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Here, we illustrate data preparation using a public Xenium dataset provided by 10x Genomics.</p>
+<p>This <a href="https://www.10xgenomics.com/datasets/xenium-human-brain-preview-data-1-standard" target="_blank">Xenium Human Brain Preview Data</a> has been analyzed using Xenium Onboard Analysis 1.3.0. Users can download the full results by clicking the ‘Output and Supplemental files tab’. The zip file <code>Xenium_V1_FFPE_Human_Brain_Healthy_With_Addon_outs.zip</code> is 5.1 Gb in size, the the decompressed is about 6 Gb.</p>
+<pre><code>~/SpaceSequest_demo/3_Xenium/
+  ├── data/
+    #Directories:
+    ├── analysis/
+    ├── cell_feature_matrix/
+    ├── cell_features/
+    ├── cell_id/
+    ├── cell_summary/
+    ├── density/
+    ├── grids/
+    ├── masks/
+    ├── polygon_num_vertices/
+    ├── polygon_vertices/
+    └── seg_mask_value/
+    
+    #Single files:
+    ├── analysis_summary.html
+    ├── analysis.tar
+    ├── analysis.zarr.zip
+    ├── cell_boundaries.csv.gz
+    ├── cell_boundaries.parquet
+    ├── cell_feature_matrix.h5
+    ├── cell_feature_matrix.tar
+    ├── cell_feature_matrix.zarr.zip
+    ├── cells.csv.gz
+    ├── cells.parquet
+    ├── cells.zarr.zip
+    ├── experiment.xenium
+    ├── gene_panel.json
+    ├── metrics_summary.csv
+    ├── nucleus_boundaries.csv
+    ├── nucleus_boundaries.parquet
+    ├── transcripts.csv.gz
+    ├── transcripts.parquet
+    └── transcripts.zarr.zip
+    
+    #Images
+    ├── morphology_focus.ome.tif
+    ├── morphology_mip.ome.tif
+    └── morphology.ome.tif</code></pre>
 </div>
 <div id="pipeline-setup-1" class="section level2 hasAnchor" number="6.2">
 <h2><span class="header-section-number">6.2</span> Pipeline setup<a href="xenium-1.html#pipeline-setup-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-</div>
-<div id="results-2" class="section level2 hasAnchor" number="6.3">
-<h2><span class="header-section-number">6.3</span> Results<a href="xenium-1.html#results-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Demo run directory: ~/SpaceSequest_demo/2_Xenium</p>
-<p>Demo data: FFPE Human Brain data from 10x: <a href="https://www.10xgenomics.com/datasets/xenium-human-brain-preview-data-1-standard" class="uri">https://www.10xgenomics.com/datasets/xenium-human-brain-preview-data-1-standard</a></p>
-<p>The Xenium raw data is stored at ~/SpaceSequest_demo/2_Xenium/data with h5, cell_boundaries, transcripts, etc. This directory needs to be specified in the sampleMeta.csv file, which will be mentioned later.</p>
-<pre><code>#First step, generate config and sampleMeta file
+<p>Demo run directory: ~/SpaceSequest_demo/3_Xenium</p>
+<p>Demo data: FFPE Human Brain data from 10x: <a href="https://www.10xgenomics.com/datasets/xenium-human-brain-preview-data-1-standard" target="_blank">https://www.10xgenomics.com/datasets/xenium-human-brain-preview-data-1-standard</a>, as described in the previous section.</p>
+<p>The Xenium raw data is stored at ~/SpaceSequest_demo/3_Xenium/data with h5, cell_boundaries, transcripts, etc. This directory needs to be specified in the sampleMeta.csv file, which will be mentioned later.</p>
+<pre><code>#First step, generate the config and sampleMeta files
 
-xenium ~/SpaceSequest_demo/2_Xenium</code></pre>
-<p>After this step, fill in the config.yml file and the sampleMeta.csv file as below. Please pay attention to the required items in the config.yml file as they are essential for the pipeline to run:</p>
+xenium ~/SpaceSequest_demo/3_Xenium/</code></pre>
+<p>After this step, users need to fill in the <code>config.yml</code> file and the <code>sampleMeta.csv</code> file as below. Please pay attention to the required items in the <code>config.yml</code> file as they are essential for the pipeline to run:</p>
 <pre><code>#Highlighting several key items:
 
 project_ID: Xenium_demo  #required
 
-sampleMeta: ~/SpaceSequest_demo/2_Xenium/sampleMeta.csv  #path to the sampleMeta file, required. It will create this dir for you if it doesn&#39;t exist
+sampleMeta: ~/SpaceSequest_demo/3_Xenium/sampleMeta.csv  #path to the sampleMeta file, required. It will create this dir for you if it doesn&#39;t exist
 
-output_dir: ~/SpaceSequest_demo/2_Xenium/output   #output directory, required
+output_dir: ~/SpaceSequest_demo/3_Xenium/output   #output directory, required
 
 cluster_resolution: 0.3   #resolution for the FindClusters step
 
@@ -185,15 +224,18 @@ reference_name: subclass   #column name of the cell type label you would like to
 integrate_data: True   #True or False to merge/integrate all the data in the sampleMeta file
 
 integrate_with_harmony: True   #True or False to use Harmony for integration. Default as True</code></pre>
-<p>For the sampleMeta.csv file, the first two columns are required: Sample and Directory. Users can add more metadata columns as shown below:</p>
+<p>For the <code>sampleMeta.csv</code> file, the first two columns are required: Sample and Directory. Users can add more metadata columns as shown below:</p>
 <pre><code>Sample,Directory,Tissue,Species
 
-Human_brain,~/SpaceSequest/Xemuim_public/data,Brain,Human</code></pre>
-<p>Then we can run the xenium script by passing the config.yml to it. We suggest submitting the command using sbatch:</p>
+Human_brain,~/SpaceSequest_demo/3_Xenium/data,Brain,Human</code></pre>
+<p>Then we can run the <code>xenium</code> script by passing the config.yml to it. We suggest submitting the command using sbatch as the process takes time to run:</p>
 <pre><code>#Run the data
 
-xenium ~/SpaceSequest_demo/1_Visium/config.yml</code></pre>
+xenium ~/SpaceSequest_demo/3_Xenium/config.yml</code></pre>
 <p>The pipeline will process/QC the data, run clustering and cell type annotation (if reference provided), and finally return an integrated Rdata file. All plots and files are stored in the output_dir directory specified in the config.yml file.</p>
+</div>
+<div id="results-2" class="section level2 hasAnchor" number="6.3">
+<h2><span class="header-section-number">6.3</span> Results<a href="xenium-1.html#results-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <!-- 
 # [![](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.Tissue.png){#fig:XeniumA width="48%"}](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.Tissue.png)
 # [![](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.UMAP.png){#fig:XeniumB width="48%"}](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.UMAP.png)
@@ -203,7 +245,7 @@ Figure 2. Xenium spatial-transcriptomics output. (Left) Tissue image with captur
 <p><img src="https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.Tissue.png" style="width:48.0%" alt="Figure 2A" />
 <img src="https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.UMAP.png" style="width:48.0%" alt="Figure 2B" /></p>
 </div>
-<p>Figure 2. Xenium spatial-transcriptomics output. (Left) Tissue image with capture spots overlaid. (Right) UMAP embedding of spatial barcodes coloured by cluster.</p>
+<p>Xenium spatial-transcriptomics output. (Left) Tissue image with capture spots overlaid. (Right) UMAP embedding of spatial barcodes coloured by cluster.</p>
 
 </div>
 </div>
