@@ -109,6 +109,25 @@ The pipeline will process/QC the data, run clustering and cell type annotation (
 
 ## Results
 
+After running the workflow, the `ouptut` directory specified in the `config.yml` file will contain result files associated with each individual data, as well as an integrated file for all the samples involved in the analysis, if `integrate_data: True` was set.
+
+Key results in the directory:
+
+```
+~/SpaceSequest_demo/3_Xenium
+  #Human_brain data
+  ├── ...
+  ├── Xenium_demo.Human_brain.RData
+  ├── Xenium_demo.Human_brain.plot.nFeature_nCount_Vln.pdf
+  ├── Xenium_demo.Human_brain.plot.original_cluster.tissue.pdf
+  └── Xenium_demo.Human_brain.plot.original_cluster.UMAP.pdf
+  
+  #Integrated data
+  ├── ...
+  ├── Xenium_demo.integrated.RData
+  └── Xenium_demo.integrated.plot.dataset.pdf
+```
+
 <!-- 
 # [![](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.Tissue.png){#fig:XeniumA width="48%"}](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.Tissue.png)
 # [![](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.UMAP.png){#fig:XeniumB width="48%"}](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.UMAP.png)
@@ -121,5 +140,3 @@ Figure 2. Xenium spatial-transcriptomics output. (Left) Tissue image with captur
 
 :::
 Xenium spatial-transcriptomics output. (Left) Tissue image with capture spots overlaid. (Right) UMAP embedding of spatial barcodes coloured by cluster.
-
-

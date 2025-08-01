@@ -10,18 +10,18 @@ GeoMx experiment can be sequenced using NGS high-throughput sequencing, or count
 
 ## Fastq to DCC conversion
 
+NanoString Technologies (Now Bruker Corporation) provides a toolkit to process GeoMx readout in Fastq format. As described [here](https://cumulus.readthedocs.io/en/stable/geomxngs/index.html){target="_blank"}, users can follow the instruction and generate files with dcc as suffix for downstream analysis. 
 
+Another useful user manual is available at: [GeoMx DSP NGS Readout User Manual](https://nanostring.com/wp-content/uploads/2022/06/MAN-10153-01-GeoMx-DSP-NGS-Readout-User-Manual.pdf){target="_blank"}
 
 ## Pipeline setup
 
-## Results
-
-## Quickomics exploration
-
 Demo run directory: ~/SpaceSequest_demo/4_GeoMx
 
-Demo dataset is a public data provided by NanoString: http://nanostring-public-share.s3-website-us-west-2.amazonaws.com/GeoScriptHub/Kidney_Dataset_for_GeomxTools.zip
-    
+Here, we will demonstrate the pipeline using a public dataset provided by NanoString Technologies. The Fastq->dcc step has already been run for this data, so we can directly start from dcc file processing.
+
+The demo dataset is a public data provided by NanoString: [http://nanostring-public-share.s3-website-us-west-2.amazonaws.com/GeoScriptHub/Kidney_Dataset_for_GeomxTools.zip](http://nanostring-public-share.s3-website-us-west-2.amazonaws.com/GeoScriptHub/Kidney_Dataset_for_GeomxTools.zip){target="_blank"}. After unzipping this file, please add the following file to the `annotation` folder inside `Kidney_Dataset`, as we modified the spreadsheet to simplify this test run: [https://github.com/interactivereport/SpaceSequest/blob/gh-pages/tutorial/02-Introduction.Rmd](https://github.com/interactivereport/SpaceSequest/blob/gh-pages/geomx/kidney_demo_AOI_Annotations_selected_clean.xlsx){target="_blank"}
+
 This is a kidney dataset, and in our demo run, we will run data processing, quality control, and differential expression analysis by comparing two kidney cell types: Glomerulus v.s. Tubule
     
 First, we initiate the pipeline using the following script. This will generate templates of config.yml and compareInfo.csv:
@@ -53,6 +53,7 @@ comparison: ~/SpaceSequest_demo/4_GeoMx/compareInfo.csv   #comparison file to de
 
 quickomics: True                                  
 ```
+
 Then prepare the compareInfo.csv file to define differential expression analysis comparisons:
 
 ```
@@ -70,4 +71,60 @@ geomx ~/SpaceSequest_demo/4_GeoMx/config.yml
 
 ```
 Finally check the results in the output_dir folder specified in the config.yml file. The output files contain DE analysis results, and if Quickomics parameter was set to True, it will create mutiple .csv files to create a Quickomics visualization link. An example can be found here (Q3 normalized values were used to create the link): http://compbio.biogen.com:3838/Quickomics/?unlisted=PRJ_GeoMx_demo_Ij4YyG
+
+## Results
+
+This test run only has a simple comparison so should only take a few minutes to run.
+
+The output files are a set of .csv files containing gene expression and differential expression analysis results. These files are fully compatible with [Quickomics](https://academic.oup.com/bioinformatics/article/37/20/3670/6254183){target="_blank"}, an R Shiny application for data exploration. Users can upload these csv files to Quickomics for downstream analysis and figure generation.
+
+Results in the directory:
+
+```
+~/SpaceSequest_demo/4_GeoMx/results
+  ├── Comparison_result_1.txt     #Differential expression result
+  
+  #Quickomics files:
+  GeoMx_demo_Sample_metadata.csv
+  GeoMx_demo_Exp_Q3NormData.csv
+  GeoMx_demo_Comparison_Data.csv
+  GeoMx_demo_ProteinGeneName_Optional.csv
+  
+  #Additional normalizations:
+  GeoMx_demo_Exp_NegNormData.csv
+  GeoMx_demo_Exp_QuantileNormData.csv
+```
+
+NanoString Technologies (Now Bruker Corporation) suggests using Q3 normalization, which was performed using:
+
+```
+demoData <- normalize(demoData ,
+                             norm_method = "quant", 
+                             desiredQuantile = .75,
+                             toElt = "q_norm")
+```
+
+However, additional normalization is also available, and users can upload those normalized values to Quickomics for analysis. For example, the 'Negative Probe' normalization was performed by the following command:
+
+```
+target_demoData <- normalize(target_demoData ,
+                             norm_method = "neg", 
+                             fromElt = "exprs",
+                             toElt = "neg_norm")
+```
+
+## Quickomics exploration
+
+Here, we upload the following four files to the [Quickomics server](https://quickomics.bxgenomics.com/){target="_blank"}:
+
+ - **GeoMx_demo_Sample_metadata.csv**: Sample meta information include sameple name, disease conditions, etc.
+ 
+ - **GeoMx_demo_Exp_Q3NormData.csv**: Gene expression values normalized by Q3 normalization
+ 
+ - **GeoMx_demo_Comparison_Data.csv**: Differential expression analysis results
+
+ - **GeoMx_demo_ProteinGeneName_Optional.csv**: Gene-Protein name conversion
+
+
+Quickomics link: [https://quickomics.bxgenomics.com/?unlisted=PRJ_GeoMx_demo_238wZk](https://quickomics.bxgenomics.com/?unlisted=PRJ_GeoMx_demo_238wZk){target="_blank"}
 

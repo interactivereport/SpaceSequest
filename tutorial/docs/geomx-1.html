@@ -156,17 +156,14 @@
 <p><strong>GeoMx workflow</strong>: This figures shows the general workflow of GeoMx experiment. The whole workflow contains sample preparation, imaging, data collection, and downstream data analysis. (Image from: <a href="https://nanostring.com/products/geomx-digital-spatial-profiler/geomx-dsp-overview/" target="_blank">https://nanostring.com/products/geomx-digital-spatial-profiler/geomx-dsp-overview/</a>)</p>
 <div id="fastq-to-dcc-conversion" class="section level2 hasAnchor" number="7.1">
 <h2><span class="header-section-number">7.1</span> Fastq to DCC conversion<a href="geomx-1.html#fastq-to-dcc-conversion" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>NanoString Technologies (Now Bruker Corporation) provides a toolkit to process GeoMx readout in Fastq format. As described <a href="https://cumulus.readthedocs.io/en/stable/geomxngs/index.html" target="_blank">here</a>, users can follow the instruction and generate files with dcc as suffix for downstream analysis.</p>
+<p>Another useful user manual is available at: <a href="https://nanostring.com/wp-content/uploads/2022/06/MAN-10153-01-GeoMx-DSP-NGS-Readout-User-Manual.pdf" target="_blank">GeoMx DSP NGS Readout User Manual</a></p>
 </div>
 <div id="pipeline-setup-2" class="section level2 hasAnchor" number="7.2">
 <h2><span class="header-section-number">7.2</span> Pipeline setup<a href="geomx-1.html#pipeline-setup-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-</div>
-<div id="results-3" class="section level2 hasAnchor" number="7.3">
-<h2><span class="header-section-number">7.3</span> Results<a href="geomx-1.html#results-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-</div>
-<div id="quickomics-exploration" class="section level2 hasAnchor" number="7.4">
-<h2><span class="header-section-number">7.4</span> Quickomics exploration<a href="geomx-1.html#quickomics-exploration" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Demo run directory: ~/SpaceSequest_demo/4_GeoMx</p>
-<p>Demo dataset is a public data provided by NanoString: <a href="http://nanostring-public-share.s3-website-us-west-2.amazonaws.com/GeoScriptHub/Kidney_Dataset_for_GeomxTools.zip" class="uri">http://nanostring-public-share.s3-website-us-west-2.amazonaws.com/GeoScriptHub/Kidney_Dataset_for_GeomxTools.zip</a></p>
+<p>Here, we will demonstrate the pipeline using a public dataset provided by NanoString Technologies. The Fastq-&gt;dcc step has already been run for this data, so we can directly start from dcc file processing.</p>
+<p>The demo dataset is a public data provided by NanoString: <a href="http://nanostring-public-share.s3-website-us-west-2.amazonaws.com/GeoScriptHub/Kidney_Dataset_for_GeomxTools.zip" target="_blank">http://nanostring-public-share.s3-website-us-west-2.amazonaws.com/GeoScriptHub/Kidney_Dataset_for_GeomxTools.zip</a>. After unzipping this file, please add the following file to the <code>annotation</code> folder inside <code>Kidney_Dataset</code>, as we modified the spreadsheet to simplify this test run: <a href="https://github.com/interactivereport/SpaceSequest/blob/gh-pages/geomx/kidney_demo_AOI_Annotations_selected_clean.xlsx" target="_blank">https://github.com/interactivereport/SpaceSequest/blob/gh-pages/tutorial/02-Introduction.Rmd</a></p>
 <p>This is a kidney dataset, and in our demo run, we will run data processing, quality control, and differential expression analysis by comparing two kidney cell types: Glomerulus v.s. Tubule</p>
 <p>First, we initiate the pipeline using the following script. This will generate templates of config.yml and compareInfo.csv:</p>
 <pre><code>#First step, generate config and sampleMeta file
@@ -201,6 +198,45 @@ Glome_vs_Tubule,~region,region,glomerulus,tubule,Linear</code></pre>
 geomx ~/SpaceSequest_demo/4_GeoMx/config.yml
 </code></pre>
 <p>Finally check the results in the output_dir folder specified in the config.yml file. The output files contain DE analysis results, and if Quickomics parameter was set to True, it will create mutiple .csv files to create a Quickomics visualization link. An example can be found here (Q3 normalized values were used to create the link): <a href="http://compbio.biogen.com:3838/Quickomics/?unlisted=PRJ_GeoMx_demo_Ij4YyG" class="uri">http://compbio.biogen.com:3838/Quickomics/?unlisted=PRJ_GeoMx_demo_Ij4YyG</a></p>
+</div>
+<div id="results-3" class="section level2 hasAnchor" number="7.3">
+<h2><span class="header-section-number">7.3</span> Results<a href="geomx-1.html#results-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>This test run only has a simple comparison so should only take a few minutes to run.</p>
+<p>The output files are a set of .csv files containing gene expression and differential expression analysis results. These files are fully compatible with <a href="https://academic.oup.com/bioinformatics/article/37/20/3670/6254183" target="_blank">Quickomics</a>, an R Shiny application for data exploration. Users can upload these csv files to Quickomics for downstream analysis and figure generation.</p>
+<p>Results in the directory:</p>
+<pre><code>~/SpaceSequest_demo/4_GeoMx/results
+  ├── Comparison_result_1.txt     #Differential expression result
+  
+  #Quickomics files:
+  GeoMx_demo_Sample_metadata.csv
+  GeoMx_demo_Exp_Q3NormData.csv
+  GeoMx_demo_Comparison_Data.csv
+  GeoMx_demo_ProteinGeneName_Optional.csv
+  
+  #Additional normalizations:
+  GeoMx_demo_Exp_NegNormData.csv
+  GeoMx_demo_Exp_QuantileNormData.csv</code></pre>
+<p>NanoString Technologies (Now Bruker Corporation) suggests using Q3 normalization, which was performed using:</p>
+<pre><code>demoData &lt;- normalize(demoData ,
+                             norm_method = &quot;quant&quot;, 
+                             desiredQuantile = .75,
+                             toElt = &quot;q_norm&quot;)</code></pre>
+<p>However, additional normalization is also available, and users can upload those normalized values to Quickomics for analysis. For example, the ‘Negative Probe’ normalization was performed by the following command:</p>
+<pre><code>target_demoData &lt;- normalize(target_demoData ,
+                             norm_method = &quot;neg&quot;, 
+                             fromElt = &quot;exprs&quot;,
+                             toElt = &quot;neg_norm&quot;)</code></pre>
+</div>
+<div id="quickomics-exploration" class="section level2 hasAnchor" number="7.4">
+<h2><span class="header-section-number">7.4</span> Quickomics exploration<a href="geomx-1.html#quickomics-exploration" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Here, we upload the following four files to the <a href="https://quickomics.bxgenomics.com/" target="_blank">Quickomics server</a>:</p>
+<ul>
+<li><p><strong>GeoMx_demo_Sample_metadata.csv</strong>: Sample meta information include sameple name, disease conditions, etc.</p></li>
+<li><p><strong>GeoMx_demo_Exp_Q3NormData.csv</strong>: Gene expression values normalized by Q3 normalization</p></li>
+<li><p><strong>GeoMx_demo_Comparison_Data.csv</strong>: Differential expression analysis results</p></li>
+<li><p><strong>GeoMx_demo_ProteinGeneName_Optional.csv</strong>: Gene-Protein name conversion</p></li>
+</ul>
+<p>Quickomics link: <a href="https://quickomics.bxgenomics.com/?unlisted=PRJ_GeoMx_demo_238wZk" target="_blank">https://quickomics.bxgenomics.com/?unlisted=PRJ_GeoMx_demo_238wZk</a></p>
 
 </div>
 </div>

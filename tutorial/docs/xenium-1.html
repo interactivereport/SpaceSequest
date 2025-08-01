@@ -236,6 +236,20 @@ xenium ~/SpaceSequest_demo/3_Xenium/config.yml</code></pre>
 </div>
 <div id="results-2" class="section level2 hasAnchor" number="6.3">
 <h2><span class="header-section-number">6.3</span> Results<a href="xenium-1.html#results-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>After running the workflow, the <code>ouptut</code> directory specified in the <code>config.yml</code> file will contain result files associated with each individual data, as well as an integrated file for all the samples involved in the analysis, if <code>integrate_data: True</code> was set.</p>
+<p>Key results in the directory:</p>
+<pre><code>~/SpaceSequest_demo/3_Xenium
+  #Human_brain data
+  ├── ...
+  ├── Xenium_demo.Human_brain.RData
+  ├── Xenium_demo.Human_brain.plot.nFeature_nCount_Vln.pdf
+  ├── Xenium_demo.Human_brain.plot.original_cluster.tissue.pdf
+  └── Xenium_demo.Human_brain.plot.original_cluster.UMAP.pdf
+  
+  #Integrated data
+  ├── ...
+  ├── Xenium_demo.integrated.RData
+  └── Xenium_demo.integrated.plot.dataset.pdf</code></pre>
 <!-- 
 # [![](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.Tissue.png){#fig:XeniumA width="48%"}](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.Tissue.png)
 # [![](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.UMAP.png){#fig:XeniumB width="48%"}](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.UMAP.png)
