@@ -32,4 +32,10 @@ cosmx2vip
 input-file-set-up
 run-the-workflow
 results-5
+spdeg
+input-file-set-up-1
+run-the-workflow-1
+results-6
 visium-hd-color-function
+input-prerequisites
+run-the-function

@@ -37,19 +37,19 @@ After this step, fill in the config.yml file and the sampleMeta.csv file as belo
 ```
 #config file for GeoMx. Please avoid using spaces in names or paths. All items are required.
 
-project_ID: GeoMx_demo  #name of the project
+project_ID: GeoMx_demo                                        #name of the project
 
 data_path: ~/SpaceSequest_demo/4_GeoMx/Kidney_Dataset/dccs    #path to DCC files
 
 data_annotation: ~/SpaceSequest_demo/4_GeoMx/Kidney_Dataset/annotation/kidney_demo_AOI_Annotations_selected_clean.xlsx        #sample meta information
 
-annotation_sheet: Template      #Sheet name of annotation Excel file
+annotation_sheet: Template                                    #Sheet name of annotation Excel file
 
 pkcs_file: ~/SpaceSequest_demo/4_GeoMx/Kidney_Dataset/pkcs/TAP_H_WTA_v1.0.pkc       #path to the pkc file
 
-output_dir: ~/SpaceSequest_demo/4_GeoMx/results      #path for output files
+output_dir: ~/SpaceSequest_demo/4_GeoMx/results               #path for output files
 
-comparison: ~/SpaceSequest_demo/4_GeoMx/compareInfo.csv   #comparison file to define DE groups
+comparison: ~/SpaceSequest_demo/4_GeoMx/compareInfo.csv       #comparison file to define DE groups
 
 quickomics: True                                  
 ```
@@ -64,6 +64,7 @@ Glome_vs_Tubule,~region,region,glomerulus,tubule,Linear
 Currently, we only support running a Linear model to compare two conditions, without covariate adjustments. More DE methods will be added later.
 
 Run the pipeline as below:
+
 ```
 #Run the data
 

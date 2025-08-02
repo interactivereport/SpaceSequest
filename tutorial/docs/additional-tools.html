@@ -113,7 +113,7 @@
 <li class="chapter" data-level="7.3" data-path="geomx-1.html"><a href="geomx-1.html#results-3"><i class="fa fa-check"></i><b>7.3</b> Results</a></li>
 <li class="chapter" data-level="7.4" data-path="geomx-1.html"><a href="geomx-1.html#quickomics-exploration"><i class="fa fa-check"></i><b>7.4</b> Quickomics exploration</a></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="cosmx-1.html"><a href="cosmx-1.html"><i class="fa fa-check"></i><b>8</b> CosMX</a>
+<li class="chapter" data-level="8" data-path="cosmx-1.html"><a href="cosmx-1.html"><i class="fa fa-check"></i><b>8</b> CosMx</a>
 <ul>
 <li class="chapter" data-level="8.1" data-path="cosmx-1.html"><a href="cosmx-1.html#input-preparation-1"><i class="fa fa-check"></i><b>8.1</b> Input preparation</a></li>
 <li class="chapter" data-level="8.2" data-path="cosmx-1.html"><a href="cosmx-1.html#pipeline-setup-3"><i class="fa fa-check"></i><b>8.2</b> Pipeline setup</a></li>
@@ -127,7 +127,17 @@
 <li class="chapter" data-level="9.1.2" data-path="additional-tools.html"><a href="additional-tools.html#run-the-workflow"><i class="fa fa-check"></i><b>9.1.2</b> Run the workflow</a></li>
 <li class="chapter" data-level="9.1.3" data-path="additional-tools.html"><a href="additional-tools.html#results-5"><i class="fa fa-check"></i><b>9.1.3</b> Results</a></li>
 </ul></li>
-<li class="chapter" data-level="9.2" data-path="additional-tools.html"><a href="additional-tools.html#visium-hd-color-function"><i class="fa fa-check"></i><b>9.2</b> Visium HD color function</a></li>
+<li class="chapter" data-level="9.2" data-path="additional-tools.html"><a href="additional-tools.html#spdeg"><i class="fa fa-check"></i><b>9.2</b> spDEG</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="additional-tools.html"><a href="additional-tools.html#input-file-set-up-1"><i class="fa fa-check"></i><b>9.2.1</b> Input file set up</a></li>
+<li class="chapter" data-level="9.2.2" data-path="additional-tools.html"><a href="additional-tools.html#run-the-workflow-1"><i class="fa fa-check"></i><b>9.2.2</b> Run the workflow</a></li>
+<li class="chapter" data-level="9.2.3" data-path="additional-tools.html"><a href="additional-tools.html#results-6"><i class="fa fa-check"></i><b>9.2.3</b> Results</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="additional-tools.html"><a href="additional-tools.html#visium-hd-color-function"><i class="fa fa-check"></i><b>9.3</b> Visium HD color function</a>
+<ul>
+<li class="chapter" data-level="9.3.1" data-path="additional-tools.html"><a href="additional-tools.html#input-prerequisites"><i class="fa fa-check"></i><b>9.3.1</b> Input prerequisites</a></li>
+<li class="chapter" data-level="9.3.2" data-path="additional-tools.html"><a href="additional-tools.html#run-the-function"><i class="fa fa-check"></i><b>9.3.2</b> Run the function</a></li>
+</ul></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -158,18 +168,208 @@
 <h3><span class="header-section-number">9.1.1</span> Input file set up<a href="additional-tools.html#input-file-set-up" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>In this section, we will go through input files that are necessary for running the cosMx2VIP workflow.</p>
 <p>Here, we use the public CosMx dataset from the NanoString website again:</p>
+<p>Human frontal cortex FFPE data is available through: <a href="https://nanostring.com/products/cosmx-spatial-molecular-imager/ffpe-dataset/human-frontal-cortex-ffpe-dataset/" target="_blank">https://nanostring.com/products/cosmx-spatial-molecular-imager/ffpe-dataset/human-frontal-cortex-ffpe-dataset/</a></p>
+<p>Since <code>cosMx2VIP</code> integrates the data and the image, it requires the images as well. Thus, we will need to download both <strong>Basic Data Files</strong> and <strong>Raw Data Export</strong>. The <strong>Basic Data Files</strong> will be a .zip file with ~15 Gb, while the <strong>Raw Data Export</strong> contains a large <strong>RawFiles.zip</strong> file with ~602 Gb. Please make sure you have enough space to store those files.</p>
+<p>Unzipping the <code>RawFiles.zip</code> file resulted in the following folders. Also attached the <code>S3</code> folder unzipped from <code>Basic Data Files</code>:</p>
+<pre><code>~/SpaceSequest_demo/6_cosMx2VIP/
+  ├── S3/
+  # S3 data files
+    ├── S3_exprMat_file.csv
+    ├── S3_fov_positions_file.csv
+    ├── S3_metadata_file.csv
+    ├── S3-polygons.csv
+    ├── S3_fov_path.csv      #This file is not downloaded from the NanoString website. See below for more details to create this file.
+    └── S3_tx_file.csv
+  
+  # More folders in the RawFiles.zip:
+  ├── CellStatsDir/
+    ├── CellComposite/
+    ├── CellOverlay/
+    ├── FOV001/
+    ├── FOV002/
+    ├── ...
+    ├── FOV392/
+    ├── Morphology2D/
+    ├── Morphology3D/
+    └── RnD/
+  ├── RunB1324_S3_c_v6/
+    ├── FOV001/
+    ├── FOV002/
+    ├── ...
+    └── FOV392/
+  └── RunSummary/
+    ├── FovTracking/
+    ├── Shading/
+    ├── Affine_Transform_20220928.csv
+    ├── c902.fovs.csv
+    ├── latest.af.fovs.csv
+    ├── latest.fovs.csv
+    ├── Morphology_ChannelID_Dictionary.txt
+    ├── MR-Tissue - All Channels.mkit
+    ├── RunRunB1324_20230504_231244_S3_Beta04_ExptConfig.txt
+    ├── RunRunB1324_20230504_231244_S3_Beta04_SpatialBC_Metrics4D.csv
+    └── temp.devapptemp</code></pre>
+<p>Another critical file for <code>cosMx2VIP</code> to run is the <strong>S3_fov_path.csv</strong> file. This file is not provided by NanoString, and needs to be set up manually. It provides the directory of each <code>fov</code> as well as the associated image file location <code>fov_img</code>. ‘…’ indicates the omitted lines for simplification:</p>
+<pre><code>fov,fov_img
+1,/SpaceSequest_demo/6_cosMx2VIP/CellStatsDir/FOV001/CellLabels_F001.tif
+2,/SpaceSequest_demo/6_cosMx2VIP/CellStatsDir/FOV002/CellLabels_F002.tif
+...
+392,/SpaceSequest_demo/6_cosMx2VIP/CellStatsDir/FOV001/CellLabels_F392.tif</code></pre>
 </div>
 <div id="run-the-workflow" class="section level3 hasAnchor" number="9.1.2">
 <h3><span class="header-section-number">9.1.2</span> Run the workflow<a href="additional-tools.html#run-the-workflow" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The first step is to run the script with a path to the working directory:</p>
+<pre><code>cosMx2VIP ~/SpaceSequest_demo/6_cosMx2VIP/</code></pre>
+<p>This will generate the following <code>config.yml</code>. Users can fill in the file using the example below:</p>
+<pre><code>## Please modify &quot;required&quot; section
+prj_name: CosMx2VIP_demo                                                  # the name of the project which will be used as prefix of all file created
+output: ~/SpaceSequest_demo/6_cosMx2VIP/
+expression_file: ~/SpaceSequest_demo/6_cosMx2VIP/S3/S3_exprMat_file.csv   # the path to the expression file for all FOV of a capture
+meta_file: ~/SpaceSequest_demo/6_cosMx2VIP/S3/S3_metadata_file.csv        # the path to the meta file for all FOV of a capture
+cell_polygon_file: ~/SpaceSequest_demo/6_cosMx2VIP/S3/S3-polygons.csv     # the path to the cell polygon file for all FOV of a capture
+transcript_loc_file: ~/SpaceSequest_demo/6_cosMx2VIP/S3/S3_tx_file.csv    # the path to the transcript location file for all FOV of a capture
+fov_image_file: ~/SpaceSequest_demo/6_cosMx2VIP/S3/S3_fov_path.csv        # the file path to the csv link the meta FOV column to image file path, 
+                                                                          #    two columns: first column is the FOV identifier the same as meta file (same column header); 
+                                                                          #    the second (&quot;fov_img&quot;) is the file path to the FOV image
+cell_id_col: [cell_ID,cellID]                                             # the column header (first one in order) of cell ID in all data across files defined in above sample_meta
+suffix_local_px: _local_px                                                # the suffix of pix location in one capture image, such that x coordinates column header is regular expression &quot;.*x.*_local_px&quot;
+suffix_global_px: _global_px                                              # the suffix of pix location in global image, such that x coordinates column header is regular expression &quot;.*x.*_global_px&quot;
+saveLocalX: false                                                         # should the local cell center coordinates to be saved into obsm.X_
+tx_col: target                                                            # the column header of transcripts in transcript location files</code></pre>
+<p>After setting up the above config.yml file, run the following command:</p>
+<pre><code>cosMx2VIP ~/SpaceSequest_demo/6_cosMx2VIP/config.yml</code></pre>
 </div>
 <div id="results-5" class="section level3 hasAnchor" number="9.1.3">
 <h3><span class="header-section-number">9.1.3</span> Results<a href="additional-tools.html#results-5" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The output of this script is an integrated h5ad file:</p>
+<pre><code>-rw-r-----  1 user user  53G Jul  9 15:51 CosMx2VIP_demo.h5ad</code></pre>
+<p>This file can be further opened by <a href="https://github.com/interactivereport/cellxgene_VIP" target="_blank">Cellxgene VIP</a>, with detailed instruction provided in this <a href="https://interactivereport.github.io/cellxgene_VIP/tutorial/docs/" target="_blank">tutorial</a>.</p>
 </div>
 </div>
-<div id="visium-hd-color-function" class="section level2 hasAnchor" number="9.2">
-<h2><span class="header-section-number">9.2</span> Visium HD color function<a href="additional-tools.html#visium-hd-color-function" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>To facilitate the analysis of Visium HD and extract meaningful information from the image, we developed a new function called <code>getVisiumHDspotCol</code> to calculate the mean RGB intensities when a paired high-resolution immunofluorescence image is available.</p>
+<div id="spdeg" class="section level2 hasAnchor" number="9.2">
+<h2><span class="header-section-number">9.2</span> spDEG<a href="additional-tools.html#spdeg" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>spDEG is a wrapper script for differential expression analysis using the output generated from SpaceSequest.</p>
+<div id="input-file-set-up-1" class="section level3 hasAnchor" number="9.2.1">
+<h3><span class="header-section-number">9.2.1</span> Input file set up<a href="additional-tools.html#input-file-set-up-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The input file can be h5ad file or Rdata file generated by SpaceSequest. However, if you are using the Rdata file, users need to save the count matrix to rds and meta table to rds files and provide them to the function instead of h5ad in the .yml file:</p>
+<pre><code>UMI:  #required, can be a matrix rds or a h5ad file
+meta: #required, can be a cell annotation data.frame rds or a h5ad file</code></pre>
+</div>
+<div id="run-the-workflow-1" class="section level3 hasAnchor" number="9.2.2">
+<h3><span class="header-section-number">9.2.2</span> Run the workflow<a href="additional-tools.html#run-the-workflow-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>To initialize the analysis, users can run the following command and create the config.yml file:</p>
+<pre><code>spDEG ~/SpaceSequest_demo/7_spDEG</code></pre>
+<p>The above script will generate two files: <code>config.yml</code> and <code>DEG_info.csv</code> file.</p>
+<p>Fill in the <code>config.yml</code> file as below:</p>
+<pre><code>UMI: ~/SpaceSequest_demo/1_Visium/Run_pipeline/Visium_demo.h5ad       # required, can be a matrix rds or a h5ad file
+meta: ~/SpaceSequest_demo/1_Visium/Run_pipeline/Visium_demo.h5ad      # required, can be a cell annotation data.frame rds or a h5ad file
+output: /mnt/depts/dept04/compbio/projects/SpaceSequest_demo/8_spDEG
+DBname: test_spDEG
+parallel: False                                                       # False or &quot;sge&quot; or &quot;slurm&quot;
+core: 1                                                               # if the above is True, all DEG jobs will be parallel locally, a DEG job a core
+memory: 16G
+newProcess: False                                                     # False use existing DEG results
+jobID: j23                                                            # an unique identifier across all YOUR parallel jobs
 
+DEG_desp: ~/SpaceSequest_demo/7_spDEG/DEG_info.csv                    # required for DEG analysis
+
+#More lines omitted
+...</code></pre>
+<p>Then fill out the <code>DEG_info.csv</code> file to set up the differential expression comparisons:</p>
+<pre><code>compare_TAM_vs_CO_NEBULA,Sample_ID,final_label,Treatment,Treated,Control,,NEBULA,HL
+compare_TAM_vs_CO_DESeq2,Sample_ID,final_label,Treatment,Treated,Control,,DESeq2,</code></pre>
+</div>
+<div id="results-6" class="section level3 hasAnchor" number="9.2.3">
+<h3><span class="header-section-number">9.2.3</span> Results<a href="additional-tools.html#results-6" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Results will be generated in the directories under <code>test_spDEG</code>, the name set up in the <code>config.yml</code> file by the <code>DBname</code> parameter:</p>
+<pre><code>spDEG ~/SpaceSequest_demo/7_spDEG
+  ├── test_spDEG
+    ├── compare_TAM_vs_CO_NEBULA
+      ├── compare_TAM_vs_CO_NEBULA__final_label:Astro__DESeq2.csv
+      ├── ...
+    └── compare_TAM_vs_CO_DESeq2
+      ├── compare_TAM_vs_CO_DESeq2__final_label:Astro__DESeq2.csv
+      ├── ...</code></pre>
+<p>An example of the output .csv file:</p>
+<pre><code>&quot;ID&quot;,&quot;log2FC&quot;,&quot;se&quot;,&quot;Pvalue&quot;,&quot;FDR&quot;,&quot;method&quot;,&quot;algorithm&quot;,&quot;cluster&quot;
+&quot;GeneA&quot;,-0.1,0.1,0.16,0.24,&quot;DESeq2&quot;,&quot;lfcShrink&quot;,&quot;Astro&quot;
+...</code></pre>
+</div>
+</div>
+<div id="visium-hd-color-function" class="section level2 hasAnchor" number="9.3">
+<h2><span class="header-section-number">9.3</span> Visium HD color function<a href="additional-tools.html#visium-hd-color-function" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>To facilitate the analysis of Visium HD and extract meaningful information from the image, we developed a new function called <code>getVisiumHDspotCol</code> to calculate the mean RGB intensities when a paired high-resolution immunofluorescence image is available.</p>
+<p>This function is similar to the <a href="https://squidpy.readthedocs.io/en/stable/api/squidpy.im.calculate_image_features.html" target="_blank"><strong>squidpy.im.calculate_image_features</strong></a> function provided by <a href="https://www.nature.com/articles/s41592-021-01358-2" target="_blank">Squidpy</a>. However, we apply this function to Visium HD bins (for example, 2μm bins) and generate R, G, B color intensities.</p>
+<p><a href="https://interactivereport.github.io/SpaceSequest/images/getVisiumHDspotCol.png" target="_blank"><img src="https://interactivereport.github.io/SpaceSequest/images/getVisiumHDspotCol.png" /></a></p>
+<p><strong>The getVisiumHDspotCol function</strong>: This function takes Visium HD data and an immunofluorescence (IF) image as input, calculates a matrix indicating the average Red, Green, and Blue color intensities in each bin. Users can select the bin size before the calculation.</p>
+<div id="input-prerequisites" class="section level3 hasAnchor" number="9.3.1">
+<h3><span class="header-section-number">9.3.1</span> Input prerequisites<a href="additional-tools.html#input-prerequisites" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>To use the <code>getVisiumHDspotCol</code> function, users need to have the immunofluorescence staining image generated during the experiment. Such image may have multiple markers stained. For example, the following run includes the IF image associated with the Visium HD data through passing the jpg file using the <code>colorizedimage</code> parameter:</p>
+<pre><code>spaceranger count --id=&quot;WT-CO1&quot; \
+    --transcriptome=~/Data/Reference_files/refdata-gex-mm10-2020-A \
+    --fastqs=~/Data/Fastq_files \
+    --cytaimage=~/Data/Sample1.tif \
+    --colorizedimage=~/Data/images_fluorescence/WT-CO1.jpg \
+    --probe-set=~/Data/Reference_files/Visium_Mouse_Transcriptome_Probe_Set_v2.0_mm10-2020-A.csv \
+    --slide=H1-ABDCEFJ \    #Using a random slide ID for illustration
+    --area=A1 \
+    --localcores=4 \
+    --localmem=256 \
+    --create-bam=false</code></pre>
+<p>After Space Ranger run, the images can be found in the <code>spatial</code> directory under the <code>outs</code> folder:</p>
+<pre><code>~/SpaceSequest/
+  ├──src/
+    ├── ...
+    └── getVisiumHDspotCol.R
+
+~/Data/WT-CO1/
+  # High-resolution images
+  ├── WT-CO1_IF_image_original.jpg
+
+  # Space Ranger output
+  ├── ...
+  ├── binned_outputs/
+  ├── cloupe_008um.cloupe
+  ├── outs/
+    ├── spatial/
+    ├── aligned_fiducials.jpg
+    ├── aligned_tissue_image.jpg
+    ├── cytassist_image.tiff
+    ├── detected_tissue_image.jpg
+    ├── tissue_hires_image.png
+    └── tissue_lowres_image.png</code></pre>
+</div>
+<div id="run-the-function" class="section level3 hasAnchor" number="9.3.2">
+<h3><span class="header-section-number">9.3.2</span> Run the function<a href="additional-tools.html#run-the-function" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<pre><code>library(Seurat)
+library(ggplot2)
+library(jpeg)
+library(BiocParallel)
+library(Matrix)
+
+source(&quot;~/SpaceSequest/src/getVisiumHDspotCol.R&quot;)
+
+#Input files
+localdir &lt;- &quot;~/Data/WT-CO1/outs&quot;
+hires_image &lt;- &quot;~/Data/WT-CO1/outs/binned_outputs/square_008um/spatial
+strImg &lt;- &quot;~/Data/WT-CO1/WT-CO1_IF_image_original.jpg&quot;
+prefix &lt;- &quot;WT-CO1&quot;
+
+#Process Visium HD data using Seurat 5
+hires = Read10X_Image(hires_image, image.name = &quot;tissue_hires_image.png&quot;)
+object &lt;- Load10X_Spatial(data.dir = localdir, bin.size = c(8), image = hires)
+object@images[[&quot;slice1.008um&quot;]]@scale.factors[[&quot;lowres&quot;]] = object@images[[&quot;slice1.008um&quot;]]@scale.factors[[&quot;hires&quot;]]
+
+#Run the function
+#In an internal test dataset, this step took ~3 hours to run
+cInfo &lt;- getVisiumHDspotCol(object,strImg,core=4)
+saveRDS(cInfo,paste0(prefix, &quot;.alignImage.cInfo.rds&quot;))
+
+#Check the result
+head(cInfo)</code></pre>
+<p>The result table has multple columns, corresponding R, G, and B colors. For example, the Red color has three columns: <code>R_mean</code>, <code>R_median</code>, and <code>R_sd</code>, indicating the mean, median, and standard deviation of the Red color for each bin. In this example, the bin size was selected as 8 μm, but users can change it based on their need.</p>
+
+</div>
 </div>
 </div>
             </section>

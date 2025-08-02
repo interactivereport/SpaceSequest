@@ -74,22 +74,23 @@ After this step, users need to fill in the `config.yml` file and the `sampleMeta
 ```
 #Highlighting several key items:
 
-project_ID: Xenium_demo  #required
+project_ID: Xenium_demo                                  #required
 
 sampleMeta: ~/SpaceSequest_demo/3_Xenium/sampleMeta.csv  #path to the sampleMeta file, required. It will create this dir for you if it doesn't exist
 
-output_dir: ~/SpaceSequest_demo/3_Xenium/output   #output directory, required
+output_dir: ~/SpaceSequest_demo/3_Xenium/output          #output directory, required
 
-cluster_resolution: 0.3   #resolution for the FindClusters step
+cluster_resolution: 0.3                                  #resolution for the FindClusters step
 
-reference: humancortexref   #Azimuth reference, for example, 'humancortexref', optional
+reference: humancortexref                                #Azimuth reference, for example, 'humancortexref', optional
 
-reference_name: subclass   #column name of the cell type label you would like to transfer. Required if reference is used.
+reference_name: subclass                                 #column name of the cell type label you would like to transfer. Required if reference is used.
 
-integrate_data: True   #True or False to merge/integrate all the data in the sampleMeta file
+integrate_data: True                                     #True or False to merge/integrate all the data in the sampleMeta file
 
-integrate_with_harmony: True   #True or False to use Harmony for integration. Default as True
+integrate_with_harmony: True                             #True or False to use Harmony for integration. Default as True
 ```
+
 For the `sampleMeta.csv` file, the first two columns are required: Sample and Directory. Users can add more metadata columns as shown below:
 
 ```
