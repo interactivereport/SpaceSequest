@@ -4,9 +4,9 @@ In this section, we will go through the necessary files for each spatial transcr
 
 ## Visium
 
-The 10x Genomics [Visium](https://www.10xgenomics.com/platforms/visium){target="_blank"} is a spatial transcriptomics platform that allows gene expression profiling while preserving the spatial location of each profiling spot (55 µm in diameter). The original sequencing output is in [Fastq format](https://en.wikipedia.org/wiki/FASTQ_format){target="_blank"}. Fastq files need to run through the workflow developed by 10x Genomics called [Space Ranger](http://10xgenomics.com/support/software/space-ranger/2.1/getting-started/what-is-space-ranger){target="_blank"}. A detailed tutorial of Space Ranger can be found through here: [https://www.10xgenomics.com/support/software/space-ranger/2.1/tutorials](https://www.10xgenomics.com/support/software/space-ranger/2.1/tutorials){target="_blank"}.
+The 10x Genomics [Visium](https://www.10xgenomics.com/platforms/visium){target="_blank"} is a spatial transcriptomics platform that allows gene expression profiling while preserving the spatial location of each profiling spot (55 µm in diameter). The original sequencing output is in the [FASTQ format](https://en.wikipedia.org/wiki/FASTQ_format){target="_blank"}. FASTQ files need to run through the workflow developed by 10x Genomics called [Space Ranger](http://10xgenomics.com/support/software/space-ranger/2.1/getting-started/what-is-space-ranger){target="_blank"}. A detailed tutorial of Space Ranger can be found through here: [https://www.10xgenomics.com/support/software/space-ranger/2.1/tutorials](https://www.10xgenomics.com/support/software/space-ranger/2.1/tutorials){target="_blank"}.
 
-Here is the file hierarchy of the original Fastq files. Reference file folder and probe set file can be downloaded from 10x Genomics website, see more details [here](https://www.10xgenomics.com/support/software/space-ranger/downloads){target="_blank"}. Here, the dataset is downloaded from an Alzheimer's disease (AD) mouse model [paper](https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.12821){target="_blank"}, with GEO entry: [GSE203424](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE203424){target="_blank"}.
+Here is the file hierarchy of the original Fastq files. Reference file folder and probe set file can be downloaded from 10x Genomics website, see more details [here](https://www.10xgenomics.com/support/software/space-ranger/downloads){target="_blank"}. Here, the dataset was downloaded from an Alzheimer's disease (AD) mouse model [paper](https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.12821){target="_blank"}, with GEO entry: [GSE203424](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE203424){target="_blank"}.
 
 ```
 ~/Data
@@ -171,9 +171,9 @@ When running the SpaceSequest `visiumhd` script, the workflow requires the path 
 
 Xenium data can be processed by 10x Genomics Xenium Ranger software. A detailed overview can be found at: [https://www.10xgenomics.com/support/software/xenium-ranger/latest](https://www.10xgenomics.com/support/software/xenium-ranger/latest){target="_blank"}.
 
-Outputs from Xenium Onboard Analysis (XOA) analysis can be used to run Xenium Ranger, as described [here](https://www.10xgenomics.com/support/software/xenium-ranger/latest/analysis/inputs/XR-input-overview){target="_blank"}.
+Outputs from [Xenium Onboard Analysis (XOA)](https://www.10xgenomics.com/support/software/xenium-onboard-analysis/latest){target="_blank"} can be used to run [Xenium Ranger](https://www.10xgenomics.com/support/software/xenium-ranger/latest){target="_blank"}, as described [here](https://www.10xgenomics.com/support/software/xenium-ranger/latest/analysis/inputs/XR-input-overview){target="_blank"}.
 
-The output files of Xenium Ranger, with a test dataset available through: 10x Genomics's website:
+The output files of Xenium Ranger run on a test dataset is available through the following website from 10x Genomics:
 
 [https://www.10xgenomics.com/datasets/xenium-human-brain-preview-data-1-standard](https://www.10xgenomics.com/datasets/xenium-human-brain-preview-data-1-standard){target="_blank"}.
 
@@ -240,9 +240,8 @@ These input files are sufficient to run the SpaceSequest `cosmx` workflow. If yo
 
 ## GeoMX
 
-Last but not least, [NanoString GeoMx Digital Spatial Profiler (DSP)](https://nanostring.com/products/geomx-digital-spatial-profiler/geomx-dsp-overview/){target="_blank"} is a spatial transcritomics (and also proteomics) platform designed for profiling gene expression and proteins in a region-of-interest (ROI)-based manner. GeoMx does not capture continuous spatial data across an entire tissue section. Instead, it relies on user-defined ROIs, allowing targeted, high-plex profiling in selected tissue compartments, such as tumor and neignborhood non-tumor cells.
+Last but not least, [NanoString GeoMx Digital Spatial Profiler (DSP)](https://nanostring.com/products/geomx-digital-spatial-profiler/geomx-dsp-overview/){target="_blank"} is a spatial transcriptomics (and also proteomics) platform designed for profiling gene expression and proteins in a region-of-interest (ROI)-based manner. GeoMx does not capture continuous spatial data across an entire tissue section. Instead, it relies on user-defined ROIs, allowing targeted, high-plex profiling in selected tissue compartments, such as tumor and neighborhood non-tumor cells.
 
-GeoMx libraries can be sequenced using a sequencer, which geneerate fastq files. Illumina data analysis platform provides [GeoMx® NGS Pipeline](https://www.illumina.com/products/by-type/informatics-products/basespace-sequence-hub/apps/nanostring-geomxr-ngs-pipeline.html){target="_blank"}, which can be directly used to convert fastq to DCC files. Other software suite may also include this pipeline, such as [Cumulus](https://cumulus.readthedocs.io/en/stable/geomxngs/index.html){target="_blank"}.
+GeoMx libraries can be sequenced using a sequencer, which generate FASTQ files. Illumina data analysis platform provides [GeoMx® NGS Pipeline](https://www.illumina.com/products/by-type/informatics-products/basespace-sequence-hub/apps/nanostring-geomxr-ngs-pipeline.html){target="_blank"}, which can be directly used to convert FASTQ to DCC files. Other software suite may also include this pipeline, such as [Cumulus](https://cumulus.readthedocs.io/en/stable/geomxngs/index.html){target="_blank"}.
 
-The converted files are text files with .dcc as suffix. These dcc files can directly be used to run SpaceSequest `geomx` workflow.
-
+The converted files are text files with .dcc as suffix. These DCC files can directly be used to run SpaceSequest `geomx` workflow.

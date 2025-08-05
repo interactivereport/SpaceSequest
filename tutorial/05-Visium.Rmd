@@ -1,6 +1,6 @@
 # Visium
 
-10x Genomics Visium is a revolutionary technology that detects RNA expression and spatial location at the same time. Unlike traditional single-cell RNA-seq, which loses spatial information, Visium enables researches to map where gene activity occurs within the architecture of the intact tissue.
+[**10x Genomics Visium**](https://www.10xgenomics.com/platforms/visium){target="_blank"} is a revolutionary technology that detects RNA expression and spatial location at the same time. Unlike traditional single-cell RNA-seq, which loses spatial information, Visium enables researches to map where gene activity occurs within the architecture of the intact tissue.
 
 In detail, tissue sections can be placed on specialized Visium slides that contain an array of spatially barcoded capture spots. Each spot captures mRNA transcripts from the overlying tissue area, and at the same time, records the spatial location using the barcodes. After high-throughput sequencing, these data can be mapped back onto high-resolution tissue images, allowing researchers to analyze the gene expression patterns from distinct histological regions.
 
@@ -14,7 +14,7 @@ In detail, tissue sections can be placed on specialized Visium slides that conta
 
 ## Space Ranger run
 
-If you start the analysis from Fastq raw data, [Space Ranger](https://www.10xgenomics.com/support/software/space-ranger/2.1){target="_blank"} is necessary to process the data to gene expression count matrix, with spatial barcodes resolved. As we mentioned before, Space Ranger requires Fastq files, high-resolution images, as well as key files (genome index, etc.) to run. We have illustrated these steps using a publicly available Visium data from an Alzheimer's disease (AD) mouse model [paper](https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.12821){target="_blank"}, with GEO entry: [GSE203424](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE203424){target="_blank"}. See [data preparation] section 3.1.
+If you start the analysis from FASTQ raw data, [Space Ranger](https://www.10xgenomics.com/support/software/space-ranger/2.1){target="_blank"} is necessary to process the data to gene expression count matrix, with spatial barcodes resolved. As we mentioned before, Space Ranger requires FASTQ files, high-resolution images, as well as key files (genome index, etc.) to run. We have illustrated these steps using a publicly available Visium data from an Alzheimer's disease (AD) mouse model [paper](https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.12821){target="_blank"}, with GEO entry: [GSE203424](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE203424){target="_blank"}. See the [data preparation] section 3.1.
 
 A typical Space Ranger run command for Visium:
 
@@ -119,7 +119,6 @@ PSAPP-TAM1,~/SpaceSequest_demo/1_Visium/SpaceRanger/PSAPP-TAM1/outs,Treated,~/Sp
 PSAPP-TAM2,~/SpaceSequest_demo/1_Visium/SpaceRanger/PSAPP-TAM2/outs,Treated,~/SpaceSequest_demo/1_Visium/SpaceRanger/PSAPP-TAM2-image.png
 ```
 
-
 Then, move the config.yml and sample.csv into a new folder called Run_pipeline, and run the `visium` script by passing the config.yml parameter to it:
 
 ```
@@ -128,11 +127,11 @@ Then, move the config.yml and sample.csv into a new folder called Run_pipeline, 
 visium ~/SpaceSequest_demo/1_Visium/Run_pipeline/config.yml
 ```
 
-Among the software used in the pipeline, SpaTalk may need more memory and time. By testing the above four datasets, 500 Gb is sufficient for SpaTalk, but 250 Gb resulted in an Out-of-memory (OOM) error.
+Among the software used in the pipeline, [SpaTalk](https://www.nature.com/articles/s41467-022-32111-8){target="_blank"} may need more memory and time. By testing the above four datasets, 500 Gb was sufficient for SpaTalk in a test run, but 250 Gb resulted in an Out-of-memory (OOM) error.
 
 ## Results
 
-Finally, useds can check the results in the output directory. For each method, SpaceSequest generates a folder to store the results, for example: *BayesSpace*, *SpaGCN*, *SpaTalk*, etc. If there were any errors occurred, users can check the jxx (in this example, j47) folder to see the original scripts and error messages.
+Finally, users can check the results in the output directory. For each method, SpaceSequest generates a folder to store the results, for example: *BayesSpace*, *SpaGCN*, *SpaTalk*, etc. If there were any errors occurred, users can check the jxx (in this example, j47) folder to see the original scripts and error messages.
 
 Output directory:
 

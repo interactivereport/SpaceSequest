@@ -1,16 +1,16 @@
 # Additional tools
 
-In this section, we introduce two additional tools to further analyze CosMx and Visium HD data.
+In this section, we introduce three additional tools to further analyze spatial transcriptomics data.
 
 ## cosMx2VIP
 
-We have introduced previously that NanoString CosMx data can be analyzed through SpaceSequest `cosmx` workflow. However, the `cosmx` workflow does not incorporate the original images for visiualization. Here, we developed another tool, called cosMx2VIP, to add CosMx images to create an integrated object, which can be further visualized by [Cellxgene VIP](https://github.com/interactivereport/cellxgene_VIP){target="_blank"}. Cellxgene VIP not only hosts single-cell RNA-seq datasets, it also loads spatial transcriptomics data and display the image and data simutaneously. Here, we will go through the process step-by-step.
+We have introduced previously that [NanoString CosMx data](https://nanostring.com/products/cosmx-spatial-molecular-imager/single-cell-imaging-overview/){target="_blank"} can be analyzed through SpaceSequest `cosmx` workflow. However, the `cosmx` workflow does not incorporate the original images for visualization. Here, we developed another tool, called **cosMx2VIP**, to add CosMx images to the gene expression data, creating an integrated object, which can be further visualized by [Cellxgene VIP](https://github.com/interactivereport/cellxgene_VIP){target="_blank"}. Cellxgene VIP not only hosts single-cell RNA-seq datasets, it also loads spatial transcriptomics data and displays the image and data simultaneously. Here, we will go through the process step-by-step.
 
 ### Input file set up
 
-In this section, we will go through input files that are necessary for running the cosMx2VIP workflow.
+In this section, we will go through input files that are necessary for running the `cosMx2VIP` workflow.
 
-Here, we use the public CosMx dataset from the NanoString website again:
+Here, we use the public CosMx dataset from NanoString website again:
 
 Human frontal cortex FFPE data is available through: [https://nanostring.com/products/cosmx-spatial-molecular-imager/ffpe-dataset/human-frontal-cortex-ffpe-dataset/](https://nanostring.com/products/cosmx-spatial-molecular-imager/ffpe-dataset/human-frontal-cortex-ffpe-dataset/){target="_blank"}
 
@@ -187,13 +187,19 @@ An example of the output .csv file:
 
 ## Visium HD color function
 
-To facilitate the analysis of Visium HD and extract meaningful information from the image, we developed a new function called `getVisiumHDspotCol` to calculate the mean RGB intensities when a paired high-resolution immunofluorescence image is available.
+To facilitate the analysis of Visium HD and extract meaningful information from the image, we developed a new function called `getVisiumHDspotCol` to calculate the mean RGB intensities when a paired high-resolution immunofluorescence (IF) image is available.
 
 This function is similar to the [**squidpy.im.calculate_image_features**](https://squidpy.readthedocs.io/en/stable/api/squidpy.im.calculate_image_features.html){target="_blank"} function provided by [Squidpy](https://www.nature.com/articles/s41592-021-01358-2){target="_blank"}. However, we apply this function to Visium HD bins (for example, 2μm bins) and generate R, G, B color intensities.
 
 [![](https://interactivereport.github.io/SpaceSequest/images/getVisiumHDspotCol.png)](https://interactivereport.github.io/SpaceSequest/images/getVisiumHDspotCol.png){target="_blank"}
 
-**The getVisiumHDspotCol function**: This function takes Visium HD data and an immunofluorescence (IF) image as input, calculates a matrix indicating the average Red, Green, and Blue color intensities in each bin. Users can select the bin size before the calculation.
+```{r, echo = FALSE}
+colorize <- function(x, color) {
+  sprintf("<span style='color: %s;'>%s</span>", color, x)
+}
+```
+
+**The getVisiumHDspotCol function**: This function takes Visium HD data and an immunofluorescence (IF) image as input, calculates a matrix indicating the average **`r colorize("Red", "red")`**, **`r colorize("Green", "darkseagreen")`**, and **`r colorize("Blue", "dodgerblue")`** color intensities in each bin. Users can select the bin size before the calculation.
 
 
 ### Input prerequisites
@@ -271,4 +277,4 @@ saveRDS(cInfo,paste0(prefix, ".alignImage.cInfo.rds"))
 head(cInfo)
 ```
 
-The result table has multple columns, corresponding R, G, and B colors. For example, the Red color has three columns: `R_mean`, `R_median`, and `R_sd`, indicating the mean, median, and standard deviation of the Red color for each bin. In this example, the bin size was selected as 8 μm, but users can change it based on their need.
+The result table has multiple columns, corresponding **`r colorize("Red", "red")`**, **`r colorize("Green", "darkseagreen")`**, and **`r colorize("Blue", "dodgerblue")`** colors. For example, the **`r colorize("Red", "red")`** color has three columns: `R_mean`, `R_median`, and `R_sd`, indicating the mean, median, and standard deviation of the Red color for each bin. In this example, the bin size was selected as 8 μm, but users can change it based on their need.

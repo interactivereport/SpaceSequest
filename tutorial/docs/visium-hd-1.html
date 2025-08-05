@@ -108,7 +108,7 @@
 </ul></li>
 <li class="chapter" data-level="7" data-path="geomx-1.html"><a href="geomx-1.html"><i class="fa fa-check"></i><b>7</b> GeoMX</a>
 <ul>
-<li class="chapter" data-level="7.1" data-path="geomx-1.html"><a href="geomx-1.html#fastq-to-dcc-conversion"><i class="fa fa-check"></i><b>7.1</b> Fastq to DCC conversion</a></li>
+<li class="chapter" data-level="7.1" data-path="geomx-1.html"><a href="geomx-1.html#fastq-to-dcc-conversion"><i class="fa fa-check"></i><b>7.1</b> FASTQ to DCC conversion</a></li>
 <li class="chapter" data-level="7.2" data-path="geomx-1.html"><a href="geomx-1.html#pipeline-setup-2"><i class="fa fa-check"></i><b>7.2</b> Pipeline setup</a></li>
 <li class="chapter" data-level="7.3" data-path="geomx-1.html"><a href="geomx-1.html#results-3"><i class="fa fa-check"></i><b>7.3</b> Results</a></li>
 <li class="chapter" data-level="7.4" data-path="geomx-1.html"><a href="geomx-1.html#quickomics-exploration"><i class="fa fa-check"></i><b>7.4</b> Quickomics exploration</a></li>
@@ -160,8 +160,8 @@
             <section class="normal" id="section-">
 <div id="visium-hd-1" class="section level1 hasAnchor" number="5">
 <h1><span class="header-section-number">Chapter 5</span> Visium HD<a href="visium-hd-1.html#visium-hd-1" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p><a href="https://www.10xgenomics.com/support/spatial-gene-expression-hd" target="_blank">10x Genomics Visium HD</a> is a high-resolution spatial transcriptomics platform that captures the full transcriptome using thousands of gap-free, 2 μm squares. As one of the latest platforms that have the ability fo reach single-cell or even sub-cellular resolution, Visium HD enables researchers to discover new biology underlying certain conditions, and power the identification of disease-related biomarkers and potential therapeutic targets.</p>
-<p>The Space Ranger pipeline from 10x Genomics can be used to process Fastq raw data to gene expression matries. By default, the Space Ranger produces outputs at 3 resolutions: 2 μm, 8 μm, and 16 μm. We use 8 μm for the first-pass analysis, as it’s not too big or too small.</p>
+<p><a href="https://www.10xgenomics.com/support/spatial-gene-expression-hd" target="_blank"><strong>10x Genomics Visium HD</strong></a> is a high-resolution spatial transcriptomics platform that captures the full transcriptome using thousands of gap-free, 2 μm squares. As one of the latest platforms that have the ability fo reach single-cell or even sub-cellular resolution, Visium HD enables researchers to discover new biology underlying certain conditions, and power the identification of disease-related biomarkers and potential therapeutic targets.</p>
+<p>The Space Ranger pipeline from 10x Genomics can be used to process FASTQ raw data to gene expression matries. By default, the Space Ranger produces outputs at 3 resolutions: 2 μm, 8 μm, and 16 μm. We use 8 μm for the first-pass analysis, as it’s not too big or too small.</p>
 <p><a href="https://cdn.10xgenomics.com/image/upload/v1713545308/blog/Visium%20HD%20NPI/Visium%20HD%20slides.png" target="_blank"><img src="https://cdn.10xgenomics.com/image/upload/v1713545308/blog/Visium%20HD%20NPI/Visium%20HD%20slides.png" /></a></p>
 <p><strong>10x Genomics Visium HD slide and barcoded squares</strong>: As illustrated in the figure above, each 10x Genomics Visium HD slide has two captures (A1 and D1). The barcoded gap-free squares are 2 μm in size. (Image from: <a href="https://www.10xgenomics.com/" target="_blank">https://www.10xgenomics.com/</a>)</p>
 <div id="space-ranger-run-1" class="section level2 hasAnchor" number="5.1">
@@ -251,7 +251,7 @@ Mouse_brain_FixedFrozen,~/SpaceSequest_demo/2_VisiumHD/Sample2_Fixed/outs</code>
 <pre><code>#Run the data
 
 visiumhd ~/SpaceSequest_demo/2_VisiumHD/config.yml</code></pre>
-<p>Finally check the results in the output_dir folder specified in the config.yml file. The output files contain some plots (QC plots, UMAP), and Rdata files storing the results.</p>
+<p>Finally check the results in the <code>output_dir</code> folder specified in the config.yml file. The output files contain several figures (QC plots, UMAP), and multiple Rdata files storing the results.</p>
 </div>
 <div id="results-1" class="section level2 hasAnchor" number="5.3">
 <h2><span class="header-section-number">5.3</span> Results<a href="visium-hd-1.html#results-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>

@@ -1,8 +1,8 @@
 # Visium HD
 
-[10x Genomics Visium HD](https://www.10xgenomics.com/support/spatial-gene-expression-hd){target="_blank"} is a high-resolution spatial transcriptomics platform that captures the full transcriptome using thousands of gap-free, 2 μm squares. As one of the latest platforms that have the ability fo reach single-cell or even sub-cellular resolution, Visium HD enables researchers to discover new biology underlying certain conditions, and power the identification of disease-related biomarkers and potential therapeutic targets.
+[**10x Genomics Visium HD**](https://www.10xgenomics.com/support/spatial-gene-expression-hd){target="_blank"} is a high-resolution spatial transcriptomics platform that captures the full transcriptome using thousands of gap-free, 2 μm squares. As one of the latest platforms that have the ability fo reach single-cell or even sub-cellular resolution, Visium HD enables researchers to discover new biology underlying certain conditions, and power the identification of disease-related biomarkers and potential therapeutic targets.
 
-The Space Ranger pipeline from 10x Genomics can be used to process Fastq raw data to gene expression matries. By default, the Space Ranger produces outputs at 3 resolutions: 2 μm, 8 μm, and 16 μm. We use 8 μm for the first-pass analysis, as it's not too big or too small.
+The Space Ranger pipeline from 10x Genomics can be used to process FASTQ raw data to gene expression matries. By default, the Space Ranger produces outputs at 3 resolutions: 2 μm, 8 μm, and 16 μm. We use 8 μm for the first-pass analysis, as it's not too big or too small.
 
 [![](https://cdn.10xgenomics.com/image/upload/v1713545308/blog/Visium%20HD%20NPI/Visium%20HD%20slides.png)](https://cdn.10xgenomics.com/image/upload/v1713545308/blog/Visium%20HD%20NPI/Visium%20HD%20slides.png){target="_blank"}
 
@@ -124,7 +124,7 @@ Finally submit the following command:
 
 visiumhd ~/SpaceSequest_demo/2_VisiumHD/config.yml
 ```
-Finally check the results in the output_dir folder specified in the config.yml file. The output files contain some plots (QC plots, UMAP), and Rdata files storing the results.
+Finally check the results in the `output_dir` folder specified in the config.yml file. The output files contain several figures (QC plots, UMAP), and multiple Rdata files storing the results.
 
 ## Results
 

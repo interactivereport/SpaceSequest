@@ -1,6 +1,6 @@
 # Xenium
 
-10x Xenium In Situ is a probe-based, single-cell resolution spatial transcriptomics platform. With its advanced probe design and high-resuolution imaging techniques, Xenium is able to detect sub-cellular resolution gene expression with accurate cell type segmentation. Xenium platform allows researchers to analyze hundreds of even thousands of genes with ease. Currently, it supports multiple [panels](https://www.10xgenomics.com/platforms/xenium#panels){target="_blank"}, including 1) Off-the-shelf panel of 50-5,000 genes, 2) Fully customizable panel of 480 genes, and 3) Customized TCR/BCR, SNVs, and isoform panels.
+[**10x Xenium In Situ**](https://www.10xgenomics.com/platforms/xenium){target="_blank"} is a probe-based, single-cell resolution spatial transcriptomics platform. With its advanced probe design and high-resolution imaging techniques, Xenium is able to detect sub-cellular resolution gene expression with accurate cell type segmentation. Xenium platform allows researchers to analyze hundreds of even thousands of genes with ease. Currently, it supports multiple [panels](https://www.10xgenomics.com/platforms/xenium#panels){target="_blank"}, including 1) Off-the-shelf panel of 50-5,000 genes, 2) Fully customizable panel of 480 genes, and 3) Customized TCR/BCR, SNVs, and isoform panels.
 
 [![](https://ostr.ccr.cancer.gov/wp-content/uploads/2025/03/xenium-workflow.png)](https://ostr.ccr.cancer.gov/wp-content/uploads/2025/03/xenium-workflow.png){target="_blank"}
 
@@ -140,4 +140,4 @@ Figure 2. Xenium spatial-transcriptomics output. (Left) Tissue image with captur
 ![Figure 2B](https://interactivereport.github.io/SpaceSequest/images/Xenium_demo.UMAP.png){width=48%}
 
 :::
-Xenium spatial-transcriptomics output. (Left) Tissue image with capture spots overlaid. (Right) UMAP embedding of spatial barcodes coloured by cluster.
+Xenium spatial-transcriptomics output. (Left) Tissue image with capture spots overlaid. (Right) UMAP embedding of spatial barcodes colored by cluster.

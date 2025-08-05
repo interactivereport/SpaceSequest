@@ -108,7 +108,7 @@
 </ul></li>
 <li class="chapter" data-level="7" data-path="geomx-1.html"><a href="geomx-1.html"><i class="fa fa-check"></i><b>7</b> GeoMX</a>
 <ul>
-<li class="chapter" data-level="7.1" data-path="geomx-1.html"><a href="geomx-1.html#fastq-to-dcc-conversion"><i class="fa fa-check"></i><b>7.1</b> Fastq to DCC conversion</a></li>
+<li class="chapter" data-level="7.1" data-path="geomx-1.html"><a href="geomx-1.html#fastq-to-dcc-conversion"><i class="fa fa-check"></i><b>7.1</b> FASTQ to DCC conversion</a></li>
 <li class="chapter" data-level="7.2" data-path="geomx-1.html"><a href="geomx-1.html#pipeline-setup-2"><i class="fa fa-check"></i><b>7.2</b> Pipeline setup</a></li>
 <li class="chapter" data-level="7.3" data-path="geomx-1.html"><a href="geomx-1.html#results-3"><i class="fa fa-check"></i><b>7.3</b> Results</a></li>
 <li class="chapter" data-level="7.4" data-path="geomx-1.html"><a href="geomx-1.html#quickomics-exploration"><i class="fa fa-check"></i><b>7.4</b> Quickomics exploration</a></li>
@@ -160,14 +160,14 @@
             <section class="normal" id="section-">
 <div id="additional-tools" class="section level1 hasAnchor" number="9">
 <h1><span class="header-section-number">Chapter 9</span> Additional tools<a href="additional-tools.html#additional-tools" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>In this section, we introduce two additional tools to further analyze CosMx and Visium HD data.</p>
+<p>In this section, we introduce three additional tools to further analyze spatial transcriptomics data.</p>
 <div id="cosmx2vip" class="section level2 hasAnchor" number="9.1">
 <h2><span class="header-section-number">9.1</span> cosMx2VIP<a href="additional-tools.html#cosmx2vip" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>We have introduced previously that NanoString CosMx data can be analyzed through SpaceSequest <code>cosmx</code> workflow. However, the <code>cosmx</code> workflow does not incorporate the original images for visiualization. Here, we developed another tool, called cosMx2VIP, to add CosMx images to create an integrated object, which can be further visualized by <a href="https://github.com/interactivereport/cellxgene_VIP" target="_blank">Cellxgene VIP</a>. Cellxgene VIP not only hosts single-cell RNA-seq datasets, it also loads spatial transcriptomics data and display the image and data simutaneously. Here, we will go through the process step-by-step.</p>
+<p>We have introduced previously that <a href="https://nanostring.com/products/cosmx-spatial-molecular-imager/single-cell-imaging-overview/" target="_blank">NanoString CosMx data</a> can be analyzed through SpaceSequest <code>cosmx</code> workflow. However, the <code>cosmx</code> workflow does not incorporate the original images for visualization. Here, we developed another tool, called <strong>cosMx2VIP</strong>, to add CosMx images to the gene expression data, creating an integrated object, which can be further visualized by <a href="https://github.com/interactivereport/cellxgene_VIP" target="_blank">Cellxgene VIP</a>. Cellxgene VIP not only hosts single-cell RNA-seq datasets, it also loads spatial transcriptomics data and displays the image and data simultaneously. Here, we will go through the process step-by-step.</p>
 <div id="input-file-set-up" class="section level3 hasAnchor" number="9.1.1">
 <h3><span class="header-section-number">9.1.1</span> Input file set up<a href="additional-tools.html#input-file-set-up" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>In this section, we will go through input files that are necessary for running the cosMx2VIP workflow.</p>
-<p>Here, we use the public CosMx dataset from the NanoString website again:</p>
+<p>In this section, we will go through input files that are necessary for running the <code>cosMx2VIP</code> workflow.</p>
+<p>Here, we use the public CosMx dataset from NanoString website again:</p>
 <p>Human frontal cortex FFPE data is available through: <a href="https://nanostring.com/products/cosmx-spatial-molecular-imager/ffpe-dataset/human-frontal-cortex-ffpe-dataset/" target="_blank">https://nanostring.com/products/cosmx-spatial-molecular-imager/ffpe-dataset/human-frontal-cortex-ffpe-dataset/</a></p>
 <p>Since <code>cosMx2VIP</code> integrates the data and the image, it requires the images as well. Thus, we will need to download both <strong>Basic Data Files</strong> and <strong>Raw Data Export</strong>. The <strong>Basic Data Files</strong> will be a .zip file with ~15 Gb, while the <strong>Raw Data Export</strong> contains a large <strong>RawFiles.zip</strong> file with ~602 Gb. Please make sure you have enough space to store those files.</p>
 <p>Unzipping the <code>RawFiles.zip</code> file resulted in the following folders. Also attached the <code>S3</code> folder unzipped from <code>Basic Data Files</code>:</p>
@@ -298,10 +298,10 @@ compare_TAM_vs_CO_DESeq2,Sample_ID,final_label,Treatment,Treated,Control,,DESeq2
 </div>
 <div id="visium-hd-color-function" class="section level2 hasAnchor" number="9.3">
 <h2><span class="header-section-number">9.3</span> Visium HD color function<a href="additional-tools.html#visium-hd-color-function" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>To facilitate the analysis of Visium HD and extract meaningful information from the image, we developed a new function called <code>getVisiumHDspotCol</code> to calculate the mean RGB intensities when a paired high-resolution immunofluorescence image is available.</p>
+<p>To facilitate the analysis of Visium HD and extract meaningful information from the image, we developed a new function called <code>getVisiumHDspotCol</code> to calculate the mean RGB intensities when a paired high-resolution immunofluorescence (IF) image is available.</p>
 <p>This function is similar to the <a href="https://squidpy.readthedocs.io/en/stable/api/squidpy.im.calculate_image_features.html" target="_blank"><strong>squidpy.im.calculate_image_features</strong></a> function provided by <a href="https://www.nature.com/articles/s41592-021-01358-2" target="_blank">Squidpy</a>. However, we apply this function to Visium HD bins (for example, 2μm bins) and generate R, G, B color intensities.</p>
 <p><a href="https://interactivereport.github.io/SpaceSequest/images/getVisiumHDspotCol.png" target="_blank"><img src="https://interactivereport.github.io/SpaceSequest/images/getVisiumHDspotCol.png" /></a></p>
-<p><strong>The getVisiumHDspotCol function</strong>: This function takes Visium HD data and an immunofluorescence (IF) image as input, calculates a matrix indicating the average Red, Green, and Blue color intensities in each bin. Users can select the bin size before the calculation.</p>
+<p><strong>The getVisiumHDspotCol function</strong>: This function takes Visium HD data and an immunofluorescence (IF) image as input, calculates a matrix indicating the average <strong><span style="color: red;">Red</span></strong>, <strong><span style="color: darkseagreen;">Green</span></strong>, and <strong><span style="color: dodgerblue;">Blue</span></strong> color intensities in each bin. Users can select the bin size before the calculation.</p>
 <div id="input-prerequisites" class="section level3 hasAnchor" number="9.3.1">
 <h3><span class="header-section-number">9.3.1</span> Input prerequisites<a href="additional-tools.html#input-prerequisites" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>To use the <code>getVisiumHDspotCol</code> function, users need to have the immunofluorescence staining image generated during the experiment. Such image may have multiple markers stained. For example, the following run includes the IF image associated with the Visium HD data through passing the jpg file using the <code>colorizedimage</code> parameter:</p>
@@ -367,7 +367,7 @@ saveRDS(cInfo,paste0(prefix, &quot;.alignImage.cInfo.rds&quot;))
 
 #Check the result
 head(cInfo)</code></pre>
-<p>The result table has multple columns, corresponding R, G, and B colors. For example, the Red color has three columns: <code>R_mean</code>, <code>R_median</code>, and <code>R_sd</code>, indicating the mean, median, and standard deviation of the Red color for each bin. In this example, the bin size was selected as 8 μm, but users can change it based on their need.</p>
+<p>The result table has multiple columns, corresponding <strong><span style="color: red;">Red</span></strong>, <strong><span style="color: darkseagreen;">Green</span></strong>, and <strong><span style="color: dodgerblue;">Blue</span></strong> colors. For example, the <strong><span style="color: red;">Red</span></strong> color has three columns: <code>R_mean</code>, <code>R_median</code>, and <code>R_sd</code>, indicating the mean, median, and standard deviation of the Red color for each bin. In this example, the bin size was selected as 8 μm, but users can change it based on their need.</p>
 
 </div>
 </div>

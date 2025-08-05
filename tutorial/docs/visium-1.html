@@ -108,7 +108,7 @@
 </ul></li>
 <li class="chapter" data-level="7" data-path="geomx-1.html"><a href="geomx-1.html"><i class="fa fa-check"></i><b>7</b> GeoMX</a>
 <ul>
-<li class="chapter" data-level="7.1" data-path="geomx-1.html"><a href="geomx-1.html#fastq-to-dcc-conversion"><i class="fa fa-check"></i><b>7.1</b> Fastq to DCC conversion</a></li>
+<li class="chapter" data-level="7.1" data-path="geomx-1.html"><a href="geomx-1.html#fastq-to-dcc-conversion"><i class="fa fa-check"></i><b>7.1</b> FASTQ to DCC conversion</a></li>
 <li class="chapter" data-level="7.2" data-path="geomx-1.html"><a href="geomx-1.html#pipeline-setup-2"><i class="fa fa-check"></i><b>7.2</b> Pipeline setup</a></li>
 <li class="chapter" data-level="7.3" data-path="geomx-1.html"><a href="geomx-1.html#results-3"><i class="fa fa-check"></i><b>7.3</b> Results</a></li>
 <li class="chapter" data-level="7.4" data-path="geomx-1.html"><a href="geomx-1.html#quickomics-exploration"><i class="fa fa-check"></i><b>7.4</b> Quickomics exploration</a></li>
@@ -160,7 +160,7 @@
             <section class="normal" id="section-">
 <div id="visium-1" class="section level1 hasAnchor" number="4">
 <h1><span class="header-section-number">Chapter 4</span> Visium<a href="visium-1.html#visium-1" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>10x Genomics Visium is a revolutionary technology that detects RNA expression and spatial location at the same time. Unlike traditional single-cell RNA-seq, which loses spatial information, Visium enables researches to map where gene activity occurs within the architecture of the intact tissue.</p>
+<p><a href="https://www.10xgenomics.com/platforms/visium" target="_blank"><strong>10x Genomics Visium</strong></a> is a revolutionary technology that detects RNA expression and spatial location at the same time. Unlike traditional single-cell RNA-seq, which loses spatial information, Visium enables researches to map where gene activity occurs within the architecture of the intact tissue.</p>
 <p>In detail, tissue sections can be placed on specialized Visium slides that contain an array of spatially barcoded capture spots. Each spot captures mRNA transcripts from the overlying tissue area, and at the same time, records the spatial location using the barcodes. After high-throughput sequencing, these data can be mapped back onto high-resolution tissue images, allowing researchers to analyze the gene expression patterns from distinct histological regions.</p>
 <p><a href="https://ngisweden.scilifelab.se/wp-content/uploads/2021/02/Visium-gene-expression-slide-1024x390.png" target="_blank"><img src="https://ngisweden.scilifelab.se/wp-content/uploads/2021/02/Visium-gene-expression-slide-1024x390.png" /></a></p>
 <p><strong>10x Genomics Visium slides and barcoded spots</strong>: As illustrated in the figure above, each 10x Genomics Visium slide has multiple captures (4 for regular 6.5x6.5 mm, or 2 for 11x11 mm). The barcoded spots are 55 μm in diameter, with gaps between each spot. (Image from: <a href="https://www.10xgenomics.com/" target="_blank">https://www.10xgenomics.com/</a>)</p>
@@ -168,7 +168,7 @@
 <p><strong>SpaceSequest Visium workflow</strong>: The Visium pipeline takes <a href="https://www.10xgenomics.com/support/software/space-ranger/latest" target="_blank">Space Ranger</a> outputs and performs a series of analysis using multiple state-of-the-art tools, including <a href="https://www.nature.com/articles/s41587-021-00935-2" target="_blank">BayesSpace</a>, <a href="https://www.nature.com/articles/s41587-021-01139-4" target="_blank">Cell2location</a>, <a href="https://www.nature.com/articles/s41592-021-01255-8" target="_blank">SpaGCN</a>, <a href="https://www.nature.com/articles/s41592-021-01264-7" target="_blank">Tangram</a>, and <a href="https://www.nature.com/articles/s41467-022-32111-8" target="_blank">SpaTalk</a>.</p>
 <div id="space-ranger-run" class="section level2 hasAnchor" number="4.1">
 <h2><span class="header-section-number">4.1</span> Space Ranger run<a href="visium-1.html#space-ranger-run" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>If you start the analysis from Fastq raw data, <a href="https://www.10xgenomics.com/support/software/space-ranger/2.1" target="_blank">Space Ranger</a> is necessary to process the data to gene expression count matrix, with spatial barcodes resolved. As we mentioned before, Space Ranger requires Fastq files, high-resolution images, as well as key files (genome index, etc.) to run. We have illustrated these steps using a publicly available Visium data from an Alzheimer’s disease (AD) mouse model <a href="https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.12821" target="_blank">paper</a>, with GEO entry: <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE203424" target="_blank">GSE203424</a>. See <a href="data-preparation.html#data-preparation">data preparation</a> section 3.1.</p>
+<p>If you start the analysis from FASTQ raw data, <a href="https://www.10xgenomics.com/support/software/space-ranger/2.1" target="_blank">Space Ranger</a> is necessary to process the data to gene expression count matrix, with spatial barcodes resolved. As we mentioned before, Space Ranger requires FASTQ files, high-resolution images, as well as key files (genome index, etc.) to run. We have illustrated these steps using a publicly available Visium data from an Alzheimer’s disease (AD) mouse model <a href="https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.12821" target="_blank">paper</a>, with GEO entry: <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE203424" target="_blank">GSE203424</a>. See the <a href="data-preparation.html#data-preparation">data preparation</a> section 3.1.</p>
 <p>A typical Space Ranger run command for Visium:</p>
 <pre><code>spaceranger count --id=&quot;WT-CO1&quot; \
     --transcriptome=~/Data/Reference_files/refdata-gex-mm10-2020-A \
@@ -253,11 +253,11 @@ PSAPP-TAM2,~/SpaceSequest_demo/1_Visium/SpaceRanger/PSAPP-TAM2/outs,Treated,~/Sp
 <pre><code>#Run the pipeline
 
 visium ~/SpaceSequest_demo/1_Visium/Run_pipeline/config.yml</code></pre>
-<p>Among the software used in the pipeline, SpaTalk may need more memory and time. By testing the above four datasets, 500 Gb is sufficient for SpaTalk, but 250 Gb resulted in an Out-of-memory (OOM) error.</p>
+<p>Among the software used in the pipeline, <a href="https://www.nature.com/articles/s41467-022-32111-8" target="_blank">SpaTalk</a> may need more memory and time. By testing the above four datasets, 500 Gb was sufficient for SpaTalk in a test run, but 250 Gb resulted in an Out-of-memory (OOM) error.</p>
 </div>
 <div id="results" class="section level2 hasAnchor" number="4.3">
 <h2><span class="header-section-number">4.3</span> Results<a href="visium-1.html#results" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Finally, useds can check the results in the output directory. For each method, SpaceSequest generates a folder to store the results, for example: <em>BayesSpace</em>, <em>SpaGCN</em>, <em>SpaTalk</em>, etc. If there were any errors occurred, users can check the jxx (in this example, j47) folder to see the original scripts and error messages.</p>
+<p>Finally, users can check the results in the output directory. For each method, SpaceSequest generates a folder to store the results, for example: <em>BayesSpace</em>, <em>SpaGCN</em>, <em>SpaTalk</em>, etc. If there were any errors occurred, users can check the jxx (in this example, j47) folder to see the original scripts and error messages.</p>
 <p>Output directory:</p>
 <pre><code>~/SpaceSequest_demo/1_Visium
   ├── BayesSpace/

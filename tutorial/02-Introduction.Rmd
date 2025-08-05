@@ -2,7 +2,7 @@
 
 **Spatial transcriptomics** has emerged as one of the most powerful tools for gaining biological insights, enabling researchers to uncover intricate relationships between gene expression patterns and tissue architecture. It has been recognized as the [Method of the Year 2020](https://www.nature.com/articles/s41592-020-01033-y){target="_blank"}. Recent advances in the field have resulted in a variety of new platforms, including [**Visium**](https://www.10xgenomics.com/platforms/visium){target="_blank"}, [**Visium HD**](https://www.10xgenomics.com/platforms/visium/product-family){target="_blank"}, and [**Xenium**](https://www.10xgenomics.com/platforms/xenium){target="_blank"} from [10x Genomics](https://www.10xgenomics.com/){target="_blank"}, as well as [**GeoMx**](https://nanostring.com/products/geomx-digital-spatial-profiler/geomx-dsp-overview/){target="_blank"} and [**CosMx**](https://nanostring.com/products/cosmx-spatial-molecular-imager/){target="_blank"} from [Bruker/NanoString Technologies](https://nanostring.com/){target="_blank"}, which has now been acquired by the [Bruker Corporation](https://www.bruker.com/en.html){target="_blank"}. However, the existence of diverse spatial transcriptomics platforms and various data formats poses challenges in standardizing data analysis. Thus, there remains a critical gap in the availability of a comprehensive pipeline capable of conducting end-to-end analysis that is necessary to extract biological insights from multiple spatial transcriptomics platforms.
 
-Here, we present [SpaceSequest](https://github.com/interactivereport/spacesequest){target="_blank"}, a tailored pipeline that utilizes cutting-edge computational methodologies to conduct a thorough analysis, enabling the extraction of crucial biological insights from five major spatial transcriptomics technologies. SpaceSequest performs 
+Here, we present [**SpaceSequest**](https://github.com/interactivereport/spacesequest){target="_blank"}, a tailored pipeline that utilizes cutting-edge computational methodologies to conduct a thorough analysis, enabling the extraction of crucial biological insights from five major spatial transcriptomics technologies. SpaceSequest performs:
 
  - **Standardized quality control and general data processing.**
  
@@ -50,7 +50,7 @@ Furthermore, SpaceSequest contains three additional scripts that perform specifi
  
    This function takes Visium HD data and high-resolution image as inputs, and extracts mean R, G, and B color intensities for each bin.
    
-In summary, this pipeline has the ability to analysis the following spatial transcriptomics data platforms:
+In summary, this pipeline has the capability to analysis the following spatial transcriptomics data platforms:
 
  - 10x Genomics Visium: [https://www.10xgenomics.com/platforms/visium](https://www.10xgenomics.com/platforms/visium){target="_blank"}
 

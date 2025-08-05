@@ -1,6 +1,6 @@
 # Installation
 
-SpaceSequest can be installed through conda environment. We have tested the installation on Linux servers. Please ensure [Conda](https://anaconda.org/anaconda/conda){target="_blank"} is available on your device:
+[**SpaceSequest**](https://github.com/interactivereport/spacesequest){target="_blank"} can be installed through a conda environment. We have tested the installation on Linux servers. Please ensure [Conda](https://anaconda.org/anaconda/conda){target="_blank"} is available on your device:
 
 ```
 which conda

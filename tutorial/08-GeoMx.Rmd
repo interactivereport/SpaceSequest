@@ -1,16 +1,16 @@
 # GeoMX
 
-The GeoMx™ Digital Spatial Profiler (DSP) is a spatial transcriptomics platform developed by NanoString Technologies (Now Bruker Corporation), allowing researchers to quantify RNA and/or protein expression using FFPE (formalin-fixed, paraffin-embedded) or fresh frozen samples. GeoMx enables high-plex, spatially resolved profiling of tissues based on user-defined Region of interests (ROIs). These ROIs can be defined using multiple staining markers, and each ROI usually has at least 50–100 cells, but ideally 100–300+ cells per ROI for robust RNA signal. Thus, GeoMx cannot provide single-cell resolution spatial transcriptomics readout, but it allows better capture of lowly-expressed genes, due to its `mini-bulk` strategy.
+[**GeoMx™ Digital Spatial Profiler (DSP)**](https://nanostring.com/products/geomx-digital-spatial-profiler/geomx-dsp-overview/){target="_blank"} is a spatial transcriptomics platform developed by NanoString Technologies (Now Bruker Corporation), allowing researchers to quantify RNA and/or protein expression using FFPE (formalin-fixed, paraffin-embedded) or fresh frozen samples. GeoMx enables high-plex, spatially resolved profiling of tissues based on user-defined Region of interests (ROIs). These ROIs can be defined using multiple staining markers, and each ROI usually has at least 50–100 cells, but ideally 100–300+ cells per ROI for robust RNA signal. Thus, GeoMx cannot provide single-cell resolution spatial transcriptomics readout, but it allows better capture of lowly-expressed genes, due to its `mini-bulk` strategy.
 
-GeoMx experiment can be sequenced using NGS high-throughput sequencing, or counted using NanoString nCounter. Here, we discuss the data analysis using NGS-based readout, with DCC as pipeline input format.
+GeoMx experiment can be sequenced using NGS high-throughput sequencing, or counted using [NanoString nCounter](https://nanostring.com/products/ncounter-analysis-system/ncounter-systems-overview/){target="_blank"}. Here, we discuss the data analysis using NGS-based readout, with DCC as pipeline input format.
 
 [![](https://nanostring.com/wp-content/uploads/IM_MK4289_geomx_workflow_simplified_R4-01.png)](https://nanostring.com/wp-content/uploads/IM_MK4289_geomx_workflow_simplified_R4-01.png){target="_blank"}
 
 **GeoMx workflow**: This figures shows the general workflow of GeoMx experiment. The whole workflow contains sample preparation, imaging, data collection, and downstream data analysis. (Image from: [https://nanostring.com/products/geomx-digital-spatial-profiler/geomx-dsp-overview/](https://nanostring.com/products/geomx-digital-spatial-profiler/geomx-dsp-overview/){target="_blank"})
 
-## Fastq to DCC conversion
+## FASTQ to DCC conversion
 
-NanoString Technologies (Now Bruker Corporation) provides a toolkit to process GeoMx readout in Fastq format. As described [here](https://cumulus.readthedocs.io/en/stable/geomxngs/index.html){target="_blank"}, users can follow the instruction and generate files with dcc as suffix for downstream analysis. 
+NanoString Technologies (Now Bruker Corporation) provides a toolkit to process GeoMx readout in the FASTQ format. As described [here](https://cumulus.readthedocs.io/en/stable/geomxngs/index.html){target="_blank"}, users can follow the instruction and generate files with .dcc as suffix for downstream analysis. 
 
 Another useful user manual is available at: [GeoMx DSP NGS Readout User Manual](https://nanostring.com/wp-content/uploads/2022/06/MAN-10153-01-GeoMx-DSP-NGS-Readout-User-Manual.pdf){target="_blank"}
 
@@ -18,7 +18,7 @@ Another useful user manual is available at: [GeoMx DSP NGS Readout User Manual](
 
 Demo run directory: ~/SpaceSequest_demo/4_GeoMx
 
-Here, we will demonstrate the pipeline using a public dataset provided by NanoString Technologies. The Fastq->dcc step has already been run for this data, so we can directly start from dcc file processing.
+Here, we will demonstrate the pipeline using a public dataset provided by NanoString Technologies. The FASTQ->DCC step has already been run for this data, so we can directly start from DCC file processing.
 
 The demo dataset is a public data provided by NanoString: [http://nanostring-public-share.s3-website-us-west-2.amazonaws.com/GeoScriptHub/Kidney_Dataset_for_GeomxTools.zip](http://nanostring-public-share.s3-website-us-west-2.amazonaws.com/GeoScriptHub/Kidney_Dataset_for_GeomxTools.zip){target="_blank"}. After unzipping this file, please add the following file to the `annotation` folder inside `Kidney_Dataset`, as we modified the spreadsheet to simplify this test run: [https://github.com/interactivereport/SpaceSequest/blob/gh-pages/tutorial/02-Introduction.Rmd](https://github.com/interactivereport/SpaceSequest/blob/gh-pages/geomx/kidney_demo_AOI_Annotations_selected_clean.xlsx){target="_blank"}
 
@@ -61,7 +61,8 @@ CompareName,Model,Group_name,Group_test,Group_ctrl,Analysis_method
 
 Glome_vs_Tubule,~region,region,glomerulus,tubule,Linear
 ```
-Currently, we only support running a Linear model to compare two conditions, without covariate adjustments. More DE methods will be added later.
+
+Currently, users can run a single linear model to call the differentially expressed genes using Q3 normalized data.
 
 Run the pipeline as below:
 
@@ -71,7 +72,7 @@ Run the pipeline as below:
 geomx ~/SpaceSequest_demo/4_GeoMx/config.yml
 
 ```
-Finally check the results in the output_dir folder specified in the config.yml file. The output files contain DE analysis results, and if Quickomics parameter was set to True, it will create mutiple .csv files to create a Quickomics visualization link. An example can be found here (Q3 normalized values were used to create the link): http://compbio.biogen.com:3838/Quickomics/?unlisted=PRJ_GeoMx_demo_Ij4YyG
+Finally check the results in the output_dir folder specified in the config.yml file. The output files contain DE analysis results, and if the `quickomics` parameter was set to True, it will generate multiple .csv files to create a Quickomics visualization link. An example can be found here (Q3 normalized values were used to create the link): http://compbio.biogen.com:3838/Quickomics/?unlisted=PRJ_GeoMx_demo_Ij4YyG
 
 ## Results
 
@@ -129,12 +130,10 @@ Here, we upload the following four files to the [Quickomics server](https://quic
 
 Quickomics link: [https://quickomics.bxgenomics.com/?unlisted=PRJ_GeoMx_demo_238wZk](https://quickomics.bxgenomics.com/?unlisted=PRJ_GeoMx_demo_238wZk){target="_blank"}
 
-A few example images from Quickomics exploration:
+A few example images from Quickomics exploration. The figure below shows GeoMx PCA and volcano plots:
 
 [![](https://interactivereport.github.io/SpaceSequest/images/GeoMx_demo_plots.png)](https://interactivereport.github.io/SpaceSequest/images/GeoMx_demo_plots.png){target="_blank"}
 
-GeoMx PCA and volcano plots.
+The following figure displays a GeoMx expression heatmap:
 
 [![](https://interactivereport.github.io/SpaceSequest/images/GeoMx_demo_heatmap.png)](https://interactivereport.github.io/SpaceSequest/images/GeoMx_demo_heatmap.png){target="_blank"}
-
-GeoMx expression heatmap.
