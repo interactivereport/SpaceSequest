@@ -1,8 +1,8 @@
 # Introduction
 
-**Spatial transcriptomics** has emerged as one of the most powerful tools for gaining biological insights, enabling researchers to uncover intricate relationships between gene expression patterns and tissue architecture. It has been recognized as the [Method of the Year 2020](https://www.nature.com/articles/s41592-020-01033-y){target="_blank"}. Recent advances in the field have resulted in a variety of new platforms, including [**Visium**](https://www.10xgenomics.com/platforms/visium){target="_blank"}, [**Visium HD**](https://www.10xgenomics.com/platforms/visium/product-family){target="_blank"}, and [**Xenium**](https://www.10xgenomics.com/platforms/xenium){target="_blank"} from [10x Genomics](https://www.10xgenomics.com/){target="_blank"}, as well as [**GeoMx**](https://nanostring.com/products/geomx-digital-spatial-profiler/geomx-dsp-overview/){target="_blank"} and [**CosMx**](https://nanostring.com/products/cosmx-spatial-molecular-imager/){target="_blank"} from Bruker/NanoString Technologies, which has now been acquired by the [Bruker Corporation](https://www.bruker.com/en.html){target="_blank"}. However, the existence of diverse spatial transcriptomics platforms and various data formats poses challenges in standardizing data analysis. Thus, there remains a critical gap in the availability of a comprehensive pipeline capable of conducting end-to-end analysis that is necessary to extract biological insights from multiple spatial transcriptomics platforms.
+**Spatial transcriptomics** has emerged as one of the most powerful tools for gaining biological insights, enabling researchers to uncover intricate relationships between gene expression patterns and tissue architecture. It has been recognized as the [Method of the Year 2020](https://www.nature.com/articles/s41592-020-01033-y){target="_blank"}. Recent advances in the field have resulted in a variety of new platforms, including [**Visium**](https://www.10xgenomics.com/platforms/visium){target="_blank"}, [**Visium HD**](https://www.10xgenomics.com/platforms/visium/product-family){target="_blank"}, and [**Xenium**](https://www.10xgenomics.com/platforms/xenium){target="_blank"} from [10x Genomics](https://www.10xgenomics.com/){target="_blank"}, as well as [**GeoMx**](https://nanostring.com/products/geomx-digital-spatial-profiler/geomx-dsp-overview/){target="_blank"} and [**CosMx**](https://nanostring.com/products/cosmx-spatial-molecular-imager/){target="_blank"} from [Bruker/NanoString Technologies](https://nanostring.com/){target="_blank"}, which has now been acquired by the [Bruker Corporation](https://www.bruker.com/en.html){target="_blank"}. However, the existence of diverse spatial transcriptomics platforms and various data formats poses challenges in standardizing data analysis. Thus, there remains a critical gap in the availability of a comprehensive pipeline capable of conducting end-to-end analysis that is necessary to extract biological insights from multiple spatial transcriptomics platforms.
 
-Here, we present SpaceSequest, a tailored pipeline that utilizes cutting-edge computational methodologies to conduct a thorough analysis, enabling the extraction of crucial biological insights from five major spatial transcriptomics technologies. SpaceSequest performs 
+Here, we present [SpaceSequest](https://github.com/interactivereport/spacesequest){target="_blank"}, a tailored pipeline that utilizes cutting-edge computational methodologies to conduct a thorough analysis, enabling the extraction of crucial biological insights from five major spatial transcriptomics technologies. SpaceSequest performs 
 
  - **Standardized quality control and general data processing.**
  
@@ -18,24 +18,37 @@ This pipeline contains the following major workflows:
 
  - **visium**
  
-   Our pipeline analyzes 10x Genomics Visium data. It takes SpaceRanger output directory as input, together with a config.yml file. The output will be saved in multiple folders corresponding to the name of the software used, such as, [BayesSpace](https://www.nature.com/articles/s41587-021-00935-2){target="_blank"}, [c2l (cell2location)](https://www.nature.com/articles/s41587-021-01139-4){target="_blank"}, [SpaGCN](https://www.nature.com/articles/s41592-021-01255-8){target="_blank"}, [SpaTalk](https://www.nature.com/articles/s41467-022-32111-8){target="_blank"}, and [tangram](https://www.nature.com/articles/s41592-021-01264-7){target="_blank"}.
+   This pipeline analyzes 10x Genomics Visium data. It takes SpaceRanger output directory as input, together with a config.yml file. The output will be saved in multiple folders corresponding to the name of the software used, such as, [BayesSpace](https://www.nature.com/articles/s41587-021-00935-2){target="_blank"}, [c2l (cell2location)](https://www.nature.com/articles/s41587-021-01139-4){target="_blank"}, [SpaGCN](https://www.nature.com/articles/s41592-021-01255-8){target="_blank"}, [SpaTalk](https://www.nature.com/articles/s41467-022-32111-8){target="_blank"}, and [tangram](https://www.nature.com/articles/s41592-021-01264-7){target="_blank"}.
  
  - **visiumhd**
  
-   Our pipeline performs analyses related to Visium HD spatial transcriptomics data. It starts the analysis from SpaceRanger bin-level outputs, and runs a series of steps for QC, cell type annotation, and clustering analysis.
+   This pipeline performs analyses related to Visium HD spatial transcriptomics data. It starts the analysis from SpaceRanger bin-level outputs, and runs a series of steps for QC, cell type annotation, and clustering analysis.
   
  - **xenium**
  
-   Our pipeline directly takes Xenium data as input, runs through gene/cell level quality control and various downstream analyses.
+   This pipeline directly takes Xenium data as input, runs through gene/cell level quality control and various downstream analyses.
  
  - **cosmx**
  
-   Our pipeline performs CosMx data analysis. This includes quality control, cell type annotation (label transfer from a reference dataset), and clustering analysis.
+   This pipeline performs CosMx data analysis. This includes quality control, cell type annotation (label transfer from a reference dataset), and clustering analysis.
 
  - **geomx**
    
-   Our pipeline takes GeoMx .dcc files as input, performs sample- and probe-level quality control, and runs a series of steps to call differentially expressed genes. The output will be summarized into [Quickomics](https://academic.oup.com/bioinformatics/article/37/20/3670/6254183){target="_blank"} format for further interactive exploration.
+   This pipeline takes GeoMx .dcc files as input, performs sample- and probe-level quality control, and runs a series of steps to call differentially expressed genes. The output will be summarized into [Quickomics](https://academic.oup.com/bioinformatics/article/37/20/3670/6254183){target="_blank"} format for further interactive exploration.
    
+Furthermore, SpaceSequest contains three additional scripts that perform specific tasks to help spatial transcriptomics analysis:
+
+ - **cosMx2VIP**
+ 
+   This script converts CosMx dataset to an h5ad file so the data can be visualized in [Cellxgene VIP](https://github.com/interactivereport/cellxgene_VIP){target="_blank"}, a tool developed based on [Cellxgene](https://github.com/chanzuckerberg/cellxgene){target="_blank"}, but with additional features to navigate spatial transcriptomics datasets.
+ 
+ - **spDEG**
+ 
+   This script provides a flexibal way to perform spatial differential expression analysis, using the h5ad or R object outputs from the SpaceSequest pipeline.
+ 
+ - **getVisiumHDspotCol**
+ 
+   This function takes Visium HD data and high-resolution image as inputs, and extracts mean R, G, and B color intensities for each bin.
    
 In summary, this pipeline has the ability to analysis the following spatial transcriptomics data platforms:
 
