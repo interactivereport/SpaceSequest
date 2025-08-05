@@ -129,3 +129,12 @@ Here, we upload the following four files to the [Quickomics server](https://quic
 
 Quickomics link: [https://quickomics.bxgenomics.com/?unlisted=PRJ_GeoMx_demo_238wZk](https://quickomics.bxgenomics.com/?unlisted=PRJ_GeoMx_demo_238wZk){target="_blank"}
 
+A few example images from Quickomics exploration:
+
+[![](https://interactivereport.github.io/SpaceSequest/images/GeoMx_demo_plots.png)](https://interactivereport.github.io/SpaceSequest/images/GeoMx_demo_plots.png){target="_blank"}
+
+GeoMx PCA and volcano plots.
+
+[![](https://interactivereport.github.io/SpaceSequest/images/GeoMx_demo_heatmap.png)](https://interactivereport.github.io/SpaceSequest/images/GeoMx_demo_heatmap.png){target="_blank"}
+
+GeoMx expression heatmap.

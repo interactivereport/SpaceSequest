@@ -6,8 +6,11 @@ In detail, tissue sections can be placed on specialized Visium slides that conta
 
 [![](https://ngisweden.scilifelab.se/wp-content/uploads/2021/02/Visium-gene-expression-slide-1024x390.png)](https://ngisweden.scilifelab.se/wp-content/uploads/2021/02/Visium-gene-expression-slide-1024x390.png){target="_blank"}
 
-**10x Genomics Visium slide and barcoded spots**: As illustrated in the figure above, each 10x Genomics Visium slide has multiple captures (4 for regular 6.5x6.5 mm, or 2 for 11x11 mm). The barcoded spots are 55 μm in diameter, with gaps between each spot. (Image from: [https://www.10xgenomics.com/](https://www.10xgenomics.com/){target="_blank"})
+**10x Genomics Visium slides and barcoded spots**: As illustrated in the figure above, each 10x Genomics Visium slide has multiple captures (4 for regular 6.5x6.5 mm, or 2 for 11x11 mm). The barcoded spots are 55 μm in diameter, with gaps between each spot. (Image from: [https://www.10xgenomics.com/](https://www.10xgenomics.com/){target="_blank"})
 
+[![](https://interactivereport.github.io/SpaceSequest/images/Visium_pipeline.png)](https://interactivereport.github.io/SpaceSequest/images/Visium_pipeline.png){target="_blank"}
+
+**SpaceSequest Visium workflow**: The Visium pipeline takes [Space Ranger](https://www.10xgenomics.com/support/software/space-ranger/latest){target="_blank"} outputs and performs a series of analysis using multiple state-of-the-art tools, including [BayesSpace](https://www.nature.com/articles/s41587-021-00935-2){target="_blank"}, [Cell2location](https://www.nature.com/articles/s41587-021-01139-4){target="_blank"}, [SpaGCN](https://www.nature.com/articles/s41592-021-01255-8){target="_blank"}, [Tangram](https://www.nature.com/articles/s41592-021-01264-7){target="_blank"}, and [SpaTalk](https://www.nature.com/articles/s41467-022-32111-8){target="_blank"}.
 
 ## Space Ranger run
 
