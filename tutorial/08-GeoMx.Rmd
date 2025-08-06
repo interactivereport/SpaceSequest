@@ -127,8 +127,7 @@ Here, we upload the following four files to the [Quickomics server](https://quic
 
  - **GeoMx_demo_ProteinGeneName_Optional.csv**: Gene-Protein name conversion
 
-
-Quickomics link: [https://quickomics.bxgenomics.com/?unlisted=PRJ_GeoMx_demo_238wZk](https://quickomics.bxgenomics.com/?unlisted=PRJ_GeoMx_demo_238wZk){target="_blank"}
+After uploading, Quickomics will generate a link: [https://quickomics.bxgenomics.com/?unlisted=PRJ_GeoMx_demo_238wZk](https://quickomics.bxgenomics.com/?unlisted=PRJ_GeoMx_demo_238wZk){target="_blank"}
 
 A few example images from Quickomics exploration. The figure below shows GeoMx PCA and volcano plots:
 

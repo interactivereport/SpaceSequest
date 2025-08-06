@@ -113,6 +113,8 @@ The output of this script is an integrated h5ad file:
 
 This file can be further opened by [Cellxgene VIP](https://github.com/interactivereport/cellxgene_VIP){target="_blank"}, with detailed instruction provided in this [tutorial](https://interactivereport.github.io/cellxgene_VIP/tutorial/docs/){target="_blank"}.
 
+Here is an example of the CosMx data visualization using Cellxgene VIP: [https://cellxgenevip-cosmx.bxgenomics.com/](https://cellxgenevip-cosmx.bxgenomics.com/){target="_blank"}
+
 ## spDEG
 
 spDEG is a wrapper script for differential expression analysis using the output generated from SpaceSequest.
