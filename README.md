@@ -43,11 +43,9 @@ visium
 
 ```
 
-
-
 ## 2. Run a demo dataset
 
-In this section, we demonstrate two types of spatial data analysis (10x Visium HD and Bruker/NanoString CosMx) using public datasets. For workflows that process other spatial datasets, please find more details in the [full tutorial](https://interactivereport.github.io/SpaceSequest/tutorial/docs/index.html).
+SpaceSequest handles spatial transcriptomics data from five cutting-edge platforms. In this section, we demonstrate two types of spatial data analysis (10x Visium HD and Bruker/NanoString CosMx) using public datasets. For workflows that process other spatial datasets, please find more details in the [full tutorial](https://interactivereport.github.io/SpaceSequest/tutorial/docs/index.html), including [Visium](https://interactivereport.github.io/SpaceSequest/tutorial/docs/visium-1.html), [Visium HD](https://interactivereport.github.io/SpaceSequest/tutorial/docs/visium-hd-1.html), [Xenium](https://interactivereport.github.io/SpaceSequest/tutorial/docs/xenium-1.html), [GeoMx](https://interactivereport.github.io/SpaceSequest/tutorial/docs/geomx-1.html), and [CosMx](https://interactivereport.github.io/SpaceSequest/tutorial/docs/cosmx-1.html).
 
 ### 2.1 Visium HD
 
