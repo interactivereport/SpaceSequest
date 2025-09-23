@@ -2,6 +2,8 @@
 
 Tutorial: https://interactivereport.github.io/SpaceSequest/tutorial/docs/index.html
 
+Preprint: https://www.biorxiv.org/content/10.1101/2025.09.15.676389v2
+
 ![SpaceSequest](https://interactivereport.github.io/SpaceSequest/images/CoverImage.png)
 
 **Cover Image: Overview of SpaceSequest components.** SpaceSequest contains five modules to perform standarized data analysis generated from 10x Genomics Visium, Visium HD, and Xenium, as well as Bruker (acquired from the previous NanoString Technologies) GeoMx and CosMx platforms.
